@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Cartoon Story Maker</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#fff4e6,#e8f7ff);
+    color:#222;
+}
+
+header{
+    background:linear-gradient(135deg,#6c5ce7,#00b894);
+    color:white;
+    padding:30px 15px;
+    text-align:center;
+}
+
+header h1{
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+header p{
+    font-size:15px;
+}
+
+.container{
+    max-width:900px;
+    margin:25px auto;
+    padding:15px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:18px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+}
+
+.card h2{
+    margin-bottom:15px;
+    color:#5f27cd;
+}
+
+label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+textarea,
+input,
+select{
+    width:100%;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    font-size:15px;
+    outline:none;
+}
+
+textarea{
+    min-height:120px;
+    resize:vertical;
+}
+
+button{
+    border:none;
+    padding:13px 20px;
+    border-radius:12px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.generate{
+    width:100%;
+    margin-top:15px;
+    background:linear-gradient(135deg,#6c5ce7,#00b894);
+    color:white;
+    font-size:17px;
+}
+
+.generate:hover{
+    opacity:.9;
+}
+
+.result{
+    margin-top:12px;
+    background:#f7f7ff;
+    border:1px solid #e1e1ff;
+    padding:15px;
+    border-radius:12px;
+    white-space:pre-wrap;
+    line-height:1.6;
+}
+
+.copy{
+    margin-top:10px;
+    background:#0984e3;
+    color:white;
+}
+
+.tool{
+    margin-bottom:20px;
+}
+
+footer{
+    text-align:center;
+    padding:25px;
+    color:#666;
+    font-size:14px;
+}
+
+.emoji{
+    font-size:25px;
+}
+
+@media(max-width:600px){
+    header h1{
+        font-size:24px;
+    }
+
+    .container{
+        padding:10px;
+    }
+
+    .card{
+        padding:15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="emoji">🎨🤖📖</div>
+    <h1>AI Cartoon Story Maker</h1>
+    <p>Story को Cartoon Video के लिए तैयार करें</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>✨ अपनी कहानी बनाएं</h2>
+
+        <div class="tool">
+
+            <label>कहानी का विषय</label>
+
+            <textarea id="topic"
+            placeholder="उदाहरण: बारिश के मौसम में एक छोटा बच्चा और उसकी बिल्ली..."></textarea>
+
+        </div>
+
+        <div class="tool">
+
+            <label>कहानी की भाषा</label>
+
+            <select id="language">
+                <option>Hindi</option>
+                <option>Hinglish</option>
+                <option>English</option>
+            </select>
+
+        </div>
+
+        <div class="tool">
+
+            <label>Style</label>
+
+            <select id="style">
+                <option>2D Cartoon</option>
+                <option>2D Ghibli Style</option>
+                <option>Kids Cartoon</option>
+                <option>3D Cartoon</option>
+            </select>
+
+        </div>
+
+        <button class="generate" onclick="generateStory()">
+            🚀 Generate Cartoon Story
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>📖 Story</h2>
+
+        <div id="story" class="result">
+            यहाँ आपकी कहानी दिखाई देगी...
+        </div>
+
+        <button class="copy" onclick="copyText('story')">
+            📋 Copy Story
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>🎭 Character Prompt</h2>
+
+        <div id="characters" class="result">
+            Character prompts यहाँ आएंगे...
+        </div>
+
+        <button class="copy" onclick="copyText('characters')">
+            📋 Copy Character Prompt
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>🎬 Scene Prompts</h2>
+
+        <div id="scenes" class="result">
+            Scene prompts यहाँ आएंगे...
+        </div>
+
+        <button class="copy" onclick="copyText('scenes')">
+            📋 Copy Scene Prompts
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>💬 Dialogues</h2>
+
+        <div id="dialogue" class="result">
+            Dialogues यहाँ आएंगे...
+        </div>
+
+        <button class="copy" onclick="copyText('dialogue')">
+            📋 Copy Dialogues
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>🎙️ Voice-over Script</h2>
+
+        <div id="voice" class="result">
+            Voice-over script यहाँ आएगी...
+        </div>
+
+        <button class="copy" onclick="copyText('voice')">
+            📋 Copy Voice Script
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>📺 YouTube Content</h2>
+
+        <div id="youtube" class="result">
+            YouTube Title, Description और Hashtags यहाँ आएंगे...
+        </div>
+
+        <button class="copy" onclick="copyText('youtube')">
+            📋 Copy YouTube Content
+        </button>
+
+    </div>
+
+</div>
+
+<footer>
+    🎨 AI Cartoon Story Maker © 2026
+</footer>
+
+
+<script>
+
+function generateStory(){
+
+    let topic = document.getElementById("topic").value.trim();
+
+    let language = document.getElementById("language").value;
+
+    let style = document.getElementById("style").value;
+
+    if(topic === ""){
+        alert("कृपया पहले कहानी का विषय लिखें।");
+        return;
+    }
+
+
+    /* STORY */
+
+    let story = `
+एक बार की बात है...
+
+${topic}
+
+एक दिन इस कहानी के मुख्य किरदार को एक ऐसी परिस्थिति का सामना करना पड़ा
+जिसकी उसने कभी कल्पना भी नहीं की थी।
+
+लेकिन उसने हिम्मत नहीं हारी।
+
+अपने दोस्तों की मदद से उसने समस्या का समाधान ढूँढ लिया।
+
+आखिर में सभी के चेहरे पर मुस्कान आ गई।
+
+सीख:
+मुश्किल समय में हिम्मत और अच्छे दोस्तों का साथ कभी नहीं छोड़ना चाहिए।
+`;
+
+
+    /* CHARACTER */
+
+    let characters = `
+CHARACTER 1:
+
+मुख्य किरदार
+- उम्र: 8-10 साल
+- प्यारा और मासूम चेहरा
+- बड़ी expressive आँखें
+- छोटे बाल
+- रंगीन कपड़े
+- friendly smile
+- बच्चों के लिए आकर्षक design
+
+Style:
+${style}
+
+Full body character design,
+clean details, expressive face,
+soft lighting, colorful children's animation.
+`;
+
+
+    /* SCENES */
+
+    let scenes = `
+SCENE 1:
+कहानी की शुरुआत वाला सुंदर वातावरण।
+मुख्य किरदार अपने आसपास की दुनिया को देख रहा है।
+${style}, colorful background, cinematic composition.
+
+SCENE 2:
+मुख्य किरदार को अचानक समस्या का सामना होता है।
+चेहरे पर surprise और थोड़ी चिंता।
+${style}, expressive emotions.
+
+SCENE 3:
+मुख्य किरदार अपने दोस्त से मदद मांगता है।
+दोनों साथ खड़े होकर समस्या के बारे में सोच रहे हैं।
+${style}, children's cartoon scene.
+
+SCENE 4:
+दोनों मिलकर समस्या का समाधान करते हैं।
+खुशी और excitement का माहौल।
+${style}, bright atmosphere.
+
+SCENE 5:
+अंत में सभी खुश हैं।
+सुंदर background, smiling characters,
+warm emotional ending.
+`;
+
+
+    /* DIALOGUE */
+
+    let dialogue = `
+SCENE 1
+
+बच्चा:
+"वाह! आज का दिन कितना अच्छा है!"
+
+SCENE 2
+
+बच्चा:
+"अरे! ये क्या हो गया?"
+
+SCENE 3
+
+दोस्त:
+"चिंता मत करो, हम दोनों मिलकर इसका हल निकालेंगे।"
+
+बच्चा:
+"हाँ! हम जरूर कर सकते हैं।"
+
+SCENE 4
+
+बच्चा:
+"देखो! हमारी मेहनत काम कर गई!"
+
+दोस्त:
+"मैंने कहा था ना, हम मिलकर सब कर सकते हैं।"
+
+SCENE 5
+
+बच्चा:
+"मुश्किल चाहे कितनी भी बड़ी हो, हमें हार नहीं माननी चाहिए।"
+`;
+
+
+    /* VOICE */
+
+    let voice = `
+🎙️ VOICE-OVER SCRIPT
+
+एक प्यारी सी कहानी शुरू होती है...
+
+${topic}
+
+लेकिन अचानक सब कुछ बदल जाता है।
+
+मुख्य किरदार परेशान हो जाता है।
+
+तभी उसका दोस्त उसकी मदद के लिए आता है।
+
+दोनों मिलकर कोशिश करते हैं।
+
+और आखिरकार उन्हें सफलता मिल जाती है।
+
+इस कहानी से हमें सीख मिलती है कि
+हमें मुश्किल समय में कभी हार नहीं माननी चाहिए।
+`;
+
+
+    /* YOUTUBE */
+
+    let youtube = `
+📺 YOUTUBE TITLE:
+
+${topic} | बच्चों की प्यारी Cartoon Story 🌧️❤️ | Hindi Kids Story
+
+
+📝 DESCRIPTION:
+
+आज की वीडियो में देखिए एक बहुत ही प्यारी और मजेदार
+बच्चों की Cartoon Story. 🎨😊
+
+इस कहानी में आपको दोस्ती, हिम्मत और सीख देखने को मिलेगी। ❤️
+
+अगर आपको हमारी कहानी पसंद आए तो:
+
+👍 Like करें
+🔔 Channel Subscribe करें
+💬 Comment करके बताएं कि आपको कहानी कैसी लगी।
+
+बच्चों के लिए ऐसी ही मजेदार और educational stories
+देखने के लिए हमारे चैनल से जुड़े रहें। 🌟
+
+
+#KidsStory #HindiStory #CartoonStory #KidsCartoon
+#HindiKahani #MoralStory #AnimatedStory #KidsVideo
+`;
+
+
+    document.getElementById("story").innerText = story;
+
+    document.getElementById("characters").innerText = characters;
+
+    document.getElementById("scenes").innerText = scenes;
+
+    document.getElementById("dialogue").innerText = dialogue;
+
+    document.getElementById("voice").innerText = voice;
+
+    document.getElementById("youtube").innerText = youtube;
+
+}
+
+
+function copyText(id){
+
+    let text = document.getElementById(id).innerText;
+
+    navigator.clipboard.writeText(text)
+    .then(function(){
+
+        alert("✅ Text copied!");
+
+    })
+    .catch(function(){
+
+        alert("Copy नहीं हो पाया।");
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
