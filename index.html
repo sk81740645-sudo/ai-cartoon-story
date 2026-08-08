@@ -14,7 +14,7 @@
 }
 
 body{
-    font-family:Arial, sans-serif;
+    font-family:Arial,"Noto Sans Devanagari",sans-serif;
     background:linear-gradient(135deg,#fff4e6,#e8f7ff);
     color:#222;
 }
@@ -28,11 +28,11 @@ header{
 
 header h1{
     font-size:30px;
-    margin-bottom:10px;
+    margin:8px 0;
 }
 
 header p{
-    font-size:15px;
+    font-size:16px;
 }
 
 .container{
@@ -46,7 +46,7 @@ header p{
     padding:20px;
     border-radius:18px;
     margin-bottom:20px;
-    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
 }
 
 .card h2{
@@ -72,8 +72,13 @@ select{
 }
 
 textarea{
-    min-height:120px;
+    min-height:130px;
     resize:vertical;
+}
+
+textarea:focus,
+select:focus{
+    border-color:#6c5ce7;
 }
 
 button{
@@ -97,6 +102,10 @@ button{
     opacity:.9;
 }
 
+.tool{
+    margin-bottom:20px;
+}
+
 .result{
     margin-top:12px;
     background:#f7f7ff;
@@ -104,7 +113,8 @@ button{
     padding:15px;
     border-radius:12px;
     white-space:pre-wrap;
-    line-height:1.6;
+    line-height:1.7;
+    min-height:60px;
 }
 
 .copy{
@@ -113,8 +123,71 @@ button{
     color:white;
 }
 
-.tool{
-    margin-bottom:20px;
+.voiceButtons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:12px;
+}
+
+.voicePlay{
+    background:#00b894;
+    color:white;
+}
+
+.voiceStop{
+    background:#d63031;
+    color:white;
+}
+
+.videoBtn{
+    width:100%;
+    margin-top:10px;
+    background:linear-gradient(135deg,#e84393,#6c5ce7);
+    color:white;
+    font-size:17px;
+}
+
+.downloadBtn{
+    width:100%;
+    margin-top:10px;
+    background:#2d3436;
+    color:white;
+    display:none;
+}
+
+#videoCanvas{
+    width:100%;
+    display:none;
+    border-radius:15px;
+    margin-top:15px;
+    background:#111;
+}
+
+.progressBox{
+    display:none;
+    margin-top:15px;
+}
+
+.progressOuter{
+    width:100%;
+    height:14px;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progressInner{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,#6c5ce7,#00b894);
+    transition:.2s;
+}
+
+.status{
+    text-align:center;
+    margin-top:8px;
+    font-weight:bold;
 }
 
 footer{
@@ -125,10 +198,20 @@ footer{
 }
 
 .emoji{
-    font-size:25px;
+    font-size:30px;
+}
+
+.smallInfo{
+    background:#fff8e1;
+    border:1px solid #ffe082;
+    padding:12px;
+    border-radius:12px;
+    margin-top:12px;
+    line-height:1.6;
 }
 
 @media(max-width:600px){
+
     header h1{
         font-size:24px;
     }
@@ -140,6 +223,14 @@ footer{
     .card{
         padding:15px;
     }
+
+    button{
+        width:100%;
+    }
+
+    .voiceButtons{
+        flex-direction:column;
+    }
 }
 </style>
 </head>
@@ -147,310 +238,617 @@ footer{
 <body>
 
 <header>
-    <div class="emoji">🎨🤖📖</div>
-    <h1>AI Cartoon Story Maker</h1>
-    <p>Story को Cartoon Video के लिए तैयार करें</p>
+
+<div class="emoji">🎨🤖📖🎬</div>
+
+<h1>AI Cartoon Story Maker</h1>
+
+<p>Story को Cartoon Video और Voice के लिए तैयार करें</p>
+
 </header>
+
 
 <div class="container">
 
-    <div class="card">
 
-        <h2>✨ अपनी कहानी बनाएं</h2>
+<!-- STORY GENERATOR -->
 
-        <div class="tool">
+<div class="card">
 
-            <label>कहानी का विषय</label>
+<h2>✨ अपनी कहानी बनाएं</h2>
 
-            <textarea id="topic"
-            placeholder="उदाहरण: बारिश के मौसम में एक छोटा बच्चा और उसकी बिल्ली..."></textarea>
+<div class="tool">
 
-        </div>
+<label>कहानी का विषय</label>
 
-        <div class="tool">
-
-            <label>कहानी की भाषा</label>
-
-            <select id="language">
-                <option>Hindi</option>
-                <option>Hinglish</option>
-                <option>English</option>
-            </select>
-
-        </div>
-
-        <div class="tool">
-
-            <label>Style</label>
-
-            <select id="style">
-                <option>2D Cartoon</option>
-                <option>2D Ghibli Style</option>
-                <option>Kids Cartoon</option>
-                <option>3D Cartoon</option>
-            </select>
-
-        </div>
-
-        <button class="generate" onclick="generateStory()">
-            🚀 Generate Cartoon Story
-        </button>
-
-    </div>
-
-
-    <div class="card">
-
-        <h2>📖 Story</h2>
-
-        <div id="story" class="result">
-            यहाँ आपकी कहानी दिखाई देगी...
-        </div>
-
-        <button class="copy" onclick="copyText('story')">
-            📋 Copy Story
-        </button>
-
-    </div>
-
-
-    <div class="card">
-
-        <h2>🎭 Character Prompt</h2>
-
-        <div id="characters" class="result">
-            Character prompts यहाँ आएंगे...
-        </div>
-
-        <button class="copy" onclick="copyText('characters')">
-            📋 Copy Character Prompt
-        </button>
-
-    </div>
-
-
-    <div class="card">
-
-        <h2>🎬 Scene Prompts</h2>
-
-        <div id="scenes" class="result">
-            Scene prompts यहाँ आएंगे...
-        </div>
-
-        <button class="copy" onclick="copyText('scenes')">
-            📋 Copy Scene Prompts
-        </button>
-
-    </div>
-
-
-    <div class="card">
-
-        <h2>💬 Dialogues</h2>
-
-        <div id="dialogue" class="result">
-            Dialogues यहाँ आएंगे...
-        </div>
-
-        <button class="copy" onclick="copyText('dialogue')">
-            📋 Copy Dialogues
-        </button>
-
-    </div>
-
-
-    <div class="card">
-
-        <h2>🎙️ Voice-over Script</h2>
-
-        <div id="voice" class="result">
-            Voice-over script यहाँ आएगी...
-        </div>
-
-        <button class="copy" onclick="copyText('voice')">
-            📋 Copy Voice Script
-        </button>
-
-    </div>
-
-
-    <div class="card">
-
-        <h2>📺 YouTube Content</h2>
-
-        <div id="youtube" class="result">
-            YouTube Title, Description और Hashtags यहाँ आएंगे...
-        </div>
-
-        <button class="copy" onclick="copyText('youtube')">
-            📋 Copy YouTube Content
-        </button>
-
-    </div>
+<textarea
+id="topic"
+placeholder="उदाहरण: जंगल में रहने वाला एक बहादुर शेर और उसका छोटा दोस्त..."
+></textarea>
 
 </div>
 
+
+<div class="tool">
+
+<label>कहानी की भाषा</label>
+
+<select id="language">
+
+<option value="Hindi">Hindi</option>
+<option value="Hinglish">Hinglish</option>
+<option value="English">English</option>
+
+</select>
+
+</div>
+
+
+<div class="tool">
+
+<label>Style</label>
+
+<select id="style">
+
+<option value="2D Cartoon">2D Cartoon</option>
+<option value="2D Ghibli Style">2D Ghibli Style</option>
+<option value="Kids Cartoon">Kids Cartoon</option>
+<option value="3D Cartoon">3D Cartoon</option>
+
+</select>
+
+</div>
+
+
+<button class="generate" onclick="generateStory()">
+🚀 Generate New Cartoon Story
+</button>
+
+</div>
+
+
+
+<!-- STORY -->
+
+<div class="card">
+
+<h2>📖 Story</h2>
+
+<div id="story" class="result">
+यहाँ आपकी नई कहानी दिखाई देगी...
+</div>
+
+<button class="copy" onclick="copyText('story')">
+📋 Copy Story
+</button>
+
+</div>
+
+
+
+<!-- CHARACTER -->
+
+<div class="card">
+
+<h2>🎭 Character Prompt</h2>
+
+<div id="characters" class="result">
+Character prompts यहाँ आएंगे...
+</div>
+
+<button class="copy" onclick="copyText('characters')">
+📋 Copy Character Prompt
+</button>
+
+</div>
+
+
+
+<!-- SCENES -->
+
+<div class="card">
+
+<h2>🎬 Scene Prompts</h2>
+
+<div id="scenes" class="result">
+Scene prompts यहाँ आएंगे...
+</div>
+
+<button class="copy" onclick="copyText('scenes')">
+📋 Copy Scene Prompts
+</button>
+
+</div>
+
+
+
+<!-- DIALOGUE -->
+
+<div class="card">
+
+<h2>💬 Dialogues</h2>
+
+<div id="dialogue" class="result">
+Dialogues यहाँ आएंगे...
+</div>
+
+<button class="copy" onclick="copyText('dialogue')">
+📋 Copy Dialogues
+</button>
+
+</div>
+
+
+
+<!-- VOICE -->
+
+<div class="card">
+
+<h2>🎙️ Voice-over</h2>
+
+<div id="voice" class="result">
+Voice-over script यहाँ आएगी...
+</div>
+
+
+<div class="voiceButtons">
+
+<button class="voicePlay" onclick="playVoice()">
+▶️ Voice सुनें
+</button>
+
+<button class="voiceStop" onclick="stopVoice()">
+⏹️ Voice रोकें
+</button>
+
+</div>
+
+<div class="smallInfo">
+🎙️ Voice आपके मोबाइल के browser की built-in speech आवाज़ से चलेगी।
+</div>
+
+<button class="copy" onclick="copyText('voice')">
+📋 Copy Voice Script
+</button>
+
+</div>
+
+
+
+<!-- VIDEO -->
+
+<div class="card">
+
+<h2>🎥 Cartoon Video Maker</h2>
+
+<p style="line-height:1.6;">
+नीचे button दबाने पर आपकी कहानी के 5 animated scenes वाला video तैयार होगा।
+</p>
+
+
+<button class="videoBtn" onclick="generateVideo()">
+🎬 Generate Cartoon Video
+</button>
+
+
+<div class="progressBox" id="progressBox">
+
+<div class="progressOuter">
+
+<div class="progressInner" id="progressInner"></div>
+
+</div>
+
+<div class="status" id="videoStatus">
+Video तैयार हो रहा है...
+</div>
+
+</div>
+
+
+<canvas id="videoCanvas" width="1280" height="720"></canvas>
+
+
+<a id="downloadVideo"
+class="downloadBtn"
+download="ai-cartoon-story.webm">
+
+<button class="downloadBtn" style="display:block;">
+📥 Download Cartoon Video
+</button>
+
+</a>
+
+</div>
+
+
+
+<!-- YOUTUBE -->
+
+<div class="card">
+
+<h2>📺 YouTube Content</h2>
+
+<div id="youtube" class="result">
+YouTube Title, Description और Hashtags यहाँ आएंगे...
+</div>
+
+<button class="copy" onclick="copyText('youtube')">
+📋 Copy YouTube Content
+</button>
+
+</div>
+
+
+</div>
+
+
 <footer>
-    🎨 AI Cartoon Story Maker © 2026
+🎨 AI Cartoon Story Maker © 2026
 </footer>
+
 
 
 <script>
 
+/* =========================================
+   GLOBAL DATA
+========================================= */
+
+let currentScenes = [];
+let currentTopic = "";
+let videoURL = null;
+
+
+/* =========================================
+   RANDOM HELPERS
+========================================= */
+
+function randomItem(arr){
+    return arr[Math.floor(Math.random()*arr.length)];
+}
+
+
+/* =========================================
+   STORY GENERATOR
+========================================= */
+
 function generateStory(){
 
-    let topic = document.getElementById("topic").value.trim();
+    let topic =
+        document.getElementById("topic").value.trim();
 
-    let language = document.getElementById("language").value;
+    let language =
+        document.getElementById("language").value;
 
-    let style = document.getElementById("style").value;
+    let style =
+        document.getElementById("style").value;
+
 
     if(topic === ""){
+
         alert("कृपया पहले कहानी का विषय लिखें।");
+
         return;
     }
 
 
-    /* STORY */
+    currentTopic = topic;
 
-    let story = `
-एक बार की बात है...
+
+    let openings = [
+
+        "एक बार की बात है...",
+
+        "एक सुंदर जंगल में एक दिन...",
+
+        "बहुत समय पहले की बात है...",
+
+        "एक प्यारी सी सुबह...",
+
+        "एक छोटे से गाँव में..."
+
+    ];
+
+
+    let problems = [
+
+        "अचानक उसे एक बड़ी समस्या दिखाई दी।",
+
+        "तभी उसके सामने एक मुश्किल आ गई।",
+
+        "अचानक ऐसी घटना हुई जिसकी उसने कल्पना भी नहीं की थी।",
+
+        "तभी उसे मदद की जरूरत पड़ गई।",
+
+        "कुछ ऐसा हुआ जिससे सभी परेशान हो गए।"
+
+    ];
+
+
+    let solutions = [
+
+        "उसने हिम्मत जुटाई और अपने दोस्तों के साथ मिलकर समाधान खोजने लगा।",
+
+        "उसने हार नहीं मानी और समझदारी से रास्ता निकाला।",
+
+        "दोस्तों की मदद से उसने समस्या का हल खोज लिया।",
+
+        "सबने मिलकर मेहनत की और आखिरकार सफलता हासिल कर ली।",
+
+        "उसने साहस और बुद्धिमानी से मुश्किल को आसान बना दिया।"
+
+    ];
+
+
+    let endings = [
+
+        "आखिर में सभी के चेहरे पर मुस्कान आ गई।",
+
+        "सब बहुत खुश हुए और एक-दूसरे को धन्यवाद दिया।",
+
+        "उस दिन सभी ने एक बहुत अच्छी सीख सीखी।",
+
+        "जंगल में फिर से खुशी का माहौल बन गया।",
+
+        "उसके दोस्तों ने उसकी बहादुरी की खूब तारीफ की।"
+
+    ];
+
+
+    let moral = randomItem([
+
+        "मुश्किल समय में कभी हार नहीं माननी चाहिए।",
+
+        "सच्चे दोस्त हमेशा मुश्किल समय में साथ देते हैं।",
+
+        "हिम्मत और समझदारी से बड़ी समस्या भी हल हो सकती है।",
+
+        "मिल-जुलकर काम करने से कठिन काम भी आसान हो जाता है।",
+
+        "दूसरों की मदद करना सबसे अच्छी आदतों में से एक है।"
+
+    ]);
+
+
+    let story =
+
+`${randomItem(openings)}
+
+आज की कहानी है:
 
 ${topic}
 
-एक दिन इस कहानी के मुख्य किरदार को एक ऐसी परिस्थिति का सामना करना पड़ा
-जिसकी उसने कभी कल्पना भी नहीं की थी।
+${randomItem(problems)}
 
-लेकिन उसने हिम्मत नहीं हारी।
+लेकिन मुख्य किरदार ने हिम्मत नहीं हारी।
 
-अपने दोस्तों की मदद से उसने समस्या का समाधान ढूँढ लिया।
+${randomItem(solutions)}
 
-आखिर में सभी के चेहरे पर मुस्कान आ गई।
+उसके दोस्तों ने भी उसका साथ दिया।
+
+${randomItem(endings)}
 
 सीख:
-मुश्किल समय में हिम्मत और अच्छे दोस्तों का साथ कभी नहीं छोड़ना चाहिए।
-`;
+
+${moral}`;
 
 
-    /* CHARACTER */
+    /* =====================================
+       CHARACTER PROMPT
+    ===================================== */
 
-    let characters = `
-CHARACTER 1:
+    let characters =
 
-मुख्य किरदार
-- उम्र: 8-10 साल
-- प्यारा और मासूम चेहरा
-- बड़ी expressive आँखें
-- छोटे बाल
-- रंगीन कपड़े
-- friendly smile
-- बच्चों के लिए आकर्षक design
+`🎭 CHARACTER DESIGN
 
-Style:
+मुख्य किरदार:
+
+विषय:
+${topic}
+
+Body Details:
+• उम्र: 8-10 वर्ष
+• प्यारा और expressive चेहरा
+• बड़ी चमकदार आँखें
+• साफ और आकर्षक hairstyle
+• छोटा और cute body design
+• colorful कपड़े
+• friendly smile
+• expressive हाथ और body poses
+• बच्चों के लिए आकर्षक cartoon appearance
+• full body character
+• front view और side view के लिए suitable
+
+VISUAL STYLE:
+
 ${style}
 
-Full body character design,
-clean details, expressive face,
-soft lighting, colorful children's animation.
-`;
+High quality children's animation,
+clean outlines,
+beautiful expressions,
+colorful environment,
+soft lighting,
+cinematic composition.`;
 
 
-    /* SCENES */
+    /* =====================================
+       SCENE PROMPTS
+    ===================================== */
 
-    let scenes = `
-SCENE 1:
-कहानी की शुरुआत वाला सुंदर वातावरण।
-मुख्य किरदार अपने आसपास की दुनिया को देख रहा है।
-${style}, colorful background, cinematic composition.
+    currentScenes = [
 
-SCENE 2:
-मुख्य किरदार को अचानक समस्या का सामना होता है।
-चेहरे पर surprise और थोड़ी चिंता।
-${style}, expressive emotions.
+        {
+            title:"SCENE 1",
+            emoji:"🌅",
+            text:`कहानी की शुरुआत।
 
-SCENE 3:
-मुख्य किरदार अपने दोस्त से मदद मांगता है।
-दोनों साथ खड़े होकर समस्या के बारे में सोच रहे हैं।
-${style}, children's cartoon scene.
+${topic}
 
-SCENE 4:
-दोनों मिलकर समस्या का समाधान करते हैं।
-खुशी और excitement का माहौल।
-${style}, bright atmosphere.
+सुंदर वातावरण में मुख्य किरदार दिखाई देता है।
+वह खुशी से अपने आसपास की दुनिया को देख रहा है।
 
-SCENE 5:
-अंत में सभी खुश हैं।
-सुंदर background, smiling characters,
-warm emotional ending.
-`;
+${style},
+colorful children's cartoon,
+beautiful background,
+cinematic composition,
+expressive character.`
+        },
+
+        {
+            title:"SCENE 2",
+            emoji:"😮",
+            text:`अचानक एक समस्या सामने आती है।
+
+मुख्य किरदार हैरान और थोड़ा परेशान दिखाई देता है।
+वातावरण में suspense और emotion दिखाई देता है।
+
+${style},
+expressive face,
+dramatic cartoon scene,
+colorful background.`
+        },
+
+        {
+            title:"SCENE 3",
+            emoji:"🤝",
+            text:`मुख्य किरदार अपने दोस्त से मदद मांगता है।
+
+दोनों दोस्त साथ खड़े होकर समस्या का समाधान सोचते हैं।
+
+${style},
+friendly children's cartoon,
+emotional expressions,
+warm lighting.`
+        },
+
+        {
+            title:"SCENE 4",
+            emoji:"💪",
+            text:`दोनों दोस्त मिलकर समस्या का समाधान करते हैं।
+
+उनके चेहरे पर खुशी और excitement दिखाई देती है।
+
+${style},
+bright colorful scene,
+happy expressions,
+dynamic cartoon composition.`
+        },
+
+        {
+            title:"SCENE 5",
+            emoji:"🎉",
+            text:`समस्या पूरी तरह हल हो जाती है।
+
+मुख्य किरदार और उसके दोस्त खुशी से मुस्कुराते हैं।
+
+${style},
+beautiful ending,
+warm lighting,
+happy children's cartoon,
+cinematic final shot.`
+        }
+
+    ];
 
 
-    /* DIALOGUE */
+    let scenesText = currentScenes.map(scene =>
 
-    let dialogue = `
-SCENE 1
+`${scene.title}
 
-बच्चा:
+${scene.text}
+
+`
+
+    ).join("\n");
+
+
+    /* =====================================
+       DIALOGUE
+    ===================================== */
+
+    let dialogue =
+
+`SCENE 1
+
+मुख्य किरदार:
 "वाह! आज का दिन कितना अच्छा है!"
+
 
 SCENE 2
 
-बच्चा:
+मुख्य किरदार:
 "अरे! ये क्या हो गया?"
+
 
 SCENE 3
 
 दोस्त:
 "चिंता मत करो, हम दोनों मिलकर इसका हल निकालेंगे।"
 
-बच्चा:
+मुख्य किरदार:
 "हाँ! हम जरूर कर सकते हैं।"
+
 
 SCENE 4
 
-बच्चा:
+मुख्य किरदार:
 "देखो! हमारी मेहनत काम कर गई!"
 
 दोस्त:
-"मैंने कहा था ना, हम मिलकर सब कर सकते हैं।"
+"मैंने कहा था ना, हम मिलकर सब कर सकते हैं!"
+
 
 SCENE 5
 
-बच्चा:
-"मुश्किल चाहे कितनी भी बड़ी हो, हमें हार नहीं माननी चाहिए।"
-`;
+मुख्य किरदार:
+"मुश्किल चाहे कितनी भी बड़ी हो, हमें कभी हार नहीं माननी चाहिए।"`;
 
 
-    /* VOICE */
+    /* =====================================
+       VOICE SCRIPT
+    ===================================== */
 
-    let voice = `
-🎙️ VOICE-OVER SCRIPT
+    let voice =
 
-एक प्यारी सी कहानी शुरू होती है...
+`🎙️ VOICE-OVER SCRIPT
+
+${randomItem(openings)}
+
+आज की कहानी है...
 
 ${topic}
 
-लेकिन अचानक सब कुछ बदल जाता है।
+लेकिन अचानक एक बड़ी समस्या सामने आ जाती है।
 
-मुख्य किरदार परेशान हो जाता है।
+मुख्य किरदार थोड़ी देर के लिए परेशान हो जाता है।
 
 तभी उसका दोस्त उसकी मदद के लिए आता है।
 
-दोनों मिलकर कोशिश करते हैं।
+दोनों मिलकर हिम्मत और समझदारी से काम करते हैं।
 
-और आखिरकार उन्हें सफलता मिल जाती है।
+वे लगातार कोशिश करते हैं।
 
-इस कहानी से हमें सीख मिलती है कि
-हमें मुश्किल समय में कभी हार नहीं माननी चाहिए।
-`;
+और आखिरकार समस्या का समाधान मिल जाता है।
+
+सभी के चेहरे पर खुशी आ जाती है।
+
+इस कहानी से हमें सीख मिलती है कि:
+
+${moral}
+
+हमें मुश्किल समय में कभी हार नहीं माननी चाहिए।`;
 
 
-    /* YOUTUBE */
+    /* =====================================
+       YOUTUBE
+    ===================================== */
 
-    let youtube = `
-📺 YOUTUBE TITLE:
+    let youtube =
 
-${topic} | बच्चों की प्यारी Cartoon Story 🌧️❤️ | Hindi Kids Story
+`📺 YOUTUBE TITLE:
+
+${topic} | बच्चों की प्यारी Cartoon Story 🎨😊 | Hindi Kids Story
 
 
 📝 DESCRIPTION:
@@ -458,7 +856,7 @@ ${topic} | बच्चों की प्यारी Cartoon Story 🌧️❤
 आज की वीडियो में देखिए एक बहुत ही प्यारी और मजेदार
 बच्चों की Cartoon Story. 🎨😊
 
-इस कहानी में आपको दोस्ती, हिम्मत और सीख देखने को मिलेगी। ❤️
+इस कहानी में आपको दोस्ती, हिम्मत और एक अच्छी सीख देखने को मिलेगी। ❤️
 
 अगर आपको हमारी कहानी पसंद आए तो:
 
@@ -472,43 +870,87 @@ ${topic} | बच्चों की प्यारी Cartoon Story 🌧️❤
 
 #KidsStory #HindiStory #CartoonStory #KidsCartoon
 #HindiKahani #MoralStory #AnimatedStory #KidsVideo
-`;
+#CartoonVideo #KidsStories`;
 
 
-    document.getElementById("story").innerText = story;
+    /* =====================================
+       SHOW DATA
+    ===================================== */
 
-    document.getElementById("characters").innerText = characters;
+    document.getElementById("story").innerText =
+        story;
 
-    document.getElementById("scenes").innerText = scenes;
+    document.getElementById("characters").innerText =
+        characters;
 
-    document.getElementById("dialogue").innerText = dialogue;
+    document.getElementById("scenes").innerText =
+        scenesText;
 
-    document.getElementById("voice").innerText = voice;
+    document.getElementById("dialogue").innerText =
+        dialogue;
 
-    document.getElementById("youtube").innerText = youtube;
+    document.getElementById("voice").innerText =
+        voice;
+
+    document.getElementById("youtube").innerText =
+        youtube;
+
+
+    /* reset video */
+
+    document.getElementById("downloadVideo").style.display =
+        "none";
+
+    document.getElementById("videoCanvas").style.display =
+        "none";
+
+    alert("✅ नई Cartoon Story तैयार हो गई!");
 
 }
 
+
+/* =========================================
+   COPY
+========================================= */
 
 function copyText(id){
 
-    let text = document.getElementById(id).innerText;
+    let text =
+        document.getElementById(id).innerText;
 
-    navigator.clipboard.writeText(text)
-    .then(function(){
 
-        alert("✅ Text copied!");
+    if(navigator.clipboard){
 
-    })
-    .catch(function(){
+        navigator.clipboard.writeText(text)
 
-        alert("Copy नहीं हो पाया।");
+        .then(function(){
 
-    });
+            alert("✅ Text copied!");
+
+        })
+
+        .catch(function(){
+
+            fallbackCopy(text);
+
+        });
+
+    }else{
+
+        fallbackCopy(text);
+
+    }
 
 }
 
-</script>
 
-</body>
-</html>
+function fallbackCopy(text){
+
+    let area =
+        document.createElement("textarea");
+
+    area.value = text;
+
+    document.body.appendChild(area);
+
+   
