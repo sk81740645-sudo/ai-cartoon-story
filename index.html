@@ -2,181 +2,221 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>AI Cartoon Story & Video Maker</title>
+<title>AI Cartoon Story Maker</title>
 
 <style>
 *{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+box-sizing:border-box;
+margin:0;
+padding:0;
 }
 
 body{
-    font-family:Arial,sans-serif;
-    background:linear-gradient(135deg,#fff4e6,#e8f7ff);
-    color:#222;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#fff3e0,#e3f2fd);
+color:#222;
 }
 
 header{
-    background:linear-gradient(135deg,#6c5ce7,#00b894);
-    color:white;
-    padding:30px 15px;
-    text-align:center;
+background:linear-gradient(135deg,#6c5ce7,#00b894);
+color:white;
+padding:28px 15px;
+text-align:center;
 }
 
 header h1{
-    font-size:30px;
-    margin-bottom:10px;
+font-size:29px;
+margin:8px 0;
 }
 
 header p{
-    font-size:15px;
-}
-
-.container{
-    max-width:900px;
-    margin:25px auto;
-    padding:15px;
-}
-
-.card{
-    background:white;
-    padding:20px;
-    border-radius:18px;
-    margin-bottom:20px;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
-}
-
-.card h2{
-    margin-bottom:15px;
-    color:#5f27cd;
-}
-
-label{
-    display:block;
-    font-weight:bold;
-    margin-bottom:8px;
-}
-
-textarea,
-input,
-select{
-    width:100%;
-    padding:14px;
-    border:1px solid #ddd;
-    border-radius:12px;
-    font-size:15px;
-    outline:none;
-}
-
-textarea{
-    min-height:120px;
-    resize:vertical;
-}
-
-button{
-    border:none;
-    padding:13px 20px;
-    border-radius:12px;
-    font-size:15px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.generate{
-    width:100%;
-    margin-top:15px;
-    background:linear-gradient(135deg,#6c5ce7,#00b894);
-    color:white;
-    font-size:17px;
-}
-
-.secondary{
-    background:#0984e3;
-    color:white;
-    margin:5px;
-}
-
-.stop{
-    background:#d63031;
-    color:white;
-    margin:5px;
-}
-
-.videoBtn{
-    width:100%;
-    background:linear-gradient(135deg,#e84393,#6c5ce7);
-    color:white;
-    font-size:17px;
-    margin-top:10px;
-}
-
-.result{
-    margin-top:12px;
-    background:#f7f7ff;
-    border:1px solid #e1e1ff;
-    padding:15px;
-    border-radius:12px;
-    white-space:pre-wrap;
-    line-height:1.6;
-}
-
-.tool{
-    margin-bottom:20px;
-}
-
-.status{
-    margin-top:12px;
-    padding:12px;
-    border-radius:10px;
-    background:#f1f2f6;
-    text-align:center;
-    font-weight:bold;
-}
-
-.sceneBox{
-    padding:15px;
-    margin:10px 0;
-    background:#fff;
-    border:1px solid #ddd;
-    border-radius:12px;
-}
-
-.sceneBox h3{
-    color:#6c5ce7;
-    margin-bottom:8px;
-}
-
-footer{
-    text-align:center;
-    padding:25px;
-    color:#666;
-    font-size:14px;
+font-size:15px;
 }
 
 .emoji{
-    font-size:25px;
+font-size:32px;
+}
+
+.container{
+max-width:950px;
+margin:20px auto;
+padding:12px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:18px;
+margin-bottom:18px;
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.card h2{
+color:#5f27cd;
+margin-bottom:15px;
+}
+
+label{
+display:block;
+font-weight:bold;
+margin:12px 0 7px;
+}
+
+textarea,
+select,
+input{
+width:100%;
+padding:13px;
+border:1px solid #ddd;
+border-radius:12px;
+font-size:15px;
+outline:none;
+}
+
+textarea{
+min-height:120px;
+resize:vertical;
+}
+
+button{
+border:0;
+padding:13px 18px;
+border-radius:12px;
+font-weight:bold;
+font-size:15px;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:active{
+transform:scale(.98);
+}
+
+.generate{
+width:100%;
+background:linear-gradient(135deg,#6c5ce7,#00b894);
+color:white;
+font-size:17px;
+}
+
+.blue{
+background:#0984e3;
+color:white;
+}
+
+.green{
+background:#00b894;
+color:white;
+}
+
+.orange{
+background:#e17055;
+color:white;
+}
+
+.purple{
+background:#6c5ce7;
+color:white;
+}
+
+.red{
+background:#d63031;
+color:white;
+}
+
+.result{
+background:#f7f7ff;
+border:1px solid #e1e1ff;
+padding:15px;
+border-radius:12px;
+white-space:pre-wrap;
+line-height:1.65;
+min-height:70px;
+}
+
+.row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+.buttons{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+}
+
+.buttons button{
+margin-top:8px;
+}
+
+.status{
+padding:12px;
+background:#eafaf5;
+border-radius:10px;
+margin-top:12px;
+font-weight:bold;
+color:#087f5b;
+}
+
+video{
+width:100%;
+border-radius:15px;
+background:#111;
+margin-top:15px;
+}
+
+canvas{
+width:100%;
+border-radius:15px;
+background:#222;
+margin-top:15px;
+display:none;
+}
+
+.sceneBox{
+display:grid;
+grid-template-columns:1fr;
+gap:12px;
+}
+
+.sceneItem{
+padding:15px;
+border-radius:14px;
+background:#f8f9fa;
+border:1px solid #ddd;
+}
+
+.sceneItem h3{
+color:#6c5ce7;
+margin-bottom:8px;
+}
+
+footer{
+text-align:center;
+padding:25px;
+color:#666;
+font-size:14px;
 }
 
 @media(max-width:600px){
-    header h1{
-        font-size:24px;
-    }
+header h1{
+font-size:24px;
+}
 
-    .container{
-        padding:10px;
-    }
+.card{
+padding:15px;
+}
 
-    .card{
-        padding:15px;
-    }
+.row{
+grid-template-columns:1fr;
+}
 
-    button{
-        width:100%;
-        margin:5px 0;
-    }
+button{
+font-size:14px;
+}
 }
 </style>
 </head>
@@ -184,40 +224,35 @@ footer{
 <body>
 
 <header>
-    <div class="emoji">🎨🤖📖🎬</div>
-    <h1>AI Cartoon Story Maker</h1>
-    <p>Story • Characters • Scenes • Voice • Video</p>
+<div class="emoji">🎨🤖📖🎬</div>
+<h1>AI Cartoon Story Maker</h1>
+<p>Story • Character • Scene • Voice • Cartoon Video</p>
 </header>
 
 <div class="container">
 
 <div class="card">
 
-<h2>✨ अपनी कहानी बनाएं</h2>
-
-<div class="tool">
+<h2>✨ कहानी बनाएं</h2>
 
 <label>कहानी का विषय</label>
 
 <textarea id="topic"
-placeholder="उदाहरण: एक छोटा शेर जंगल में अपने दोस्त को बचाता है..."></textarea>
+placeholder="उदाहरण: जंगल में एक छोटा शेर अपने दोस्त की मदद करता है..."></textarea>
 
-</div>
+<div class="row">
 
-<div class="tool">
-
-<label>कहानी की भाषा</label>
+<div>
+<label>भाषा</label>
 
 <select id="language">
-<option>Hindi</option>
-<option>Hinglish</option>
-<option>English</option>
+<option value="Hindi">Hindi</option>
+<option value="Hinglish">Hinglish</option>
+<option value="English">English</option>
 </select>
-
 </div>
 
-<div class="tool">
-
+<div>
 <label>Cartoon Style</label>
 
 <select id="style">
@@ -226,28 +261,16 @@ placeholder="उदाहरण: एक छोटा शेर जंगल म�
 <option>Kids Cartoon</option>
 <option>3D Cartoon</option>
 </select>
-
 </div>
-
-<div class="tool">
-
-<label>Voice</label>
-
-<select id="voiceType">
-<option>Hindi Female</option>
-<option>Hindi Male</option>
-<option>English Female</option>
-<option>English Male</option>
-</select>
 
 </div>
 
 <button class="generate" onclick="generateStory()">
-🚀 Generate New Cartoon Story
+🚀 Generate New Story
 </button>
 
 <div id="status" class="status">
-Ready 👍
+💡 अपनी कहानी का विषय लिखकर Generate दबाएं।
 </div>
 
 </div>
@@ -261,22 +284,28 @@ Ready 👍
 यहाँ आपकी नई कहानी दिखाई देगी...
 </div>
 
-<button class="secondary" onclick="copyText('story')">
+<div class="buttons">
+<button class="blue" onclick="copyText('story')">
 📋 Copy Story
 </button>
+
+<button class="purple" onclick="generateStory()">
+🔄 New Story
+</button>
+</div>
 
 </div>
 
 
 <div class="card">
 
-<h2>👤 Character Prompt</h2>
+<h2>🎭 Character Prompt</h2>
 
 <div id="characters" class="result">
-Character prompts यहाँ आएंगे...
+Character prompt यहाँ आएगा...
 </div>
 
-<button class="secondary" onclick="copyText('characters')">
+<button class="blue" onclick="copyText('characters')">
 📋 Copy Character Prompt
 </button>
 
@@ -291,7 +320,7 @@ Character prompts यहाँ आएंगे...
 Scene prompts यहाँ आएंगे...
 </div>
 
-<button class="secondary" onclick="copyText('scenes')">
+<button class="blue" onclick="copyText('scenes')">
 📋 Copy Scene Prompts
 </button>
 
@@ -306,7 +335,7 @@ Scene prompts यहाँ आएंगे...
 Dialogues यहाँ आएंगे...
 </div>
 
-<button class="secondary" onclick="copyText('dialogue')">
+<button class="blue" onclick="copyText('dialogue')">
 📋 Copy Dialogues
 </button>
 
@@ -317,59 +346,80 @@ Dialogues यहाँ आएंगे...
 
 <h2>🎙️ Voice-over</h2>
 
-<div id="voiceScript" class="result">
+<div id="voice" class="result">
 Voice-over script यहाँ आएगी...
 </div>
 
-<button class="secondary" onclick="speakVoice()">
-▶️ Voice सुनें
+<div class="buttons">
+
+<button class="green" onclick="speakVoice()">
+🔊 Voice सुनें
 </button>
 
-<button class="stop" onclick="stopVoice()">
-⏹️ Voice Stop
+<button class="red" onclick="stopVoice()">
+⏹️ Stop Voice
 </button>
 
-<button class="secondary" onclick="copyText('voiceScript')">
-📋 Copy Voice Script
+<button class="blue" onclick="copyText('voice')">
+📋 Copy Voice
 </button>
+
+</div>
 
 </div>
 
 
 <div class="card">
 
-<h2>🖼️ Image Prompts</h2>
+<h2>🖼️ Cartoon Scene Image</h2>
 
-<div id="imagePrompts" class="result">
-Images बनाने के prompts यहाँ आएंगे...
-</div>
-
-<button class="secondary" onclick="copyText('imagePrompts')">
-📋 Copy Image Prompts
-</button>
-
-</div>
-
-
-<div class="card">
-
-<h2>🎥 Cartoon Video</h2>
-
-<p style="line-height:1.6;margin-bottom:10px;">
-पहले story और scenes generate करें। फिर नीचे दिए workflow से
-images + voice को video में इस्तेमाल कर सकते हैं।
+<p>
+नीचे Generate Image दबाने पर browser में cartoon scene तैयार होगा।
 </p>
 
-<button class="videoBtn" onclick="prepareVideo()">
-🎬 Prepare Cartoon Video
+<button class="purple" onclick="generateImage()">
+🖼️ Generate Scene Image
+</button>
+
+<canvas id="imageCanvas" width="900" height="550"></canvas>
+
+<div class="buttons">
+
+<button class="green" onclick="downloadImage()">
+📥 Download Image
+</button>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>🎥 Cartoon Video Generator</h2>
+
+<p>
+आपकी कहानी के scenes से browser में छोटा cartoon video बनाया जाएगा।
+</p>
+
+<button class="generate" onclick="generateVideo()">
+🎬 Generate Cartoon Video
 </button>
 
 <div id="videoStatus" class="status">
-Video अभी तैयार नहीं है।
+🎥 Video अभी तैयार नहीं है।
 </div>
 
-<div id="videoInfo" class="result">
-Video बनाने के लिए Scene Images और Voice-over तैयार रखें।
+<canvas id="videoCanvas" width="900" height="550"></canvas>
+
+<video id="videoPreview" controls></video>
+
+<div class="buttons">
+
+<button class="green" onclick="downloadVideo()">
+📥 Download Video
+</button>
+
 </div>
 
 </div>
@@ -383,7 +433,7 @@ Video बनाने के लिए Scene Images और Voice-over तैय�
 YouTube Title, Description और Hashtags यहाँ आएंगे...
 </div>
 
-<button class="secondary" onclick="copyText('youtube')">
+<button class="blue" onclick="copyText('youtube')">
 📋 Copy YouTube Content
 </button>
 
@@ -394,321 +444,260 @@ YouTube Title, Description और Hashtags यहाँ आएंगे...
 
 <footer>
 🎨 AI Cartoon Story Maker © 2026
-</footer>
+</footer><script>
 
+let currentStory = "";
+let currentScenes = [];
+let currentDialogues = [];
+let videoBlob = null;
+let generatedImage = null;
 
-<script>
+const storyIdeas = [
 
-let currentTopic = "";
-let currentVoiceText = "";
+"एक छोटा शेर जंगल में अपने खोए हुए दोस्त को ढूंढता है।",
 
+"एक बच्चा बारिश में एक घायल चिड़िया की मदद करता है।",
 
-/* =========================
-   GENERATE STORY
-========================= */
+"एक छोटी बिल्ली को जंगल में एक जादुई छाता मिलता है।",
+
+"एक गरीब खरगोश अपने दोस्तों के साथ मिलकर जंगल बचाता है।",
+
+"एक छोटा हाथी अपने दोस्त को नदी पार कराने में मदद करता है।",
+
+"एक बच्चा और उसका कुत्ता बारिश में एक खोया हुआ पिल्ला ढूंढते हैं।",
+
+"एक छोटा बंदर पेड़ से गिरने के बाद अपने दोस्तों से मदद मांगता है।",
+
+"जंगल के सभी जानवर मिलकर एक छोटे पौधे को बड़ा करते हैं।",
+
+"एक बहादुर बच्चा तूफान में अपने गांव की मदद करता है।",
+
+"एक छोटा शेर डरना छोड़कर अपने दोस्तों की रक्षा करता है।"
+
+];
+
+function randomItem(arr){
+return arr[Math.floor(Math.random()*arr.length)];
+}
+
 
 function generateStory(){
 
-    let topic =
-    document.getElementById("topic").value.trim();
+let topic=document.getElementById("topic").value.trim();
 
-    let language =
-    document.getElementById("language").value;
+let language=document.getElementById("language").value;
 
-    let style =
-    document.getElementById("style").value;
+let style=document.getElementById("style").value;
 
-    if(topic === ""){
+if(topic===""){
 
-        alert("कृपया पहले कहानी का विषय लिखें।");
+topic=randomItem(storyIdeas);
 
-        return;
-    }
+document.getElementById("topic").value=topic;
 
-    currentTopic = topic;
+}
 
-    document.getElementById("status").innerText =
-    "⏳ नई कहानी तैयार हो रही है...";
+let endings=[
+
+"उस दिन उसे समझ आया कि सच्ची ताकत दूसरों की मदद करने में होती है।",
+
+"सभी दोस्तों ने खुशी से एक-दूसरे को गले लगाया।",
+
+"उसके अच्छे काम से पूरे जंगल में खुशी फैल गई।",
+
+"सबने मिलकर समस्या हल की और खुशी-खुशी घर लौट गए।",
+
+"इस घटना के बाद वह पहले से भी ज्यादा बहादुर बन गया।"
+
+];
+
+let ending=randomItem(endings);
 
 
-    /* STORY */
-
-    let story = `
-🌟 कहानी: ${topic}
-
-एक सुंदर सुबह की शुरुआत होती है।
+currentStory=
+`एक बार की बात है...
 
 ${topic}
 
-मुख्य किरदार अपनी यात्रा पर निकलता है।
-उसे रास्ते में एक मुश्किल दिखाई देती है।
+सुबह का समय था। चारों तरफ सुंदर वातावरण था।
+मुख्य किरदार अपने आसपास की दुनिया को देखकर बहुत खुश था।
 
-पहले वह थोड़ा परेशान होता है,
-लेकिन वह हिम्मत नहीं हारता।
+तभी अचानक एक समस्या सामने आ गई।
 
-वह अपने दोस्तों की मदद लेता है
-और सभी मिलकर समस्या का समाधान ढूँढते हैं।
+पहले तो वह थोड़ा घबरा गया,
+लेकिन उसने हिम्मत नहीं हारी।
 
-काफी कोशिश के बाद उन्हें सफलता मिल जाती है।
+उसने अपने दोस्तों को बुलाया और सभी ने मिलकर
+समस्या का हल ढूंढना शुरू किया।
 
-सभी बहुत खुश होते हैं और एक-दूसरे को धन्यवाद देते हैं।
+काफी कोशिश के बाद आखिरकार उन्हें सफलता मिल गई।
 
-❤️ कहानी की सीख:
+${ending}
 
-मुश्किल समय में डरना नहीं चाहिए।
-हिम्मत, दोस्ती और मेहनत से बड़ी से बड़ी समस्या
-का समाधान किया जा सकता है।
-`;
+सीख:
+मुश्किल समय में कभी हार नहीं माननी चाहिए और
+दूसरों की मदद हमेशा करनी चाहिए।`;
 
 
-    /* CHARACTER */
+document.getElementById("story").innerText=currentStory;
 
-    let characters = `
-👤 CHARACTER 1
 
-नाम:
-मुख्य किरदार
+let characterName="मुख्य किरदार";
 
-उम्र:
-8-10 साल
+if(/शेर|lion/i.test(topic)) characterName="छोटा शेर";
+else if(/बिल्ली|cat/i.test(topic)) characterName="प्यारी बिल्ली";
+else if(/हाथी|elephant/i.test(topic)) characterName="छोटा हाथी";
+else if(/खरगोश|rabbit/i.test(topic)) characterName="प्यारा खरगोश";
+else if(/बच्चा|लड़का|लड़की|child/i.test(topic)) characterName="प्यारा बच्चा";
+
+
+let characters=
+`CHARACTER 1
+नाम: ${characterName}
 
 Body Details:
+- उम्र: बच्चों के लिए उपयुक्त
 - प्यारा expressive चेहरा
 - बड़ी चमकदार आँखें
-- छोटे साफ बाल
-- मासूम मुस्कान
-- बच्चों जैसा शरीर
-- रंगीन कपड़े
-- friendly personality
+- friendly smile
+- साफ और आकर्षक body design
+- colorful कपड़े
 - full body character
+- हाथ और पैर स्पष्ट दिखाई दें
+- बच्चों के cartoon के लिए safe design
 
-Style:
+STYLE:
 ${style}
 
-Prompt:
-Full body children's cartoon character,
-cute expressive face, large expressive eyes,
-colorful clothes, clean details,
-soft lighting, beautiful background,
-high quality ${style}.
-`;
+Visual:
+${style}, colorful children's animation,
+soft lighting, expressive face,
+clean outlines, detailed background,
+cinematic composition.`;
 
 
-    /* SCENES */
+document.getElementById("characters").innerText=characters;
 
-    let scenes = `
-🎬 SCENE 1
+
+currentScenes=[
+
+`SCENE 1
+कहानी की शुरुआत।
+${characterName} सुंदर वातावरण में दिखाई देता है।
+${style}, colorful cartoon background.`,
+
+`SCENE 2
+अचानक कहानी में समस्या आती है।
+${characterName} के चेहरे पर surprise और चिंता दिखाई देती है।
+${style}, expressive emotion.`,
+
+`SCENE 3
+${characterName} अपने दोस्तों से मदद मांगता है।
+सभी मिलकर समस्या के बारे में सोचते हैं।
+${style}, children's cartoon scene.`,
+
+`SCENE 4
+सभी दोस्त मिलकर समस्या का समाधान करते हैं।
+चेहरों पर खुशी और excitement है।
+${style}, bright colorful atmosphere.`,
+
+`SCENE 5
+समस्या पूरी तरह हल हो जाती है।
+सभी दोस्त खुशी से मुस्कुराते हैं।
+${style}, warm emotional ending.`
+
+];
+
+
+document.getElementById("scenes").innerText=
+currentScenes.join("\n\n");
+
+
+currentDialogues=[
+
+`SCENE 1
+
+${characterName}:
+"वाह! आज का दिन कितना सुंदर है!"`,
+
+`SCENE 2
+
+${characterName}:
+"अरे! ये समस्या कैसे हल होगी?"`,
+
+`SCENE 3
+
+दोस्त:
+"चिंता मत करो, हम सब मिलकर इसका हल निकालेंगे।"
+
+${characterName}:
+"हाँ! हम कोशिश जरूर करेंगे।"`,
+
+`SCENE 4
+
+${characterName}:
+"देखो! हमारी मेहनत काम कर गई!"
+
+दोस्त:
+"हमने मिलकर कर दिखाया!"`,
+
+`SCENE 5
+
+${characterName}:
+"मुश्किल चाहे कितनी भी बड़ी हो,
+हमें कभी हार नहीं माननी चाहिए।"`
+
+];
+
+
+document.getElementById("dialogue").innerText=
+currentDialogues.join("\n\n");
+
+
+let voiceText=
+`एक बार की बात है...
 
 ${topic}
 
-कहानी की शुरुआत का सुंदर वातावरण।
-मुख्य किरदार अपने आसपास की दुनिया देख रहा है।
+सुबह का समय था और चारों तरफ सुंदर वातावरण था।
 
-Style:
-${style}
+लेकिन अचानक एक समस्या सामने आ गई।
 
-🎬 SCENE 2
+मुख्य किरदार थोड़ा घबरा गया,
+लेकिन उसने हिम्मत नहीं हारी।
 
-मुख्य किरदार को अचानक एक समस्या दिखाई देती है।
-चेहरे पर surprise और चिंता दिखाई देती है।
+उसने अपने दोस्तों को बुलाया।
 
-Style:
-${style}
+सभी ने मिलकर कोशिश की।
 
-🎬 SCENE 3
-
-मुख्य किरदार अपने दोस्त से मदद मांगता है।
-दोनों मिलकर समस्या के बारे में सोचते हैं।
-
-Style:
-${style}
-
-🎬 SCENE 4
-
-दोनों दोस्त मिलकर समस्या का समाधान करने की कोशिश करते हैं।
-माहौल exciting और positive है।
-
-Style:
-${style}
-
-🎬 SCENE 5
-
-आखिरकार समस्या हल हो जाती है।
-सभी के चेहरे पर खुशी दिखाई देती है।
-
-Style:
-${style}
-
-🎬 SCENE 6
-
-अंत में सभी दोस्त साथ खड़े होकर मुस्कुराते हैं।
-सुंदर cinematic ending।
-
-Style:
-${style}
-`;
-
-
-    /* DIALOGUE */
-
-    let dialogue = `
-🎬 SCENE 1
-
-मुख्य किरदार:
-"वाह! आज का दिन कितना सुंदर है!"
-
-
-🎬 SCENE 2
-
-मुख्य किरदार:
-"अरे! यह क्या हो गया?"
-
-
-🎬 SCENE 3
-
-दोस्त:
-"चिंता मत करो, हम मिलकर इसका हल निकालेंगे।"
-
-मुख्य किरदार:
-"हाँ! मैं हार नहीं मानूँगा।"
-
-
-🎬 SCENE 4
-
-मुख्य किरदार:
-"चलो, एक बार फिर कोशिश करते हैं!"
-
-दोस्त:
-"हाँ! हम साथ मिलकर जरूर सफल होंगे।"
-
-
-🎬 SCENE 5
-
-मुख्य किरदार:
-"देखो! हमने कर दिखाया!"
-
-
-🎬 SCENE 6
-
-दोस्त:
-"मुश्किल समय में हमेशा हिम्मत रखनी चाहिए।"
-
-मुख्य किरदार:
-"और अच्छे दोस्तों का साथ कभी नहीं छोड़ना चाहिए।"
-`;
-
-
-    /* VOICE */
-
-    let voice = `
-🎙️ VOICE-OVER SCRIPT
-
-एक सुंदर सुबह की शुरुआत होती है।
-
-${topic}
-
-मुख्य किरदार अपनी यात्रा पर निकलता है।
-
-लेकिन रास्ते में उसे एक बड़ी समस्या दिखाई देती है।
-
-वह कुछ देर के लिए परेशान होता है।
-
-फिर उसका दोस्त उसकी मदद के लिए आता है।
-
-दोनों मिलकर समस्या का समाधान ढूँढने लगते हैं।
-
-कई कोशिशों के बाद आखिरकार उन्हें सफलता मिल जाती है।
-
-सभी बहुत खुश होते हैं।
+आखिरकार उनकी मेहनत रंग लाई और समस्या हल हो गई।
 
 इस कहानी से हमें सीख मिलती है कि
-मुश्किल समय में हमें कभी हार नहीं माननी चाहिए।
-
-हिम्मत और दोस्ती के साथ हम किसी भी समस्या
-का सामना कर सकते हैं।
-`;
-
-    currentVoiceText = voice;
+मुश्किल समय में कभी हार नहीं माननी चाहिए
+और हमेशा दूसरों की मदद करनी चाहिए।`;
 
 
-    /* IMAGE PROMPTS */
-
-    let imagePrompts = `
-🖼️ IMAGE PROMPT 1
-
-${topic}
-
-${style}, children's cartoon scene,
-cute characters, colorful environment,
-cinematic composition, soft lighting,
-high quality, detailed background.
+document.getElementById("voice").innerText=voiceText;
 
 
-🖼️ IMAGE PROMPT 2
-
-Main character discovers a problem,
-expressive surprised face,
-${style}, colorful children's animation,
-cinematic lighting.
-
-
-🖼️ IMAGE PROMPT 3
-
-Main character and friend discussing the problem,
-friendly expressions,
-${style}, colorful background,
-children's cartoon.
-
-
-🖼️ IMAGE PROMPT 4
-
-Two friends solving the problem together,
-happy expressions, action moment,
-${style}, cinematic children's animation.
-
-
-🖼️ IMAGE PROMPT 5
-
-Problem successfully solved,
-characters celebrating together,
-${style}, beautiful colorful background.
-
-
-🖼️ IMAGE PROMPT 6
-
-Happy ending,
-all characters smiling together,
-warm emotional atmosphere,
-${style}, cinematic cartoon scene.
-`;
-
-
-    /* YOUTUBE */
-
-    let youtube = `
-📺 TITLE
+let youtube=
+`📺 YOUTUBE TITLE:
 
 ${topic} | बच्चों की प्यारी Cartoon Story 🎨❤️
 
 
-📝 DESCRIPTION
+📝 DESCRIPTION:
 
-आज की वीडियो में देखिए:
+आज की वीडियो में देखिए एक मजेदार और प्यारी
+Hindi Cartoon Story. 🎬😊
 
-${topic}
+इस कहानी में दोस्ती, हिम्मत और मदद की सुंदर सीख है। ❤️
 
-यह एक मजेदार और प्यारी बच्चों की Cartoon Story है।
-इस कहानी में दोस्ती, हिम्मत और मेहनत की सीख मिलती है। ❤️
-
-अगर आपको वीडियो पसंद आए तो:
+बच्चों को यह कहानी जरूर पसंद आएगी। 🌈✨
 
 👍 Like करें
 🔔 Channel Subscribe करें
-💬 Comment करें
-
-ऐसी ही मजेदार बच्चों की कहानियों के लिए
-हमारे चैनल से जुड़े रहें। 🌟
-
+💬 Comment करके बताएं कि कहानी कैसी लगी।
 
 #KidsStory
 #HindiStory
@@ -717,226 +706,517 @@ ${topic}
 #HindiKahani
 #MoralStory
 #AnimatedStory
-#KidsVideo
-`;
+#KidsVideo`;
 
 
-    /* SHOW */
-
-    document.getElementById("story").innerText =
-    story;
-
-    document.getElementById("characters").innerText =
-    characters;
-
-    document.getElementById("scenes").innerText =
-    scenes;
-
-    document.getElementById("dialogue").innerText =
-    dialogue;
-
-    document.getElementById("voiceScript").innerText =
-    voice;
-
-    document.getElementById("imagePrompts").innerText =
-    imagePrompts;
-
-    document.getElementById("youtube").innerText =
-    youtube;
+document.getElementById("youtube").innerText=youtube;
 
 
-    document.getElementById("status").innerText =
-    "✅ नई कहानी तैयार है!";
+document.getElementById("status").innerText=
+"✅ नई कहानी तैयार हो गई! अब आप Image, Voice और Video बना सकते हैं।";
 
 }
 
 
-/* =========================
-   COPY
-========================= */
-
 function copyText(id){
 
-    let element =
-    document.getElementById(id);
+let text=document.getElementById(id).innerText;
 
-    let text =
-    element.innerText;
+if(navigator.clipboard){
 
-    if(navigator.clipboard){
+navigator.clipboard.writeText(text)
+.then(function(){
+alert("✅ Text copied!");
+})
+.catch(function(){
+fallbackCopy(text);
+});
 
-        navigator.clipboard.writeText(text)
-        .then(function(){
-
-            alert("✅ Text copied!");
-
-        })
-        .catch(function(){
-
-            fallbackCopy(text);
-
-        });
-
-    }else{
-
-        fallbackCopy(text);
-
-    }
+}else{
+fallbackCopy(text);
+}
 
 }
 
 
 function fallbackCopy(text){
 
-    let area =
-    document.createElement("textarea");
+let area=document.createElement("textarea");
 
-    area.value = text;
+area.value=text;
 
-    document.body.appendChild(area);
+document.body.appendChild(area);
 
-    area.select();
+area.select();
 
-    document.execCommand("copy");
+document.execCommand("copy");
 
-    document.body.removeChild(area);
+area.remove();
 
-    alert("✅ Text copied!");
+alert("✅ Text copied!");
 
 }
 
 
-/* =========================
-   VOICE
-========================= */
-
 function speakVoice(){
 
-    if(!currentVoiceText){
+let text=document.getElementById("voice").innerText;
 
-        alert("पहले कहानी Generate करें।");
+if(!text || text.includes("यहाँ")){
 
-        return;
-    }
+alert("पहले कहानी Generate करें।");
 
-    if(!("speechSynthesis" in window)){
+return;
 
-        alert("आपके browser में Voice feature उपलब्ध नहीं है।");
+}
 
-        return;
-    }
+window.speechSynthesis.cancel();
 
-    speechSynthesis.cancel();
+let speech=new SpeechSynthesisUtterance(text);
 
-    let voiceText =
-    currentVoiceText;
+let language=document.getElementById("language").value;
 
-    let selected =
-    document.getElementById("voiceType").value;
+if(language==="Hindi"){
+speech.lang="hi-IN";
+}else if(language==="English"){
+speech.lang="en-US";
+}else{
+speech.lang="hi-IN";
+}
 
-    let utterance =
-    new SpeechSynthesisUtterance(voiceText);
+speech.rate=.9;
 
+speech.pitch=1;
 
-    if(selected.includes("Hindi")){
-
-        utterance.lang = "hi-IN";
-
-    }else{
-
-        utterance.lang = "en-US";
-
-    }
-
-    if(selected.includes("Female")){
-
-        utterance.pitch = 1.2;
-
-    }else{
-
-        utterance.pitch = 0.8;
-
-    }
-
-    utterance.rate = 0.9;
-
-    utterance.volume = 1;
-
-
-    speechSynthesis.speak(utterance);
+window.speechSynthesis.speak(speech);
 
 }
 
 
 function stopVoice(){
 
-    if("speechSynthesis" in window){
-
-        speechSynthesis.cancel();
-
-    }
+window.speechSynthesis.cancel();
 
 }
 
 
-/* =========================
-   VIDEO PREPARATION
-========================= */
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){
 
-function prepareVideo(){
+let words=text.split(" ");
 
-    let topic =
-    document.getElementById("topic").value.trim();
+let line="";
 
-    if(topic === ""){
+for(let n=0;n<words.length;n++){
 
-        alert("पहले कहानी Generate करें।");
+let testLine=line+words[n]+" ";
 
-        return;
-    }
+let metrics=ctx.measureText(testLine);
 
+let testWidth=metrics.width;
 
-    document.getElementById("videoStatus").innerText =
-    "🎬 Video project तैयार है!";
+if(testWidth>maxWidth && n>0){
 
+ctx.fillText(line,x,y);
 
-    document.getElementById("videoInfo").innerText =
+line=words[n]+" ";
 
-`🎥 CARTOON VIDEO PROJECT
+y+=lineHeight;
 
-Topic:
-${topic}
+}else{
 
-✅ Story तैयार
-✅ Character Prompt तैयार
-✅ 6 Scene Prompts तैयार
-✅ Dialogue तैयार
-✅ Voice-over तैयार
+line=testLine;
 
-अगला काम:
+}
 
-1. Scene prompts से cartoon images बनाएं।
-2. Voice-over को सुनें/record करें।
-3. Images और voice को किसी video editor में जोड़ें।
-4. Music और transitions लगाएं।
-5. Final video export करें।
+}
 
-⚠️ इस HTML version में automatic AI video generation
-के लिए external video-generation API नहीं जोड़ी गई है।`;
+ctx.fillText(line,x,y);
 
 }
 
 
-/* =========================
-   PAGE LOAD
-========================= */
+function drawCartoonScene(ctx,sceneNumber){
 
-window.addEventListener("load",function(){
+let canvas=ctx.canvas;
 
-    document.getElementById("status").innerText =
-    "Ready 👍 कहानी का विषय लिखें।";
+let w=canvas.width;
+
+let h=canvas.height;
+
+
+ctx.clearRect(0,0,w,h);
+
+
+/* SKY */
+
+let gradient=ctx.createLinearGradient(0,0,0,h);
+
+gradient.addColorStop(0,"#87ceeb");
+
+gradient.addColorStop(1,"#fff4d6");
+
+ctx.fillStyle=gradient;
+
+ctx.fillRect(0,0,w,h);
+
+
+/* SUN */
+
+ctx.beginPath();
+
+ctx.arc(760,90,45,0,Math.PI*2);
+
+ctx.fillStyle="#ffd32a";
+
+ctx.fill();
+
+
+/* CLOUDS */
+
+ctx.fillStyle="white";
+
+for(let i=0;i<3;i++){
+
+let x=120+i*280;
+
+ctx.beginPath();
+
+ctx.arc(x,120,35,0,Math.PI*2);
+
+ctx.arc(x+35,110,45,0,Math.PI*2);
+
+ctx.arc(x+75,125,30,0,Math.PI*2);
+
+ctx.fill();
+
+}
+
+
+/* GROUND */
+
+ctx.fillStyle="#55b34a";
+
+ctx.fillRect(0,390,w,160);
+
+
+/* TREES */
+
+for(let i=0;i<5;i++){
+
+let x=70+i*190;
+
+ctx.fillStyle="#795548";
+
+ctx.fillRect(x,280,35,120);
+
+ctx.fillStyle="#228b22";
+
+ctx.beginPath();
+
+ctx.arc(x+15,255,75,0,Math.PI*2);
+
+ctx.fill();
+
+}
+
+
+/* CHARACTER */
+
+let animal="🦁";
+
+let topic=document.getElementById("topic").value.toLowerCase();
+
+if(topic.includes("बिल्ली")) animal="🐱";
+
+if(topic.includes("हाथी")) animal="🐘";
+
+if(topic.includes("खरगोश")) animal="🐰";
+
+if(topic.includes("कुत्ता")) animal="🐶";
+
+if(topic.includes("बंदर")) animal="🐵";
+
+if(topic.includes("बच्चा")) animal="🧒";
+
+
+ctx.font="120px Arial";
+
+ctx.textAlign="center";
+
+ctx.fillText(animal,w/2,360);
+
+
+/* SCENE TITLE */
+
+ctx.fillStyle="rgba(255,255,255,.9)";
+
+ctx.roundRect(35,30,w-70,65,18);
+
+ctx.fill();
+
+
+ctx.fillStyle="#333";
+
+ctx.font="bold 30px Arial";
+
+ctx.fillText("Cartoon Scene "+sceneNumber,w/2,72);
+
+
+/* SCENE TEXT */
+
+ctx.fillStyle="rgba(255,255,255,.92)";
+
+ctx.roundRect(55,420,w-110,100,15);
+
+ctx.fill();
+
+
+ctx.fillStyle="#222";
+
+ctx.font="22px Arial";
+
+let shortText=
+sceneNumber===1 ?
+"एक सुंदर कहानी की शुरुआत..." :
+sceneNumber===2 ?
+"अचानक एक समस्या सामने आई!" :
+sceneNumber===3 ?
+"दोस्त मिलकर समाधान खोज रहे हैं..." :
+sceneNumber===4 ?
+"सबने मिलकर समस्या हल कर दी!" :
+"सबके चेहरे पर खुशी आ गई!";
+
+wrapText(ctx,shortText,w/2,455,w-150,28);
+
+ctx.textAlign="left";
+
+}function generateImage(){
+
+let canvas=document.getElementById("imageCanvas");
+
+let ctx=canvas.getContext("2d");
+
+canvas.style.display="block";
+
+drawCartoonScene(ctx,1);
+
+generatedImage=canvas.toDataURL("image/png");
+
+}
+
+
+function downloadImage(){
+
+let canvas=document.getElementById("imageCanvas");
+
+if(canvas.style.display==="none"){
+
+alert("पहले Generate Image दबाएं।");
+
+return;
+
+}
+
+let link=document.createElement("a");
+
+link.download="cartoon-scene.png";
+
+link.href=canvas.toDataURL("image/png");
+
+link.click();
+
+}
+
+
+async function generateVideo(){
+
+if(currentStory===""){
+
+alert("पहले Generate New Story दबाएं।");
+
+return;
+
+}
+
+
+let canvas=document.getElementById("videoCanvas");
+
+let ctx=canvas.getContext("2d");
+
+canvas.style.display="block";
+
+
+let status=document.getElementById("videoStatus");
+
+status.innerText="⏳ Cartoon video तैयार हो रहा है...";
+
+
+let stream;
+
+try{
+
+stream=canvas.captureStream(30);
+
+}catch(e){
+
+alert("आपका browser video recording support नहीं करता। Chrome में खोलकर कोशिश करें।");
+
+return;
+
+}
+
+
+let options={mimeType:"video/webm;codecs=vp9"};
+
+if(!MediaRecorder.isTypeSupported(options.mimeType)){
+
+options={mimeType:"video/webm"};
+
+}
+
+if(!MediaRecorder.isTypeSupported(options.mimeType)){
+
+options={};
+
+}
+
+
+let recorder;
+
+try{
+
+recorder=new MediaRecorder(stream,options);
+
+}catch(e){
+
+recorder=new MediaRecorder(stream);
+
+}
+
+
+let chunks=[];
+
+
+recorder.ondataavailable=function(event){
+
+if(event.data && event.data.size>0){
+
+chunks.push(event.data);
+
+}
+
+};
+
+
+let stopped=new Promise(function(resolve){
+
+recorder.onstop=resolve;
 
 });
+
+
+recorder.start();
+
+
+let scenes=currentScenes.length>0 ?
+currentScenes :
+[
+"Scene 1",
+"Scene 2",
+"Scene 3",
+"Scene 4",
+"Scene 5"
+];
+
+
+for(let scene=1;scene<=5;scene++){
+
+drawCartoonScene(ctx,scene);
+
+status.innerText=
+"🎬 Scene "+scene+" / 5 तैयार हो रहा है...";
+
+await wait(2200);
+
+}
+
+
+recorder.stop();
+
+await stopped;
+
+
+videoBlob=new Blob(chunks,{type:"video/webm"});
+
+let url=URL.createObjectURL(videoBlob);
+
+let video=document.getElementById("videoPreview");
+
+video.src=url;
+
+video.controls=true;
+
+video.load();
+
+
+status.innerText=
+"✅ आपका Cartoon Video तैयार है! नीचे Play करें।";
+
+
+}
+
+
+function wait(ms){
+
+return new Promise(function(resolve){
+
+setTimeout(resolve,ms);
+
+});
+
+}
+
+
+function downloadVideo(){
+
+if(!videoBlob){
+
+alert("पहले Generate Cartoon Video दबाएं।");
+
+return;
+
+}
+
+let url=URL.createObjectURL(videoBlob);
+
+let link=document.createElement("a");
+
+link.href=url;
+
+link.download="ai-cartoon-story-video.webm";
+
+link.click();
+
+setTimeout(function(){
+
+URL.revokeObjectURL(url);
+
+},3000);
+
+}
+
+
+window.addEventListener("beforeunload",function(){
+
+window.speechSynthesis.cancel();
+
+});
+
+
+/* START WITH A SAMPLE */
+
+document.getElementById("topic").value=
+"एक छोटा शेर जंगल में अपने दोस्त की मदद करता है।";
 
 </script>
 
