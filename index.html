@@ -582,6 +582,332 @@ function downloadStory(){
 
 
 </script>
+<!-- 🎬 VIDEO GENERATOR -->
+<style>
+#videoGeneratorBox{
+  margin:25px auto;
+  max-width:650px;
+  padding:20px;
+  border-radius:20px;
+  background:white;
+  box-shadow:0 8px 30px rgba(0,0,0,.15);
+  text-align:center;
+}
 
+#videoGeneratorBox h2{
+  margin-top:0;
+}
+
+#makeVideoBtn{
+  width:100%;
+  padding:15px;
+  border:0;
+  border-radius:14px;
+  background:linear-gradient(135deg,#7b2cff,#0099ff);
+  color:white;
+  font-size:18px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+#videoStatus{
+  margin:15px 0;
+  font-weight:bold;
+}
+
+#videoPreview{
+  width:100%;
+  max-height:400px;
+  border-radius:15px;
+  display:none;
+  background:#111;
+}
+
+#downloadVideoBtn{
+  display:none;
+  margin-top:15px;
+  padding:13px 20px;
+  border-radius:12px;
+  background:#16a34a;
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+}
+</style>
+
+<div id="videoGeneratorBox">
+
+  <h2>🎬 Cartoon Video Generator</h2>
+
+  <p>
+    अपनी कहानी को वीडियो में बदलें ✨
+  </p>
+
+  <button id="makeVideoBtn">
+    🎬 Video बनाएं
+  </button>
+
+  <div id="videoStatus"></div>
+
+  <video id="videoPreview" controls></video>
+
+  <br>
+
+  <a id="downloadVideoBtn" download="ai-cartoon-video.webm">
+    ⬇️ Video Download करें
+  </a>
+
+</div>
+
+<script>
+(function(){
+
+const box = document.getElementById("videoGeneratorBox");
+const button = document.getElementById("makeVideoBtn");
+const status = document.getElementById("videoStatus");
+const video = document.getElementById("videoPreview");
+const download = document.getElementById("downloadVideoBtn");
+
+button.addEventListener("click", async function(){
+
+  let textarea =
+    document.querySelector("textarea");
+
+  if(!textarea || !textarea.value.trim()){
+    alert("पहले कहानी लिखें ✍️");
+    return;
+  }
+
+  const story = textarea.value.trim();
+
+  status.innerText = "⏳ Video तैयार हो रहा है...";
+
+  button.disabled = true;
+
+  try{
+
+    const canvas = document.createElement("canvas");
+
+    canvas.width = 1280;
+    canvas.height = 720;
+
+    const ctx = canvas.getContext("2d");
+
+    const stream = canvas.captureStream(30);
+
+    const recorder = new MediaRecorder(stream,{
+      mimeType:"video/webm"
+    });
+
+    let chunks = [];
+
+    recorder.ondataavailable = function(e){
+      if(e.data.size > 0){
+        chunks.push(e.data);
+      }
+    };
+
+    recorder.onstop = function(){
+
+      const blob = new Blob(chunks,{
+        type:"video/webm"
+      });
+
+      const url = URL.createObjectURL(blob);
+
+      video.src = url;
+      video.style.display = "block";
+
+      download.href = url;
+      download.style.display = "inline-block";
+
+      status.innerText =
+        "✅ Video तैयार है!";
+
+      button.disabled = false;
+    };
+
+    recorder.start();
+
+    const scenes = story
+      .split(/[।.!?]/)
+      .map(x => x.trim())
+      .filter(x => x.length > 0)
+      .slice(0,8);
+
+    if(scenes.length === 0){
+      scenes.push(story);
+    }
+
+    for(let i=0;i<scenes.length;i++){
+
+      await drawScene(
+        ctx,
+        scenes[i],
+        i+1,
+        scenes.length
+      );
+
+      await wait(2500);
+    }
+
+    recorder.stop();
+
+  }catch(error){
+
+    console.error(error);
+
+    status.innerText =
+      "❌ Video बनाने में समस्या हुई।";
+
+    button.disabled = false;
+  }
+
+});
+
+function drawScene(ctx,text,num,total){
+
+  return new Promise(resolve=>{
+
+    let start = performance.now();
+
+    function animation(now){
+
+      let progress =
+        Math.min((now-start)/600,1);
+
+      const w = ctx.canvas.width;
+      const h = ctx.canvas.height;
+
+      const gradient =
+        ctx.createLinearGradient(0,0,w,h);
+
+      gradient.addColorStop(
+        0,
+        "#7b2cff"
+      );
+
+      gradient.addColorStop(
+        1,
+        "#00bfff"
+      );
+
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0,0,w,h);
+
+      // clouds
+      ctx.fillStyle =
+        "rgba(255,255,255,.25)";
+
+      ctx.beginPath();
+      ctx.arc(180,130,60,0,Math.PI*2);
+      ctx.arc(240,130,75,0,Math.PI*2);
+      ctx.arc(310,130,55,0,Math.PI*2);
+      ctx.fill();
+
+      // title
+      ctx.fillStyle="white";
+      ctx.font="bold 52px Arial";
+      ctx.textAlign="center";
+
+      ctx.fillText(
+        "🎬 AI Cartoon Story",
+        w/2,
+        100
+      );
+
+      // scene number
+      ctx.font="bold 28px Arial";
+
+      ctx.fillText(
+        "Scene " + num + " / " + total,
+        w/2,
+        160
+      );
+
+      // story
+      ctx.font="36px Arial";
+
+      wrapText(
+        ctx,
+        text,
+        w/2,
+        310,
+        1000,
+        52
+      );
+
+      // child friendly footer
+      ctx.font="28px Arial";
+
+      ctx.fillText(
+        "✨ एक मजेदार कहानी ✨",
+        w/2,
+        650
+      );
+
+      if(progress < 1){
+        requestAnimationFrame(animation);
+      }else{
+        resolve();
+      }
+    }
+
+    requestAnimationFrame(animation);
+  });
+}
+
+function wrapText(
+  ctx,
+  text,
+  x,
+  y,
+  maxWidth,
+  lineHeight
+){
+
+  const words = text.split(" ");
+
+  let line = "";
+
+  for(let n=0;n<words.length;n++){
+
+    const testLine =
+      line + words[n] + " ";
+
+    const width =
+      ctx.measureText(testLine).width;
+
+    if(width > maxWidth && n > 0){
+
+      ctx.fillText(
+        line,
+        x,
+        y
+      );
+
+      line =
+        words[n] + " ";
+
+      y += lineHeight;
+
+    }else{
+
+      line = testLine;
+
+    }
+  }
+
+  ctx.fillText(line,x,y);
+}
+
+function wait(ms){
+  return new Promise(
+    resolve => setTimeout(resolve,ms)
+  );
+}
+
+})();
+    </script>
 </body>
 </html>
