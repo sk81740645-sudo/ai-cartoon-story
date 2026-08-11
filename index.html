@@ -3,1603 +3,734 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>AI Cartoon Story Maker</title>
 
 <style>
+
 *{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
 body{
-  font-family:Arial,sans-serif;
-  background:linear-gradient(135deg,#fff3e0,#e3f2fd);
-  color:#222;
-  min-height:100vh;
+    font-family:Arial,sans-serif;
+    min-height:100vh;
+    background:linear-gradient(135deg,#7b2cff,#008cff,#00c6ff);
+    color:#222;
 }
 
-header{
-  background:linear-gradient(135deg,#6a1b9a,#1565c0);
-  color:white;
-  padding:25px 15px;
-  text-align:center;
-  box-shadow:0 4px 15px rgba(0,0,0,.2);
+.header{
+    text-align:center;
+    color:white;
+    padding:35px 15px 25px;
 }
 
-header h1{
-  font-size:28px;
-  margin-bottom:8px;
+.header h1{
+    font-size:38px;
+    margin-bottom:12px;
 }
 
-header p{
-  font-size:14px;
-  opacity:.9;
+.header p{
+    font-size:20px;
+    line-height:1.5;
 }
 
 .container{
-  width:95%;
-  max-width:900px;
-  margin:20px auto;
+    width:94%;
+    max-width:700px;
+    margin:auto;
 }
 
 .card{
-  background:white;
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:20px;
-  box-shadow:0 5px 20px rgba(0,0,0,.12);
+    background:white;
+    border-radius:25px;
+    padding:25px;
+    box-shadow:0 10px 35px rgba(0,0,0,.2);
+    margin-bottom:25px;
 }
 
-.card h2{
-  color:#6a1b9a;
-  margin-bottom:15px;
-}
-
-label{
-  display:block;
-  font-weight:bold;
-  margin:12px 0 7px;
-}
-
-input,textarea,select{
-  width:100%;
-  padding:13px;
-  border:1px solid #ccc;
-  border-radius:10px;
-  font-size:16px;
-  outline:none;
+.label{
+    display:block;
+    font-size:22px;
+    font-weight:bold;
+    margin-bottom:12px;
 }
 
 textarea{
-  min-height:130px;
-  resize:vertical;
+    width:100%;
+    height:180px;
+    border:3px solid #ddd;
+    border-radius:20px;
+    padding:18px;
+    font-size:20px;
+    resize:vertical;
+    outline:none;
 }
 
-input:focus,textarea:focus,select:focus{
-  border-color:#6a1b9a;
+textarea:focus{
+    border-color:#7b2cff;
 }
 
-button{
-  border:none;
-  border-radius:10px;
-  padding:13px 18px;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:15px;
+.mainBtn{
+    width:100%;
+    margin-top:20px;
+    padding:18px;
+    border:none;
+    border-radius:18px;
+    background:linear-gradient(90deg,#7b2cff,#008cff);
+    color:white;
+    font-size:21px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-.primary{
-  background:linear-gradient(135deg,#7b1fa2,#1976d2);
-  color:white;
-  width:100%;
+.mainBtn:active{
+    transform:scale(.98);
 }
 
-.secondary{
-  background:#eeeeee;
-  color:#333;
+.storyBox{
+    display:none;
+    background:#fafafa;
+    border-radius:22px;
+    padding:25px;
+    margin-top:25px;
 }
 
-.success{
-  background:#2e7d32;
-  color:white;
+.storyTitle{
+    color:#7b2cff;
+    font-size:27px;
+    margin-bottom:18px;
 }
 
-button:active{
-  transform:scale(.98);
+.storyText{
+    font-size:20px;
+    line-height:1.9;
+    white-space:pre-line;
 }
 
-.result{
-  display:none;
+.copyBtn{
+    width:100%;
+    padding:16px;
+    margin-top:20px;
+    border:none;
+    border-radius:15px;
+    background:#222;
+    color:white;
+    font-size:19px;
+    font-weight:bold;
 }
 
-.story-box{
-  background:#f7f7ff;
-  border-left:5px solid #7b1fa2;
-  padding:15px;
-  border-radius:10px;
-  margin-top:12px;
-  white-space:pre-wrap;
-  line-height:1.6;
+.videoSection{
+    display:none;
+    background:white;
+    border-radius:25px;
+    padding:25px;
+    margin-bottom:30px;
+    box-shadow:0 10px 35px rgba(0,0,0,.2);
 }
 
-.scene{
-  background:#fff8e1;
-  border-radius:14px;
-  padding:16px;
-  margin-top:15px;
-  border:1px solid #ffe082;
+.videoSection h2{
+    color:#7b2cff;
+    text-align:center;
+    margin-bottom:15px;
 }
 
-.scene h3{
-  color:#e65100;
-  margin-bottom:10px;
+.videoBtn{
+    width:100%;
+    padding:18px;
+    border:none;
+    border-radius:17px;
+    background:linear-gradient(90deg,#ff0080,#7928ff);
+    color:white;
+    font-size:21px;
+    font-weight:bold;
 }
 
-.prompt{
-  background:#f3e5f5;
-  padding:12px;
-  border-radius:10px;
-  line-height:1.5;
-  margin-top:8px;
+.status{
+    text-align:center;
+    margin:15px 0;
+    font-size:17px;
+    font-weight:bold;
 }
 
-.dialogue{
-  background:#e8f5e9;
-  padding:12px;
-  border-radius:10px;
-  line-height:1.5;
-  margin-top:8px;
+video{
+    width:100%;
+    border-radius:18px;
+    display:none;
+    margin-top:15px;
+    background:#111;
 }
 
-.character{
-  background:#e3f2fd;
-  padding:12px;
-  border-radius:10px;
-  margin-top:10px;
-  line-height:1.5;
+.downloadBtn{
+    display:none;
+    width:100%;
+    text-align:center;
+    padding:16px;
+    margin-top:15px;
+    background:#222;
+    color:white;
+    border-radius:15px;
+    text-decoration:none;
+    font-size:19px;
+    font-weight:bold;
 }
 
-.actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+.footer{
+    color:white;
+    text-align:center;
+    padding:20px;
+    font-size:16px;
 }
 
-.actions button{
-  width:100%;
-}
-
-footer{
-  text-align:center;
-  padding:25px;
-  color:#666;
-  font-size:13px;
-}
-
-.loading{
-  display:none;
-  text-align:center;
-  padding:20px;
-}
-
-.spinner{
-  width:35px;
-  height:35px;
-  border:4px solid #ddd;
-  border-top:4px solid #7b1fa2;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-  margin:auto;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg);}
-}
-
-@media(max-width:600px){
-  header h1{
-    font-size:23px;
-  }
-
-  .actions{
-    grid-template-columns:1fr;
-  }
-
-  .card{
-    padding:15px;
-  }
-}
 </style>
 </head>
 
+
 <body>
 
-<header>
-  <h1>🎬 AI Cartoon Story Maker</h1>
-  <p>कहानी से Cartoon Scenes, Image Prompts और Dialogues बनाएं ✨</p>
-</header>
+<div class="header">
 
-<div class="container">
+    <h1>🎬 AI Cartoon Story</h1>
 
-  <div class="card">
-    <h2>📝 अपनी कहानी बनाएं</h2>
-
-    <label>कहानी का विषय</label>
-    <input
-      id="topic"
-      type="text"
-      placeholder="जैसे: बरसात में एक छोटे बच्चे की कहानी"
-    >
-
-    <label>कहानी की भाषा</label>
-    <select id="language">
-      <option value="Hindi">हिंदी</option>
-      <option value="English">English</option>
-    </select>
-
-    <label>कहानी की लंबाई</label>
-    <select id="length">
-      <option value="30">30 सेकंड</option>
-      <option value="40" selected>40 सेकंड</option>
-      <option value="60">60 सेकंड</option>
-    </select>
-
-    <label>Style</label>
-    <select id="style">
-      <option value="2D Ghibli inspired cartoon style">
-        2D Ghibli inspired cartoon style
-      </option>
-      <option value="2D colorful children's cartoon">
-        2D Colorful Children's Cartoon
-      </option>
-      <option value="3D cartoon">
-        3D Cartoon
-      </option>
-    </select>
-
-    <button class="primary" onclick="generateStory()">
-      ✨ कहानी तैयार करें
-    </button>
-
-    <div class="loading" id="loading">
-      <div class="spinner"></div>
-      <p style="margin-top:10px">कहानी तैयार हो रही है...</p>
-    </div>
-  </div>
-
-  <div class="card result" id="result">
-
-    <h2>📖 आपकी कहानी</h2>
-
-    <div class="story-box" id="story"></div>
-
-    <h2 style="margin-top:25px">👤 Characters</h2>
-
-    <div id="characters"></div>
-
-    <h2 style="margin-top:25px">🎬 Scenes</h2>
-
-    <div id="scenes"></div>
-
-    <div class="actions">
-      <button class="secondary" onclick="copyAll()">
-        📋 Copy
-      </button>
-
-      <button class="success" onclick="downloadStory()">
-        📥 Download
-      </button>
-    </div>
-
-  </div>
+    <p>
+        ✨ अपनी कहानी बनाइए और Cartoon Video के लिए तैयार कीजिए
+    </p>
 
 </div>
 
-<footer>
-  ❤️ AI Cartoon Story Maker
-  <br>
-  बच्चों के लिए मजेदार और creative stories बनाएं 🎨
-</footer>
+
+<div class="container">
+
+    <!-- STORY INPUT -->
+
+    <div class="card">
+
+        <label class="label">
+            📝 कहानी का विषय लिखें
+        </label>
+
+        <textarea
+            id="topic"
+            placeholder="जैसे: राजा और घोड़े की कहानी"
+        ></textarea>
+
+        <button
+            class="mainBtn"
+            onclick="createStory()"
+        >
+            ✨ कहानी बनाएं
+        </button>
+
+    </div>
+
+
+    <!-- STORY -->
+
+    <div
+        class="storyBox"
+        id="storyBox"
+    >
+
+        <h2 class="storyTitle">
+            📖 आपकी Cartoon Story
+        </h2>
+
+        <div
+            class="storyText"
+            id="storyText"
+        ></div>
+
+        <button
+            class="copyBtn"
+            onclick="copyStory()"
+        >
+            📋 कहानी Copy करें
+        </button>
+
+    </div>
+
+
+    <!-- VIDEO -->
+
+    <div
+        class="videoSection"
+        id="videoSection"
+    >
+
+        <h2>
+            🎬 Cartoon Video बनाएं
+        </h2>
+
+        <p
+            style="
+            text-align:center;
+            margin-bottom:18px;
+            color:#555;
+            "
+        >
+            अपनी बनाई हुई कहानी का वीडियो तैयार करें
+        </p>
+
+        <button
+            class="videoBtn"
+            id="videoBtn"
+            onclick="generateVideo()"
+        >
+            🎬 Video Generate करें
+        </button>
+
+        <div
+            class="status"
+            id="status"
+        ></div>
+
+        <video
+            id="video"
+            controls
+        ></video>
+
+        <a
+            id="downloadBtn"
+            class="downloadBtn"
+            download="ai-cartoon-story.webm"
+        >
+            ⬇️ Video Download करें
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="footer">
+
+    ❤️ AI Cartoon Story • बच्चों के लिए मजेदार कहानियां
+
+</div>
+
+
 
 <script>
 
-function generateStory(){
+/* =========================
+   STORY GENERATOR
+========================= */
 
-  const topic =
-    document.getElementById("topic").value.trim();
+let currentStory = "";
 
-  const language =
-    document.getElementById("language").value;
 
-  const length =
-    document.getElementById("length").value;
+function createStory(){
 
-  const style =
-    document.getElementById("style").value;
+    const topic =
+        document.getElementById("topic").value.trim();
 
-  if(!topic){
-    alert("कृपया पहले कहानी का विषय लिखें।");
-    return;
-  }
+    if(topic === ""){
 
-  document.getElementById("loading").style.display="block";
+        alert("कृपया पहले कहानी का विषय लिखें।");
 
-  setTimeout(function(){
+        return;
+    }
 
-    const story =
-`एक छोटे से गाँव में आरव नाम का प्यारा बच्चा रहता था।
-एक दिन ${topic} शुरू हुई।
 
-आरव ने अपने दोस्तों के साथ मिलकर एक मजेदार काम करने का फैसला किया।
-रास्ते में उसे एक छोटी सी परेशानी दिखाई दी।
+    currentStory =
+`एक दिन ${topic} की एक बहुत प्यारी कहानी शुरू हुई।
 
-आरव ने हिम्मत नहीं छोड़ी और अपने दोस्तों की मदद से समस्या को हल कर दिया।
-अंत में सभी बच्चे खुशी-खुशी घर लौटे।
+एक छोटा बच्चा अपने दोस्तों के साथ खेल रहा था।
+अचानक उसे एक सुंदर और अनोखी चीज दिखाई दी।
 
-सीख: मिल-जुलकर काम करने से बड़ी से बड़ी परेशानी आसान हो जाती है।`;
+बच्चे ने ध्यान से देखा और उसके पास गया।
+वह बहुत खुश हुआ और उसने अपने दोस्तों को भी बुलाया।
 
-    document.getElementById("story").innerText=story;
+सभी दोस्तों ने मिलकर उस चीज की मदद करने का फैसला किया।
 
-    const characters = [
+उन्होंने मिलकर मेहनत की और आखिरकार समस्या हल हो गई।
 
-      {
-        name:"आरव 👦",
-        detail:
-        `8 साल का प्यारा भारतीय बच्चा, गोल चेहरा, बड़ी चमकदार आंखें,
-छोटे काले बाल, पीली टी-शर्ट, नीली शॉर्ट्स, छोटे जूते,
-friendly smile, ${style}`
-      },
+सब बच्चे बहुत खुश हुए और एक-दूसरे से बोले कि हमें हमेशा दूसरों की मदद करनी चाहिए।
 
-      {
-        name:"आरव का दोस्त 👦",
-        detail:
-        `8 साल का खुशमिजाज बच्चा, छोटे काले बाल,
-हरा टी-शर्ट, भूरे शॉर्ट्स, मासूम चेहरा,
-${style}`
-      },
+उस दिन बच्चों ने सीखा कि दोस्ती, प्यार और मदद करने से हर मुश्किल आसान हो सकती है।
 
-      {
-        name:"छोटी बिल्ली 🐱",
-        detail:
-        `छोटी प्यारी सफेद बिल्ली, बड़ी गोल आंखें,
-छोटे कान, fluffy tail, cute expression,
-${style}`
-      }
+सीख:
+हमें हमेशा दूसरों की मदद करनी चाहिए और अपने दोस्तों के साथ प्यार से रहना चाहिए।`;
 
-    ];
 
-    let characterHTML="";
+    document.getElementById("storyText").innerText =
+        currentStory;
 
-    characters.forEach(function(c){
+    document.getElementById("storyBox").style.display =
+        "block";
 
-      characterHTML += `
-        <div class="character">
-          <strong>${c.name}</strong>
-          <p>${c.detail}</p>
-        </div>
-      `;
+    document.getElementById("videoSection").style.display =
+        "block";
 
-    });
 
-    document.getElementById("characters").innerHTML=characterHTML;
-
-    const scenes = [
-
-      {
-        title:"Scene 1 — गाँव का दृश्य 🌳",
-        description:
-        "सुबह का सुंदर गाँव, छोटे घर, हरे पेड़ और हल्की धूप। आरव अपने घर के बाहर खड़ा है।",
-        prompt:
-        `Beautiful Indian village, small colorful houses, green trees,
-morning sunlight, cute little boy standing outside his home,
-child friendly atmosphere, ${style}, cinematic composition`,
-        dialogue:
-        `आरव: "वाह! आज का दिन कितना सुंदर है!"`
-      },
-
-      {
-        title:"Scene 2 — कहानी की शुरुआत 🌧️",
-        description:
-        `आरव देखता है कि ${topic} हो रही है।`,
-        prompt:
-        `Cute little Indian boy watching the situation,
-emotional but happy expression, beautiful environment,
-soft lighting, colorful children's cartoon,
-${style}`,
-        dialogue:
-        `आरव: "हमें कुछ करना चाहिए!"`
-      },
-
-      {
-        title:"Scene 3 — दोस्तों की मदद 🤝",
-        description:
-        "आरव अपने दोस्त के साथ मिलकर समस्या को हल करने की कोशिश करता है।",
-        prompt:
-        `Two cute children working together,
-helping each other, positive emotions,
-bright colorful background, expressive faces,
-${style}`,
-        dialogue:
-        `दोस्त: "चिंता मत करो आरव, हम मिलकर इसे ठीक कर देंगे!"`
-      },
-
-      {
-        title:"Scene 4 — खुशी का पल 😊",
-        description:
-        "समस्या हल हो जाती है और सभी बच्चे खुशी से मुस्कुराते हैं।",
-        prompt:
-        `Happy children smiling together after solving a problem,
-warm sunlight, joyful atmosphere,
-cute expressions, colorful environment,
-${style}`,
-        dialogue:
-        `आरव: "देखा! साथ मिलकर हम कुछ भी कर सकते हैं!"`
-      },
-
-      {
-        title:"Scene 5 — Ending 🌈",
-        description:
-        "आरव और उसके दोस्त खुशी-खुशी घर की ओर जाते हैं।",
-        prompt:
-        `Cute children walking home together,
-beautiful sunset, colorful sky, peaceful village,
-heartwarming ending, children's cartoon,
-${style}`,
-        dialogue:
-        `सभी: "दोस्ती और मदद सबसे बड़ी ताकत है!"`
-      }
-
-    ];
-
-    let sceneHTML="";
-
-    scenes.forEach(function(scene){
-
-      sceneHTML += `
-        <div class="scene">
-
-          <h3>${scene.title}</h3>
-
-          <p>
-            <strong>📌 Scene:</strong>
-            ${scene.description}
-          </p>
-
-          <div class="prompt">
-            <strong>🎨 Image Prompt:</strong>
-            <br>
-            ${scene.prompt}
-          </div>
-
-          <div class="dialogue">
-            <strong>🎙️ Dialogue:</strong>
-            <br>
-            ${scene.dialogue}
-          </div>
-
-        </div>
-      `;
-
-    });
-
-    document.getElementById("scenes").innerHTML=sceneHTML;
-
-    document.getElementById("loading").style.display="none";
-    document.getElementById("result").style.display="block";
-
-    document.getElementById("result")
-      .scrollIntoView({behavior:"smooth"});
-
-  },1000);
-
+    document.getElementById("videoSection")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
 }
 
 
-function getAllText(){
+/* =========================
+   COPY STORY
+========================= */
 
-  const story =
-    document.getElementById("story").innerText;
+function copyStory(){
 
-  const characters =
-    document.getElementById("characters").innerText;
+    if(!currentStory){
 
-  const scenes =
-    document.getElementById("scenes").innerText;
+        alert("पहले कहानी बनाएं।");
 
-  return `
-AI CARTOON STORY MAKER
+        return;
+    }
 
-====================
-STORY
-====================
-
-${story}
-
-====================
-CHARACTERS
-====================
-
-${characters}
-
-====================
-SCENES
-====================
-
-${scenes}
-
-====================
-Generated by AI Cartoon Story Maker
-====================
-`;
-
-}
-
-
-function copyAll(){
-
-  navigator.clipboard.writeText(getAllText())
+    navigator.clipboard.writeText(currentStory)
     .then(function(){
 
-      alert("✅ पूरा content copy हो गया!");
+        alert("✅ कहानी Copy हो गई!");
 
     })
     .catch(function(){
 
-      alert("Copy नहीं हो पाया।");
+        alert("कहानी Copy नहीं हो पाई।");
 
     });
 
 }
 
 
-function downloadStory(){
+/* =========================
+   VIDEO GENERATOR
+========================= */
 
-  const text=getAllText();
+function generateVideo(){
 
-  const blob=new Blob(
-    [text],
-    {type:"text/plain;charset=utf-8"}
-  );
+    if(!currentStory){
 
-  const url=URL.createObjectURL(blob);
+        alert("पहले कहानी बनाएं।");
 
-  const a=document.createElement("a");
-
-  a.href=url;
-  a.download="cartoon-story.txt";
-
-  document.body.appendChild(a);
-
-  a.click();
-
-  document.body.removeChild(a);
-
-  URL.revokeObjectURL(url);
-
-}
+        return;
+    }
 
 
-</script>
-<!-- 🎬 VIDEO GENERATOR -->
-<style>
-#videoGeneratorBox{
-  margin:25px auto;
-  max-width:650px;
-  padding:20px;
-  border-radius:20px;
-  background:white;
-  box-shadow:0 8px 30px rgba(0,0,0,.15);
-  text-align:center;
-}
+    const button =
+        document.getElementById("videoBtn");
 
-#videoGeneratorBox h2{
-  margin-top:0;
-}
+    const status =
+        document.getElementById("status");
 
-#makeVideoBtn{
-  width:100%;
-  padding:15px;
-  border:0;
-  border-radius:14px;
-  background:linear-gradient(135deg,#7b2cff,#0099ff);
-  color:white;
-  font-size:18px;
-  font-weight:bold;
-  cursor:pointer;
-}
+    const video =
+        document.getElementById("video");
 
-#videoStatus{
-  margin:15px 0;
-  font-weight:bold;
-}
+    const download =
+        document.getElementById("downloadBtn");
 
-#videoPreview{
-  width:100%;
-  max-height:400px;
-  border-radius:15px;
-  display:none;
-  background:#111;
-}
 
-#downloadVideoBtn{
-  display:none;
-  margin-top:15px;
-  padding:13px 20px;
-  border-radius:12px;
-  background:#16a34a;
-  color:white;
-  text-decoration:none;
-  font-weight:bold;
-}
-</style>
+    button.disabled = true;
 
-<div id="videoGeneratorBox">
+    button.innerText =
+        "⏳ Video बन रही है...";
 
-  <h2>🎬 Cartoon Video Generator</h2>
 
-  <p>
-    अपनी कहानी को वीडियो में बदलें ✨
-  </p>
+    status.innerText =
+        "🎬 Cartoon Video तैयार हो रही है...";
 
-  <button id="makeVideoBtn">
-    🎬 Video बनाएं
-  </button>
 
-  <div id="videoStatus"></div>
+    /*
+       CANVAS
+    */
 
-  <video id="videoPreview" controls></video>
+    const canvas =
+        document.createElement("canvas");
 
-  <br>
+    canvas.width = 720;
+    canvas.height = 1280;
 
-  <a id="downloadVideoBtn" download="ai-cartoon-video.webm">
-    ⬇️ Video Download करें
-  </a>
 
-</div>
+    const ctx =
+        canvas.getContext("2d");
 
-<script>
-(function(){
 
-const box = document.getElementById("videoGeneratorBox");
-const button = document.getElementById("makeVideoBtn");
-const status = document.getElementById("videoStatus");
-const video = document.getElementById("videoPreview");
-const download = document.getElementById("downloadVideoBtn");
+    /*
+       VIDEO STREAM
+    */
 
-button.addEventListener("click", async function(){
+    const stream =
+        canvas.captureStream(30);
 
-  let textarea =
-    document.querySelector("textarea");
 
-  if(!textarea || !textarea.value.trim()){
-    alert("पहले कहानी लिखें ✍️");
-    return;
-  }
+    let recorder;
 
-  const story = textarea.value.trim();
 
-  status.innerText = "⏳ Video तैयार हो रहा है...";
+    try{
 
-  button.disabled = true;
+        recorder =
+            new MediaRecorder(
+                stream,
+                {
+                    mimeType:"video/webm"
+                }
+            );
 
-  try{
+    }
 
-    const canvas = document.createElement("canvas");
+    catch(error){
 
-    canvas.width = 1280;
-    canvas.height = 720;
+        alert(
+            "आपके Browser में Video Generation Support नहीं है। Chrome इस्तेमाल करें।"
+        );
 
-    const ctx = canvas.getContext("2d");
+        button.disabled = false;
 
-    const stream = canvas.captureStream(30);
+        button.innerText =
+            "🎬 Video Generate करें";
 
-    const recorder = new MediaRecorder(stream,{
-      mimeType:"video/webm"
-    });
+        return;
+    }
+
 
     let chunks = [];
 
-    recorder.ondataavailable = function(e){
-      if(e.data.size > 0){
-        chunks.push(e.data);
-      }
-    };
 
-    recorder.onstop = function(){
+    recorder.ondataavailable =
+        function(event){
 
-      const blob = new Blob(chunks,{
-        type:"video/webm"
-      });
+            if(event.data.size > 0){
 
-      const url = URL.createObjectURL(blob);
+                chunks.push(event.data);
 
-      video.src = url;
-      video.style.display = "block";
+            }
 
-      download.href = url;
-      download.style.display = "inline-block";
+        };
 
-      status.innerText =
-        "✅ Video तैयार है!";
 
-      button.disabled = false;
-    };
+    recorder.onstop =
+        function(){
+
+            const blob =
+                new Blob(
+                    chunks,
+                    {
+                        type:"video/webm"
+                    }
+                );
+
+
+            const url =
+                URL.createObjectURL(blob);
+
+
+            video.src = url;
+
+            video.style.display =
+                "block";
+
+
+            download.href =
+                url;
+
+            download.style.display =
+                "block";
+
+
+            status.innerText =
+                "✅ Video तैयार हो गई!";
+
+
+            button.disabled =
+                false;
+
+
+            button.innerText =
+                "🎬 Video फिर से बनाएं";
+
+
+            video.scrollIntoView({
+                behavior:"smooth"
+            });
+
+        };
+
 
     recorder.start();
 
-    const scenes = story
-      .split(/[।.!?]/)
-      .map(x => x.trim())
-      .filter(x => x.length > 0)
-      .slice(0,8);
 
-    if(scenes.length === 0){
-      scenes.push(story);
-    }
+    /*
+       STORY TEXT
+    */
 
-    for(let i=0;i<scenes.length;i++){
+    let lines =
+        currentStory.match(/.{1,32}/g) || [];
 
-      await drawScene(
-        ctx,
-        scenes[i],
-        i+1,
-        scenes.length
-      );
 
-      await wait(2500);
-    }
+    /*
+       VIDEO LENGTH
+    */
 
-    recorder.stop();
+    const duration =
+        10000;
 
-  }catch(error){
+    const start =
+        Date.now();
 
-    console.error(error);
 
-    status.innerText =
-      "❌ Video बनाने में समस्या हुई।";
+    /*
+       DRAW VIDEO
+    */
 
-    button.disabled = false;
-  }
-
-});
-
-function drawScene(ctx,text,num,total){
-
-  return new Promise(resolve=>{
+    function draw(){
 
-    let start = performance.now();
+        const elapsed =
+            Date.now() - start;
 
-    function animation(now){
 
-      let progress =
-        Math.min((now-start)/600,1);
+        const progress =
+            Math.min(
+                elapsed / duration,
+                1
+            );
 
-      const w = ctx.canvas.width;
-      const h = ctx.canvas.height;
 
-      const gradient =
-        ctx.createLinearGradient(0,0,w,h);
+        /*
+           BACKGROUND
+        */
 
-      gradient.addColorStop(
-        0,
-        "#7b2cff"
-      );
+        const gradient =
+            ctx.createLinearGradient(
+                0,
+                0,
+                720,
+                1280
+            );
 
-      gradient.addColorStop(
-        1,
-        "#00bfff"
-      );
 
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0,0,w,h);
-
-      // clouds
-      ctx.fillStyle =
-        "rgba(255,255,255,.25)";
-
-      ctx.beginPath();
-      ctx.arc(180,130,60,0,Math.PI*2);
-      ctx.arc(240,130,75,0,Math.PI*2);
-      ctx.arc(310,130,55,0,Math.PI*2);
-      ctx.fill();
-
-      // title
-      ctx.fillStyle="white";
-      ctx.font="bold 52px Arial";
-      ctx.textAlign="center";
-
-      ctx.fillText(
-        "🎬 AI Cartoon Story",
-        w/2,
-        100
-      );
-
-      // scene number
-      ctx.font="bold 28px Arial";
-
-      ctx.fillText(
-        "Scene " + num + " / " + total,
-        w/2,
-        160
-      );
-
-      // story
-      ctx.font="36px Arial";
-
-      wrapText(
-        ctx,
-        text,
-        w/2,
-        310,
-        1000,
-        52
-      );
-
-      // child friendly footer
-      ctx.font="28px Arial";
-
-      ctx.fillText(
-        "✨ एक मजेदार कहानी ✨",
-        w/2,
-        650
-      );
-
-      if(progress < 1){
-        requestAnimationFrame(animation);
-      }else{
-        resolve();
-      }
-    }
-
-    requestAnimationFrame(animation);
-  });
-}
-
-function wrapText(
-  ctx,
-  text,
-  x,
-  y,
-  maxWidth,
-  lineHeight
-){
-
-  const words = text.split(" ");
-
-  let line = "";
-
-  for(let n=0;n<words.length;n++){
-
-    const testLine =
-      line + words[n] + " ";
-
-    const width =
-      ctx.measureText(testLine).width;
-
-    if(width > maxWidth && n > 0){
-
-      ctx.fillText(
-        line,
-        x,
-        y
-      );
-
-      line =
-        words[n] + " ";
-
-      y += lineHeight;
-
-    }else{
-
-      line = testLine;
-
-    }
-  }
-
-  ctx.fillText(line,x,y);
-}
-
-function wait(ms){
-  return new Promise(
-    resolve => setTimeout(resolve,ms)
-  );
-}
-
-})();
-    </script>
-  <!-- ================= VIDEO GENERATOR ================= -->
-
-<style>
-.video-box{
-  width:90%;
-  max-width:650px;
-  margin:30px auto;
-  padding:25px;
-  background:#ffffff;
-  border-radius:22px;
-  box-shadow:0 10px 30px rgba(0,0,0,.20);
-  text-align:center;
-}
-
-.video-box h2{
-  color:#222;
-  margin-bottom:10px;
-}
-
-.video-box p{
-  color:#555;
-  font-size:16px;
-}
-
-.video-btn{
-  width:100%;
-  padding:17px;
-  border:0;
-  border-radius:15px;
-  background:linear-gradient(90deg,#7b2cff,#0099ff);
-  color:white;
-  font-size:20px;
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:15px;
-}
-
-.video-btn:active{
-  transform:scale(.98);
-}
-
-#videoStatus{
-  margin-top:15px;
-  font-size:17px;
-  font-weight:bold;
-  color:#333;
-}
-
-#myVideo{
-  width:100%;
-  margin-top:20px;
-  border-radius:15px;
-  display:none;
-  background:#000;
-}
-
-#downloadVideo{
-  display:none;
-  margin-top:15px;
-  padding:14px 22px;
-  background:#16a34a;
-  color:white;
-  border-radius:12px;
-  text-decoration:none;
-  font-weight:bold;
-}
-</style>
-
-
-<div class="video-box">
-
-  <h2>🎬 Cartoon Video Generator</h2>
-
-  <p>
-    अपनी कहानी को Cartoon Video में बदलें ✨
-  </p>
-
-  <button
-    class="video-btn"
-    onclick="createCartoonVideo()">
-    🎬 Video बनाएं
-  </button>
-
-  <div id="videoStatus">
-    कहानी लिखने के बाद Video बनाएं दबाएं
-  </div>
-
-  <video
-    id="myVideo"
-    controls>
-  </video>
-
-  <br>
-
-  <a
-    id="downloadVideo"
-    download="cartoon-video.webm">
-    ⬇️ Video Download करें
-  </a>
-
-</div>
-
-
-<script>
-
-async function createCartoonVideo(){
-
-  const status =
-    document.getElementById("videoStatus");
-
-  const video =
-    document.getElementById("myVideo");
-
-  const download =
-    document.getElementById("downloadVideo");
-
-  status.innerHTML =
-    "⏳ Video तैयार हो रहा है...";
-
-  /*
-   * कहानी ढूँढने की कोशिश
-   */
-
-  let story = "";
-
-  const textareas =
-    document.querySelectorAll("textarea");
-
-  if(textareas.length > 0){
-
-    for(let i=0;i<textareas.length;i++){
-
-      if(textareas[i].value.trim()){
-
-        story =
-          textareas[i].value.trim();
-
-        break;
-      }
-    }
-  }
-
-  /*
-   * अगर कहानी नहीं मिली
-   */
-
-  if(!story){
-
-    story =
-      "एक छोटा बच्चा बारिश में खेल रहा था। " +
-      "उसे एक प्यारी चिड़िया मिली। " +
-      "बच्चे ने चिड़िया की मदद की और दोनों अच्छे दोस्त बन गए।";
-
-    status.innerHTML =
-      "ℹ️ उदाहरण कहानी से Video बनाया जा रहा है...";
-  }
-
-
-  /*
-   * Canvas
-   */
-
-  const canvas =
-    document.createElement("canvas");
-
-  canvas.width = 1280;
-  canvas.height = 720;
-
-  const ctx =
-    canvas.getContext("2d");
-
-
-  /*
-   * Video stream
-   */
-
-  const stream =
-    canvas.captureStream(30);
-
-  let recorder;
-
-  try{
-
-    recorder =
-      new MediaRecorder(stream,{
-        mimeType:"video/webm"
-      });
-
-  }catch(e){
-
-    recorder =
-      new MediaRecorder(stream);
-  }
-
-
-  const chunks = [];
-
-
-  recorder.ondataavailable =
-    function(event){
-
-      if(event.data.size > 0){
-
-        chunks.push(event.data);
-      }
-    };
-
-
-  recorder.onstop =
-    function(){
-
-      const blob =
-        new Blob(
-          chunks,
-          {type:"video/webm"}
+        gradient.addColorStop(
+            0,
+            "#7b2cff"
         );
 
-      const url =
-        URL.createObjectURL(blob);
+        gradient.addColorStop(
+            0.5,
+            "#008cff"
+        );
 
-      video.src = url;
+        gradient.addColorStop(
+            1,
+            "#00c6ff"
+        );
 
-      video.style.display =
-        "block";
 
-      download.href =
-        url;
+        ctx.fillStyle =
+            gradient;
 
-      download.style.display =
-        "inline-block";
+        ctx.fillRect(
+            0,
+            0,
+            720,
+            1280
+        );
 
-      status.innerHTML =
-        "✅ आपका Video तैयार है! 🎉";
-    };
 
+        /*
+           TITLE
+        */
 
-  recorder.start();
+        ctx.fillStyle =
+            "white";
 
+        ctx.textAlign =
+            "center";
 
-  /*
-   * कहानी को Scenes में बाँटना
-   */
+        ctx.font =
+            "bold 52px Arial";
 
-  let scenes =
-    story
-      .split(/[।.!?]/)
-      .map(x => x.trim())
-      .filter(x => x.length > 0);
 
+        ctx.fillText(
+            "🎬 AI Cartoon Story",
+            360,
+            150
+        );
 
-  if(scenes.length === 0){
 
-    scenes = [story];
-  }
+        /*
+           CHARACTER
+        */
 
+        ctx.font =
+            "100px Arial";
 
-  /*
-   * Maximum 8 scenes
-   */
+        ctx.fillText(
+            "🧒",
+            360,
+            330
+        );
 
-  scenes =
-    scenes.slice(0,8);
 
+        /*
+           STORY
+        */
 
-  /*
-   * हर Scene
-   */
+        ctx.font =
+            "bold 30px Arial";
 
-  for(let i=0;i<scenes.length;i++){
 
-    drawScene(
-      ctx,
-      scenes[i],
-      i+1,
-      scenes.length
-    );
+        const visible =
+            Math.floor(
+                lines.length * progress
+            );
 
-    await sleep(2500);
-  }
 
+        for(
+            let i=0;
+            i<visible && i<14;
+            i++
+        ){
 
-  recorder.stop();
+            ctx.fillText(
+                lines[i],
+                360,
+                470 + i*48
+            );
 
-}
+        }
 
 
-function drawScene(
-  ctx,
-  text,
-  number,
-  total
-){
+        /*
+           FOOTER
+        */
 
-  const w =
-    ctx.canvas.width;
+        ctx.font =
+            "28px Arial";
 
-  const h =
-    ctx.canvas.height;
 
+        ctx.fillText(
+            "✨ बच्चों के लिए मजेदार कहानी ✨",
+            360,
+            1150
+        );
 
-  /*
-   * Background
-   */
 
-  const gradient =
-    ctx.createLinearGradient(
-      0,0,w,h
-    );
+        if(progress < 1){
 
-  gradient.addColorStop(
-    0,
-    "#6c2cff"
-  );
+            requestAnimationFrame(draw);
 
-  gradient.addColorStop(
-    1,
-    "#00aaff"
-  );
+        }
 
-  ctx.fillStyle =
-    gradient;
+        else{
 
-  ctx.fillRect(
-    0,0,w,h
-  );
+            recorder.stop();
 
-
-  /*
-   * Cartoon Sun
-   */
-
-  ctx.fillStyle =
-    "#FFD93D";
-
-  ctx.beginPath();
-
-  ctx.arc(
-    1050,
-    130,
-    65,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fill();
-
-
-  /*
-   * Clouds
-   */
-
-  ctx.fillStyle =
-    "rgba(255,255,255,.75)";
-
-  cloud(ctx,200,150);
-  cloud(ctx,430,110);
-  cloud(ctx,700,170);
-
-
-  /*
-   * Title
-   */
-
-  ctx.fillStyle =
-    "white";
-
-  ctx.textAlign =
-    "center";
-
-  ctx.font =
-    "bold 55px Arial";
-
-  ctx.fillText(
-    "🎬 AI Cartoon Story",
-    w/2,
-    90
-  );
-
-
-  /*
-   * Scene number
-   */
-
-  ctx.font =
-    "bold 28px Arial";
-
-  ctx.fillText(
-    "Scene " +
-    number +
-    " / " +
-    total,
-    w/2,
-    145
-  );
-
-
-  /*
-   * Story text
-   */
-
-  ctx.font =
-    "36px Arial";
-
-  drawWrappedText(
-    ctx,
-    text,
-    w/2,
-    320,
-    1000,
-    55
-  );
-
-
-  /*
-   * Footer
-   */
-
-  ctx.font =
-    "28px Arial";
-
-  ctx.fillText(
-    "✨ मजेदार Cartoon कहानी ✨",
-    w/2,
-    650
-  );
-
-}
-
-
-function cloud(ctx,x,y){
-
-  ctx.fillStyle =
-    "rgba(255,255,255,.75)";
-
-  ctx.beginPath();
-
-  ctx.arc(
-    x,
-    y,
-    45,
-    0,
-    Math.PI*2
-  );
-
-  ctx.arc(
-    x+55,
-    y-20,
-    60,
-    0,
-    Math.PI*2
-  );
-
-  ctx.arc(
-    x+120,
-    y,
-    45,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fill();
-
-}
-
-
-function drawWrappedText(
-  ctx,
-  text,
-  x,
-  y,
-  maxWidth,
-  lineHeight
-){
-
-  const words =
-    text.split(" ");
-
-  let line = "";
-
-  for(
-    let i=0;
-    i<words.length;
-    i++
-  ){
-
-    const test =
-      line +
-      words[i] +
-      " ";
-
-    const width =
-      ctx.measureText(test).width;
-
-    if(
-      width > maxWidth &&
-      i > 0
-    ){
-
-      ctx.fillText(
-        line,
-        x,
-        y
-      );
-
-      line =
-        words[i] + " ";
-
-      y += lineHeight;
-
-    }else{
-
-      line = test;
+        }
 
     }
-  }
-
-  ctx.fillText(
-    line,
-    x,
-    y
-  );
-
-}
 
 
-function sleep(ms){
-
-  return new Promise(
-    resolve =>
-      setTimeout(resolve,ms)
-  );
+    draw();
 
 }
 
 </script>
 
-<!-- ================= END VIDEO GENERATOR ================= -->
-  <!-- 🎬 VIDEO GENERATOR -->
-<div id="videoBox" style="
-margin:20px;
-padding:20px;
-background:white;
-border-radius:20px;
-text-align:center;
-box-shadow:0 5px 20px #0002;
-">
-  <h2 style="color:#7b2cff;">🎬 Cartoon Video बनाएं</h2>
-
-  <button id="makeVideoBtn" style="
-  width:100%;
-  padding:16px;
-  border:0;
-  border-radius:15px;
-  background:linear-gradient(90deg,#7b2cff,#009dff);
-  color:white;
-  font-size:18px;
-  font-weight:bold;
-  ">
-  🎬 Video बनाएं
-  </button>
-
-  <p id="videoStatus" style="margin-top:15px;"></p>
-
-  <video id="resultVideo"
-    controls
-    style="display:none;width:100%;border-radius:15px;margin-top:15px;">
-  </video>
-
-  <a id="downloadVideo"
-     style="
-     display:none;
-     margin-top:15px;
-     padding:14px;
-     background:#222;
-     color:white;
-     border-radius:12px;
-     text-decoration:none;
-     ">
-     ⬇️ Video Download करें
-  </a>
-</div>
-
-<script>
-document.getElementById("makeVideoBtn").addEventListener("click", async function(){
-
-  const btn = this;
-  const status = document.getElementById("videoStatus");
-  const video = document.getElementById("resultVideo");
-  const download = document.getElementById("downloadVideo");
-
-  btn.disabled = true;
-  btn.innerText = "⏳ Video बन रही है...";
-  status.innerText = "🎬 कृपया थोड़ा इंतजार करें...";
-
-  const story =
-    document.querySelector("textarea")?.value ||
-    "एक प्यारी सी कार्टून कहानी";
-
-  const canvas = document.createElement("canvas");
-  canvas.width = 720;
-  canvas.height = 1280;
-
-  const ctx = canvas.getContext("2d");
-
-  const stream = canvas.captureStream(30);
-
-  const recorder = new MediaRecorder(stream, {
-    mimeType: "video/webm"
-  });
-
-  const chunks = [];
-
-  recorder.ondataavailable = e => {
-    if(e.data.size > 0) chunks.push(e.data);
-  };
-
-  recorder.onstop = () => {
-
-    const blob = new Blob(chunks, {
-      type:"video/webm"
-    });
-
-    const url = URL.createObjectURL(blob);
-
-    video.src = url;
-    video.style.display = "block";
-
-    download.href = url;
-    download.download = "ai-cartoon-story.webm";
-    download.style.display = "inline-block";
-
-    status.innerText = "✅ Video तैयार है!";
-
-    btn.disabled = false;
-    btn.innerText = "🎬 Video फिर से बनाएं";
-  };
-
-  recorder.start();
-
-  const start = Date.now();
-  const duration = 8000;
-
-  function draw(){
-
-    const elapsed = Date.now() - start;
-    const progress = Math.min(elapsed / duration, 1);
-
-    const gradient = ctx.createLinearGradient(
-      0,0,720,1280
-    );
-
-    gradient.addColorStop(0,"#7b2cff");
-    gradient.addColorStop(1,"#00bfff");
-
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0,0,720,1280);
-
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
-
-    ctx.font = "bold 52px Arial";
-    ctx.fillText("🎬 AI Cartoon Story",360,180);
-
-    ctx.font = "bold 36px Arial";
-
-    const words = story.substring(0,180).match(/.{1,25}/g) || [];
-
-    words.forEach((line,i)=>{
-      ctx.fillText(
-        line,
-        360,
-        350 + i*60
-      );
-    });
-
-    ctx.font = "28px Arial";
-    ctx.fillText(
-      "✨ बच्चों के लिए मजेदार कहानी ✨",
-      360,
-      1100
-    );
-
-    if(progress < 1){
-      requestAnimationFrame(draw);
-    }else{
-      recorder.stop();
-    }
-  }
-
-  draw();
-});
-</script>
 </body>
 </html>
