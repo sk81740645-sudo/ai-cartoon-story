@@ -1446,5 +1446,160 @@ function sleep(ms){
 </script>
 
 <!-- ================= END VIDEO GENERATOR ================= -->
+  <!-- 🎬 VIDEO GENERATOR -->
+<div id="videoBox" style="
+margin:20px;
+padding:20px;
+background:white;
+border-radius:20px;
+text-align:center;
+box-shadow:0 5px 20px #0002;
+">
+  <h2 style="color:#7b2cff;">🎬 Cartoon Video बनाएं</h2>
+
+  <button id="makeVideoBtn" style="
+  width:100%;
+  padding:16px;
+  border:0;
+  border-radius:15px;
+  background:linear-gradient(90deg,#7b2cff,#009dff);
+  color:white;
+  font-size:18px;
+  font-weight:bold;
+  ">
+  🎬 Video बनाएं
+  </button>
+
+  <p id="videoStatus" style="margin-top:15px;"></p>
+
+  <video id="resultVideo"
+    controls
+    style="display:none;width:100%;border-radius:15px;margin-top:15px;">
+  </video>
+
+  <a id="downloadVideo"
+     style="
+     display:none;
+     margin-top:15px;
+     padding:14px;
+     background:#222;
+     color:white;
+     border-radius:12px;
+     text-decoration:none;
+     ">
+     ⬇️ Video Download करें
+  </a>
+</div>
+
+<script>
+document.getElementById("makeVideoBtn").addEventListener("click", async function(){
+
+  const btn = this;
+  const status = document.getElementById("videoStatus");
+  const video = document.getElementById("resultVideo");
+  const download = document.getElementById("downloadVideo");
+
+  btn.disabled = true;
+  btn.innerText = "⏳ Video बन रही है...";
+  status.innerText = "🎬 कृपया थोड़ा इंतजार करें...";
+
+  const story =
+    document.querySelector("textarea")?.value ||
+    "एक प्यारी सी कार्टून कहानी";
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 720;
+  canvas.height = 1280;
+
+  const ctx = canvas.getContext("2d");
+
+  const stream = canvas.captureStream(30);
+
+  const recorder = new MediaRecorder(stream, {
+    mimeType: "video/webm"
+  });
+
+  const chunks = [];
+
+  recorder.ondataavailable = e => {
+    if(e.data.size > 0) chunks.push(e.data);
+  };
+
+  recorder.onstop = () => {
+
+    const blob = new Blob(chunks, {
+      type:"video/webm"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    video.src = url;
+    video.style.display = "block";
+
+    download.href = url;
+    download.download = "ai-cartoon-story.webm";
+    download.style.display = "inline-block";
+
+    status.innerText = "✅ Video तैयार है!";
+
+    btn.disabled = false;
+    btn.innerText = "🎬 Video फिर से बनाएं";
+  };
+
+  recorder.start();
+
+  const start = Date.now();
+  const duration = 8000;
+
+  function draw(){
+
+    const elapsed = Date.now() - start;
+    const progress = Math.min(elapsed / duration, 1);
+
+    const gradient = ctx.createLinearGradient(
+      0,0,720,1280
+    );
+
+    gradient.addColorStop(0,"#7b2cff");
+    gradient.addColorStop(1,"#00bfff");
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0,0,720,1280);
+
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+
+    ctx.font = "bold 52px Arial";
+    ctx.fillText("🎬 AI Cartoon Story",360,180);
+
+    ctx.font = "bold 36px Arial";
+
+    const words = story.substring(0,180).match(/.{1,25}/g) || [];
+
+    words.forEach((line,i)=>{
+      ctx.fillText(
+        line,
+        360,
+        350 + i*60
+      );
+    });
+
+    ctx.font = "28px Arial";
+    ctx.fillText(
+      "✨ बच्चों के लिए मजेदार कहानी ✨",
+      360,
+      1100
+    );
+
+    if(progress < 1){
+      requestAnimationFrame(draw);
+    }else{
+      recorder.stop();
+    }
+  }
+
+  draw();
+});
+</script>
 </body>
 </html>
