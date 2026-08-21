@@ -4,733 +4,469 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>AI Cartoon Story Maker</title>
+<title>Student AI Helper India</title>
 
 <style>
-
 *{
     box-sizing:border-box;
-    margin:0;
-    padding:0;
 }
 
 body{
+    margin:0;
     font-family:Arial,sans-serif;
-    min-height:100vh;
-    background:linear-gradient(135deg,#7b2cff,#008cff,#00c6ff);
-    color:#222;
+    background:#f4f7fb;
+    color:#172033;
 }
 
-.header{
-    text-align:center;
+header{
+    background:linear-gradient(135deg,#4527a0,#6c4cff);
     color:white;
-    padding:35px 15px 25px;
+    padding:22px 18px;
+    text-align:center;
 }
 
-.header h1{
-    font-size:38px;
-    margin-bottom:12px;
+header h1{
+    margin:0;
+    font-size:28px;
 }
 
-.header p{
-    font-size:20px;
-    line-height:1.5;
+header p{
+    margin:8px 0 0;
+    opacity:.9;
 }
 
 .container{
-    width:94%;
-    max-width:700px;
+    max-width:900px;
     margin:auto;
+    padding:20px;
 }
 
 .card{
     background:white;
-    border-radius:25px;
-    padding:25px;
-    box-shadow:0 10px 35px rgba(0,0,0,.2);
-    margin-bottom:25px;
+    border-radius:22px;
+    padding:22px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
 }
 
-.label{
-    display:block;
-    font-size:22px;
-    font-weight:bold;
-    margin-bottom:12px;
+h2{
+    margin-top:0;
 }
 
+input,
 textarea{
     width:100%;
-    height:180px;
-    border:3px solid #ddd;
-    border-radius:20px;
-    padding:18px;
-    font-size:20px;
-    resize:vertical;
+    padding:16px;
+    border:1px solid #d8deea;
+    border-radius:14px;
+    font-size:16px;
+    margin:8px 0 14px;
     outline:none;
 }
 
-textarea:focus{
-    border-color:#7b2cff;
+textarea{
+    min-height:150px;
+    resize:vertical;
 }
 
-.mainBtn{
-    width:100%;
-    margin-top:20px;
-    padding:18px;
-    border:none;
-    border-radius:18px;
-    background:linear-gradient(90deg,#7b2cff,#008cff);
-    color:white;
-    font-size:21px;
+button{
+    border:0;
+    border-radius:14px;
+    padding:14px 20px;
+    font-size:16px;
     font-weight:bold;
     cursor:pointer;
 }
 
-.mainBtn:active{
-    transform:scale(.98);
-}
-
-.storyBox{
-    display:none;
-    background:#fafafa;
-    border-radius:22px;
-    padding:25px;
-    margin-top:25px;
-}
-
-.storyTitle{
-    color:#7b2cff;
-    font-size:27px;
-    margin-bottom:18px;
-}
-
-.storyText{
-    font-size:20px;
-    line-height:1.9;
-    white-space:pre-line;
-}
-
-.copyBtn{
-    width:100%;
-    padding:16px;
-    margin-top:20px;
-    border:none;
-    border-radius:15px;
-    background:#222;
+.primary{
+    background:#5140e8;
     color:white;
-    font-size:19px;
-    font-weight:bold;
 }
 
-.videoSection{
-    display:none;
-    background:white;
-    border-radius:25px;
-    padding:25px;
-    margin-bottom:30px;
-    box-shadow:0 10px 35px rgba(0,0,0,.2);
-}
-
-.videoSection h2{
-    color:#7b2cff;
-    text-align:center;
-    margin-bottom:15px;
-}
-
-.videoBtn{
-    width:100%;
-    padding:18px;
-    border:none;
-    border-radius:17px;
-    background:linear-gradient(90deg,#ff0080,#7928ff);
+.success{
+    background:#0a9f58;
     color:white;
-    font-size:21px;
-    font-weight:bold;
+}
+
+.logout{
+    background:#e53935;
+    color:white;
+}
+
+button:disabled{
+    opacity:.6;
+}
+
+.login-box{
+    max-width:600px;
+    margin:30px auto;
+}
+
+#app{
+    display:none;
+}
+
+.answer{
+    background:#f1f5ff;
+    border-left:5px solid #5140e8;
+    padding:20px;
+    border-radius:14px;
+    line-height:1.7;
+    white-space:pre-wrap;
 }
 
 .status{
-    text-align:center;
-    margin:15px 0;
-    font-size:17px;
-    font-weight:bold;
+    padding:12px;
+    border-radius:10px;
+    margin-top:10px;
+    display:none;
 }
 
-video{
-    width:100%;
+.features{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.feature{
+    background:white;
     border-radius:18px;
-    display:none;
-    margin-top:15px;
-    background:#111;
-}
-
-.downloadBtn{
-    display:none;
-    width:100%;
-    text-align:center;
-    padding:16px;
-    margin-top:15px;
-    background:#222;
-    color:white;
-    border-radius:15px;
-    text-decoration:none;
-    font-size:19px;
-    font-weight:bold;
-}
-
-.footer{
-    color:white;
-    text-align:center;
     padding:20px;
-    font-size:16px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
 }
 
+.feature span{
+    font-size:38px;
+}
+
+@media(max-width:600px){
+    .features{
+        grid-template-columns:1fr;
+    }
+
+    header h1{
+        font-size:23px;
+    }
+}
 </style>
 </head>
 
-
 <body>
 
-<div class="header">
+<header>
+    <h1>🎓 Student AI Helper India</h1>
+    <p>पढ़ाई को आसान बनाएं 🤖📚</p>
+</header>
 
-    <h1>🎬 AI Cartoon Story</h1>
 
-    <p>
-        ✨ अपनी कहानी बनाइए और Cartoon Video के लिए तैयार कीजिए
-    </p>
+<!-- LOGIN -->
+<div id="loginBox" class="container">
+
+    <div class="card login-box">
+
+        <h2>👨‍🎓 Student Login</h2>
+
+        <label>Email</label>
+        <input
+            type="email"
+            id="email"
+            placeholder="अपना Email लिखें"
+        >
+
+        <label>Password</label>
+        <input
+            type="password"
+            id="password"
+            placeholder="Password लिखें"
+        >
+
+        <button
+            class="primary"
+            id="createBtn"
+            onclick="createAccount()"
+        >
+            📝 Create Account
+        </button>
+
+        <br><br>
+
+        <button
+            class="success"
+            id="loginBtn"
+            onclick="loginUser()"
+        >
+            🔐 Login
+        </button>
+
+        <div id="loginStatus" class="status"></div>
+
+    </div>
 
 </div>
 
+
+<!-- MAIN APP -->
+<div id="app">
 
 <div class="container">
 
-    <!-- STORY INPUT -->
-
     <div class="card">
 
-        <label class="label">
-            📝 कहानी का विषय लिखें
-        </label>
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+        ">
+
+            <div>
+                <h2>🤖 अपना सवाल पूछें</h2>
+                <p>
+                    कोई भी Question लिखें और उसे आसान भाषा में समझें।
+                </p>
+            </div>
+
+            <button
+                class="logout"
+                onclick="logoutUser()"
+            >
+                Logout
+            </button>
+
+        </div>
+
 
         <textarea
-            id="topic"
-            placeholder="जैसे: राजा और घोड़े की कहानी"
+            id="question"
+            placeholder="जैसे: Photosynthesis क्या है?"
         ></textarea>
 
+
         <button
-            class="mainBtn"
-            onclick="createStory()"
+            class="primary"
+            id="askBtn"
+            onclick="askGemini()"
         >
-            ✨ कहानी बनाएं
+            ✨ समझाओ
         </button>
+
+
+        <div id="aiStatus" class="status"></div>
+
+
+        <br>
+
+
+        <div id="answerBox" class="answer">
+            🤖 यहाँ आपके सवाल का आसान जवाब आएगा।
+        </div>
 
     </div>
 
 
-    <!-- STORY -->
+    <!-- FEATURES -->
 
-    <div
-        class="storyBox"
-        id="storyBox"
-    >
+    <div class="features">
 
-        <h2 class="storyTitle">
-            📖 आपकी Cartoon Story
-        </h2>
+        <div class="feature">
+            <span>📚</span>
+            <h3>Chapter Summary</h3>
+            <p>Chapter को आसान बनाएं</p>
+        </div>
 
-        <div
-            class="storyText"
-            id="storyText"
-        ></div>
+        <div class="feature">
+            <span>❓</span>
+            <h3>Question Generator</h3>
+            <p>Questions बनाएं</p>
+        </div>
 
-        <button
-            class="copyBtn"
-            onclick="copyStory()"
-        >
-            📋 कहानी Copy करें
-        </button>
+        <div class="feature">
+            <span>📝</span>
+            <h3>Notes Maker</h3>
+            <p>Short Notes बनाएं</p>
+        </div>
 
-    </div>
-
-
-    <!-- VIDEO -->
-
-    <div
-        class="videoSection"
-        id="videoSection"
-    >
-
-        <h2>
-            🎬 Cartoon Video बनाएं
-        </h2>
-
-        <p
-            style="
-            text-align:center;
-            margin-bottom:18px;
-            color:#555;
-            "
-        >
-            अपनी बनाई हुई कहानी का वीडियो तैयार करें
-        </p>
-
-        <button
-            class="videoBtn"
-            id="videoBtn"
-            onclick="generateVideo()"
-        >
-            🎬 Video Generate करें
-        </button>
-
-        <div
-            class="status"
-            id="status"
-        ></div>
-
-        <video
-            id="video"
-            controls
-        ></video>
-
-        <a
-            id="downloadBtn"
-            class="downloadBtn"
-            download="ai-cartoon-story.webm"
-        >
-            ⬇️ Video Download करें
-        </a>
+        <div class="feature">
+            <span>🎯</span>
+            <h3>MCQ Test</h3>
+            <p>अपना Test लें</p>
+        </div>
 
     </div>
 
 </div>
 
-
-<div class="footer">
-
-    ❤️ AI Cartoon Story • बच्चों के लिए मजेदार कहानियां
-
 </div>
 
 
+<!-- FIREBASE + GEMINI -->
+<script type="module">
 
-<script>
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-/* =========================
-   STORY GENERATOR
-========================= */
-
-let currentStory = "";
-
-
-function createStory(){
-
-    const topic =
-        document.getElementById("topic").value.trim();
-
-    if(topic === ""){
-
-        alert("कृपया पहले कहानी का विषय लिखें।");
-
-        return;
-    }
-
-
-    currentStory =
-`एक दिन ${topic} की एक बहुत प्यारी कहानी शुरू हुई।
-
-एक छोटा बच्चा अपने दोस्तों के साथ खेल रहा था।
-अचानक उसे एक सुंदर और अनोखी चीज दिखाई दी।
-
-बच्चे ने ध्यान से देखा और उसके पास गया।
-वह बहुत खुश हुआ और उसने अपने दोस्तों को भी बुलाया।
-
-सभी दोस्तों ने मिलकर उस चीज की मदद करने का फैसला किया।
-
-उन्होंने मिलकर मेहनत की और आखिरकार समस्या हल हो गई।
-
-सब बच्चे बहुत खुश हुए और एक-दूसरे से बोले कि हमें हमेशा दूसरों की मदद करनी चाहिए।
-
-उस दिन बच्चों ने सीखा कि दोस्ती, प्यार और मदद करने से हर मुश्किल आसान हो सकती है।
-
-सीख:
-हमें हमेशा दूसरों की मदद करनी चाहिए और अपने दोस्तों के साथ प्यार से रहना चाहिए।`;
-
-
-    document.getElementById("storyText").innerText =
-        currentStory;
-
-    document.getElementById("storyBox").style.display =
-        "block";
-
-    document.getElementById("videoSection").style.display =
-        "block";
-
-
-    document.getElementById("videoSection")
-        .scrollIntoView({
-            behavior:"smooth"
-        });
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
 }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 
-/* =========================
-   COPY STORY
-========================= */
+// ================================
+// FIREBASE CONFIG
+// ================================
 
-function copyStory(){
-
-    if(!currentStory){
-
-        alert("पहले कहानी बनाएं।");
-
-        return;
-    }
-
-    navigator.clipboard.writeText(currentStory)
-    .then(function(){
-
-        alert("✅ कहानी Copy हो गई!");
-
-    })
-    .catch(function(){
-
-        alert("कहानी Copy नहीं हो पाई।");
-
-    });
-
-}
+const firebaseConfig = {
+  apiKey: "AIzaSyAfvCTOabGcjX_1PpS046d-nR702qzsYp8",
+  authDomain: "student-ai-helper-india.firebaseapp.com",
+  projectId: "student-ai-helper-india",
+  storageBucket: "student-ai-helper-india.firebasestorage.app",
+  messagingSenderId: "494220803173",
+  appId: "1:494220803173:web:48326bc8322bcf652dda8c",
+  measurementId: "G-9WVQ0YJH92"
+};
 
 
-/* =========================
-   VIDEO GENERATOR
-========================= */
+// ================================
+// FIREBASE START
+// ================================
 
-function generateVideo(){
-
-    if(!currentStory){
-
-        alert("पहले कहानी बनाएं।");
-
-        return;
-    }
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 
-    const button =
-        document.getElementById("videoBtn");
+// ================================
+// CREATE ACCOUNT
+// ================================
 
-    const status =
-        document.getElementById("status");
+window.createAccount = async function () {
 
-    const video =
-        document.getElementById("video");
+  const email =
+    document.getElementById("email").value.trim();
 
-    const download =
-        document.getElementById("downloadBtn");
+  const password =
+    document.getElementById("password").value;
 
+  if (!email || !password) {
+    alert("❌ Email और Password डालें");
+    return;
+  }
 
-    button.disabled = true;
+  if (password.length < 6) {
+    alert("❌ Password कम से कम 6 characters का होना चाहिए");
+    return;
+  }
 
-    button.innerText =
-        "⏳ Video बन रही है...";
+  try {
 
+    await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+document.getElementById("loginStatus").innerText =
+console.log("🎉 Account सफलतापूर्वक बन गया!");
+document.getElementById("loginStatus").style.display = "block";
+    
 
-    status.innerText =
-        "🎬 Cartoon Video तैयार हो रही है...";
+  } catch (error) {
 
+    if (error.code === "auth/email-already-in-use") {
 
-    /*
-       CANVAS
-    */
+      alert("⚠️ यह Email पहले से मौजूद है। Login करें।");
 
-    const canvas =
-        document.createElement("canvas");
+    } else {
 
-    canvas.width = 720;
-    canvas.height = 1280;
-
-
-    const ctx =
-        canvas.getContext("2d");
-
-
-    /*
-       VIDEO STREAM
-    */
-
-    const stream =
-        canvas.captureStream(30);
-
-
-    let recorder;
-
-
-    try{
-
-        recorder =
-            new MediaRecorder(
-                stream,
-                {
-                    mimeType:"video/webm"
-                }
-            );
+      alert("❌ Account नहीं बना: " + error.message);
 
     }
 
-    catch(error){
+  }
 
-        alert(
-            "आपके Browser में Video Generation Support नहीं है। Chrome इस्तेमाल करें।"
-        );
+};
 
-        button.disabled = false;
 
-        button.innerText =
-            "🎬 Video Generate करें";
+// ================================
+// LOGIN
+// ================================
 
-        return;
-    }
+window.loginUser = async function () {
 
+  const email =
+    document.getElementById("email").value.trim();
 
-    let chunks = [];
+  const password =
+    document.getElementById("password").value;
 
+  if (!email || !password) {
+    alert("❌ Email और Password डालें");
+    return;
+  }
 
-    recorder.ondataavailable =
-        function(event){
+  try {
 
-            if(event.data.size > 0){
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
-                chunks.push(event.data);
+    alert("✅ Login सफल हुआ!");
 
-            }
+  } catch (error) {
 
-        };
+    alert("❌ Login नहीं हुआ: " + error.message);
 
+  }
 
-    recorder.onstop =
-        function(){
+};
 
-            const blob =
-                new Blob(
-                    chunks,
-                    {
-                        type:"video/webm"
-                    }
-                );
 
+// ================================
+// LOGOUT
+// ================================
 
-            const url =
-                URL.createObjectURL(blob);
+window.logoutUser = async function () {
 
+  await signOut(auth);
 
-            video.src = url;
+};
 
-            video.style.display =
-                "block";
 
+// ================================
+// LOGIN STATUS
+// ================================
+onAuthStateChanged(auth, (user) => {
 
-            download.href =
-                url;
+  const loginBox = document.getElementById("loginBox");
+  const appBox = document.getElementById("app");
 
-            download.style.display =
-                "block";
+  if (user) {
 
+    // Login होने के बाद Login screen छुपाओ
+    loginBox.style.display = "none";
 
-            status.innerText =
-                "✅ Video तैयार हो गई!";
+    // Main Student AI Helper दिखाओ
+    appBox.style.display = "block";
 
+    console.log("✅ User Login:", user.email);
 
-            button.disabled =
-                false;
+  } else {
 
+    // Logout होने पर Login screen दिखाओ
+    loginBox.style.display = "block";
 
-            button.innerText =
-                "🎬 Video फिर से बनाएं";
+    // Main App छुपाओ
+    appBox.style.display = "none";
 
+  }
 
-            video.scrollIntoView({
-                behavior:"smooth"
-            });
-
-        };
-
-
-    recorder.start();
-
-
-    /*
-       STORY TEXT
-    */
-
-    let lines =
-        currentStory.match(/.{1,32}/g) || [];
-
-
-    /*
-       VIDEO LENGTH
-    */
-
-    const duration =
-        10000;
-
-    const start =
-        Date.now();
-
-
-    /*
-       DRAW VIDEO
-    */
-
-    function draw(){
-
-        const elapsed =
-            Date.now() - start;
-
-
-        const progress =
-            Math.min(
-                elapsed / duration,
-                1
-            );
-
-
-        /*
-           BACKGROUND
-        */
-
-        const gradient =
-            ctx.createLinearGradient(
-                0,
-                0,
-                720,
-                1280
-            );
-
-
-        gradient.addColorStop(
-            0,
-            "#7b2cff"
-        );
-
-        gradient.addColorStop(
-            0.5,
-            "#008cff"
-        );
-
-        gradient.addColorStop(
-            1,
-            "#00c6ff"
-        );
-
-
-        ctx.fillStyle =
-            gradient;
-
-        ctx.fillRect(
-            0,
-            0,
-            720,
-            1280
-        );
-
-
-        /*
-           TITLE
-        */
-
-        ctx.fillStyle =
-            "white";
-
-        ctx.textAlign =
-            "center";
-
-        ctx.font =
-            "bold 52px Arial";
-
-
-        ctx.fillText(
-            "🎬 AI Cartoon Story",
-            360,
-            150
-        );
-
-
-        /*
-           CHARACTER
-        */
-
-        ctx.font =
-            "100px Arial";
-
-        ctx.fillText(
-            "🧒",
-            360,
-            330
-        );
-
-
-        /*
-           STORY
-        */
-
-        ctx.font =
-            "bold 30px Arial";
-
-
-        const visible =
-            Math.floor(
-                lines.length * progress
-            );
-
-
-        for(
-            let i=0;
-            i<visible && i<14;
-            i++
-        ){
-
-            ctx.fillText(
-                lines[i],
-                360,
-                470 + i*48
-            );
-
-        }
-
-
-        /*
-           FOOTER
-        */
-
-        ctx.font =
-            "28px Arial";
-
-
-        ctx.fillText(
-            "✨ बच्चों के लिए मजेदार कहानी ✨",
-            360,
-            1150
-        );
-
-
-        if(progress < 1){
-
-            requestAnimationFrame(draw);
-
-        }
-
-        else{
-
-            recorder.stop();
-
-        }
-
-    }
-
-
-    draw();
-
-}
-
+});
 </script>
-
 </body>
 </html>
