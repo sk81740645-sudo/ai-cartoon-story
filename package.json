@@ -1,0 +1,12 @@
+{
+  "name": "ai-cartoon-story",
+  "version": "1.0.0",
+  "description": "AI Cartoon Story Maker",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
