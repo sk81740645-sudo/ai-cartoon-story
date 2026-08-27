@@ -1,32 +1,31 @@
 const express = require("express");
-const cors = require("cors");
+const path = require("path");
 const OpenAI = require("openai");
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.use(cors());
 app.use(express.json());
+app.use(express.static(__dirname));
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-app.get("/", (req, res) => {
-  res.send("BaatAI Backend is running 🤖");
-});
-
-app.post("/chat", async (req, res) => {
+app.post("/api/chat", async (req, res) => {
   try {
     const message = req.body.message;
 
-    if (!message) {
+    if (!message || !message.trim()) {
       return res.status(400).json({
-        error: "Message is required"
+        error: "Message खाली है"
       });
     }
 
     const response = await client.responses.create({
-      model: "gpt-5-mini",
+      model: "gpt-5.5",
+      instructions:
+        "आप BaatAI हैं। हिंदी में दोस्ताना, आसान और उपयोगी जवाब दें। जरूरत होने पर Hinglish भी समझें।",
       input: message
     });
 
@@ -35,16 +34,18 @@ app.post("/chat", async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("OpenAI Error:", error);
 
     res.status(500).json({
-      error: "AI response नहीं मिल पाया।"
+      error: "AI से जवाब लेने में समस्या हुई।"
     });
   }
 });
 
-const PORT = process.env.PORT || 3000;
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
 app.listen(PORT, () => {
-  console.log(`BaatAI server running on port ${PORT}`);
+  console.log(`BaatAI running on port ${PORT}`);
 });
