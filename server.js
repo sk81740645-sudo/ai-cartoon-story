@@ -23,7 +23,7 @@ app.post("/api/chat", async (req, res) => {
     }
 
     const response = await client.responses.create({
-      model: "gpt-5.5",
+      model: "gpt-5.6",
       instructions:
         "आप BaatAI हैं। हिंदी में दोस्ताना, आसान और उपयोगी जवाब दें। जरूरत होने पर Hinglish भी समझें।",
       input: message
