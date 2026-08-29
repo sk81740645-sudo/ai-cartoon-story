@@ -1,335 +1,214 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>BaatAI - AI Chatbot</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-body{
-  width:100%;
-  height:100vh;
-  overflow:hidden;
-  background:#f5f7fb;
+body {
+  font-family: Arial, sans-serif;
+  background: #0f0f12;
+  color: white;
+  height: 100vh;
 }
 
-.app{
-  width:100%;
-  height:100vh;
-  display:flex;
+.app {
+  display: flex;
+  height: 100vh;
 }
 
-.sidebar{
-  width:260px;
-  height:100vh;
-  background:#111827;
-  color:#fff;
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  flex-shrink:0;
-  transition:.3s;
+/* SIDEBAR */
+
+.sidebar {
+  width: 250px;
+  background: #17171c;
+  border-right: 1px solid #292930;
+  padding: 20px;
 }
 
-.logo{
-  font-size:28px;
-  font-weight:bold;
-  margin-bottom:28px;
+.logo {
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 30px;
 }
 
-.logo span{
-  color:#00bfff;
+.new-chat {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #444;
+  border-radius: 10px;
+  background: #222229;
+  color: white;
+  cursor: pointer;
+  margin-bottom: 20px;
 }
 
-.new-chat{
-  width:100%;
-  padding:14px;
-  border:1px solid #374151;
-  border-radius:12px;
-  background:#1f2937;
-  color:#fff;
-  font-size:16px;
-  cursor:pointer;
+.info {
+  color: #999;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
-.history-title{
-  margin-top:30px;
-  color:#9ca3af;
-  font-size:16px;
+/* MAIN */
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
-.history-list{
-  margin-top:12px;
-  overflow-y:auto;
+.header {
+  height: 65px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid #292930;
+  font-size: 20px;
+  font-weight: bold;
 }
 
-.history-item{
-  padding:10px;
-  border-radius:8px;
-  color:#d1d5db;
-  font-size:14px;
-  margin-bottom:5px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+.chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 25px;
 }
 
-.sidebar-bottom{
-  margin-top:auto;
-  color:#9ca3af;
-  font-size:14px;
-  line-height:1.7;
+.message {
+  max-width: 850px;
+  margin: 0 auto 20px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
 }
 
-.main{
-  flex:1;
-  min-width:0;
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  background:#f8fafc;
+.user {
+  background: #25252d;
 }
 
-.topbar{
-  width:100%;
-  height:65px;
-  background:#fff;
-  border-bottom:1px solid #e5e7eb;
-  display:flex;
-  align-items:center;
-  padding:0 18px;
-  flex-shrink:0;
+.bot {
+  background: #19191f;
+  border: 1px solid #292930;
 }
 
-.menu-btn{
-  display:none;
-  border:0;
-  background:none;
-  font-size:27px;
-  margin-right:14px;
-  cursor:pointer;
+.label {
+  font-size: 13px;
+  color: #aaa;
+  margin-bottom: 6px;
 }
 
-.top-title{
-  font-size:21px;
-  font-weight:bold;
-  color:#111827;
+/* WELCOME */
+
+.welcome {
+  max-width: 700px;
+  margin: 100px auto;
+  text-align: center;
 }
 
-.chat{
-  flex:1;
-  overflow-y:auto;
-  padding:30px 20px;
+.welcome h1 {
+  font-size: 40px;
+  margin-bottom: 15px;
 }
 
-.welcome{
-  max-width:650px;
-  margin:70px auto;
-  text-align:center;
+.welcome p {
+  color: #aaa;
+  font-size: 17px;
 }
 
-.welcome-icon{
-  font-size:60px;
-  margin-bottom:15px;
+/* INPUT */
+
+.input-area {
+  padding: 15px 20px 20px;
+  border-top: 1px solid #292930;
 }
 
-.welcome h1{
-  font-size:32px;
-  color:#111827;
-  margin-bottom:12px;
+.input-box {
+  max-width: 850px;
+  margin: auto;
+  display: flex;
+  gap: 10px;
 }
 
-.welcome p{
-  color:#6b7280;
-  font-size:17px;
-  line-height:1.7;
+#input {
+  flex: 1;
+  min-height: 52px;
+  max-height: 150px;
+  resize: none;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid #3a3a43;
+  background: #19191f;
+  color: white;
+  outline: none;
+  font-size: 16px;
 }
 
-.message{
-  display:flex;
-  gap:10px;
-  margin-bottom:20px;
-  max-width:850px;
-  margin-left:auto;
-  margin-right:auto;
+#send {
+  width: 55px;
+  border: none;
+  border-radius: 12px;
+  background: #7c3aed;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
 }
 
-.avatar{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-shrink:0;
-  font-size:19px;
+#send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.user .avatar{
-  background:#2563eb;
+.typing {
+  color: #aaa;
+  font-size: 14px;
+  max-width: 850px;
+  margin: 0 auto 15px;
 }
 
-.bot .avatar{
-  background:#06b6d4;
-}
+/* MOBILE */
 
-.bubble{
-  max-width:80%;
-  padding:14px 17px;
-  border-radius:15px;
-  line-height:1.6;
-  font-size:16px;
-  white-space:pre-wrap;
-  word-wrap:break-word;
-}
+@media (max-width: 700px) {
 
-.user .bubble{
-  background:#2563eb;
-  color:#fff;
-  border-bottom-right-radius:5px;
-}
-
-.bot .bubble{
-  background:#fff;
-  color:#1f2937;
-  border:1px solid #e5e7eb;
-  border-bottom-left-radius:5px;
-}
-
-.typing{
-  display:flex;
-  gap:5px;
-  align-items:center;
-}
-
-.dot{
-  width:7px;
-  height:7px;
-  background:#6b7280;
-  border-radius:50%;
-  animation:bounce 1.2s infinite;
-}
-
-.dot:nth-child(2){
-  animation-delay:.2s;
-}
-
-.dot:nth-child(3){
-  animation-delay:.4s;
-}
-
-@keyframes bounce{
-  0%,60%,100%{
-    transform:translateY(0);
+  .sidebar {
+    display: none;
   }
 
-  30%{
-    transform:translateY(-6px);
+  .header {
+    justify-content: center;
   }
+
+  .chat {
+    padding: 15px;
+  }
+
+  .message {
+    margin-bottom: 15px;
+  }
+
+  .welcome {
+    margin: 80px 20px;
+  }
+
+  .welcome h1 {
+    font-size: 32px;
+  }
+
+  .input-area {
+    padding: 10px;
+  }
+
 }
 
-.input-area{
-  width:100%;
-  padding:12px 20px 15px;
-  background:#f8fafc;
-  flex-shrink:0;
-}
-
-.input-box{
-  max-width:850px;
-  margin:auto;
-  background:#fff;
-  border:1px solid #d1d5db;
-  border-radius:16px;
-  padding:7px;
-  display:flex;
-  align-items:flex-end;
-  box-shadow:0 3px 12px rgba(0,0,0,.06);
-}
-
-textarea{
-  flex:1;
-  border:0;
-  outline:0;
-  resize:none;
-  padding:12px;
-  font-size:16px;
-  min-height:45px;
-  max-height:120px;
-}
-
-.send-btn{
-  width:46px;
-  height:46px;
-  border:0;
-  border-radius:12px;
-  background:#2563eb;
-  color:#fff;
-  font-size:22px;
-  cursor:pointer;
-}
-
-.send-btn:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-}
-
-.disclaimer{
-  text-align:center;
-  font-size:11px;
-  color:#9ca3af;
-  margin-top:7px;
-}
-
-@media(max-width:700px){
-
-  .sidebar{
-    position:fixed;
-    left:-270px;
-    top:0;
-    z-index:1000;
-    box-shadow:5px 0 20px rgba(0,0,0,.25);
-  }
-
-  .sidebar.open{
-    left:0;
-  }
-
-  .menu-btn{
-    display:block;
-  }
-
-  .chat{
-    padding:20px 12px;
-  }
-
-  .input-area{
-    padding:8px 10px 12px;
-  }
-
-  .welcome{
-    margin:60px auto;
-  }
-
-  .welcome h1{
-    font-size:28px;
-  }
-
-  .welcome-icon{
-    font-size:50px;
-  }
-
-  .bubble{
-    max-width:88%;
-  }
-}
 </style>
 </head>
 
@@ -337,50 +216,36 @@ textarea{
 
 <div class="app">
 
-  <aside class="sidebar" id="sidebar">
+  <aside class="sidebar">
 
     <div class="logo">
-      🤖 <span>BaatAI</span>
+      🤖 BaatAI
     </div>
 
     <button class="new-chat" onclick="newChat()">
       ＋ New Chat
     </button>
 
-    <div class="history-title">
-      Chat History
-    </div>
-
-    <div class="history-list" id="historyList"></div>
-
-    <div class="sidebar-bottom">
-      BaatAI v1.0<br>
-      आपका AI साथी 🤖
+    <div class="info">
+      आपका दोस्ताना AI assistant।<br><br>
+      हिंदी, English और Hinglish में सवाल पूछें।
     </div>
 
   </aside>
 
+
   <main class="main">
 
-    <header class="topbar">
-      <button class="menu-btn" onclick="toggleMenu()">☰</button>
-
-      <div class="top-title">
-        🤖 BaatAI
-      </div>
+    <header class="header">
+      🤖 BaatAI
     </header>
+
 
     <section class="chat" id="chat">
 
       <div class="welcome" id="welcome">
 
-        <div class="welcome-icon">
-          🤖
-        </div>
-
-        <h1>
-          नमस्ते! 👋
-        </h1>
+        <h1>Namaste! 👋</h1>
 
         <p>
           मैं BaatAI हूँ।<br>
@@ -391,29 +256,25 @@ textarea{
 
     </section>
 
+
+    <div class="typing" id="typing"></div>
+
+
     <div class="input-area">
 
       <div class="input-box">
 
         <textarea
-          id="messageInput"
-          placeholder="BaatAI से कुछ पूछें..."
+          id="input"
+          placeholder="कुछ पूछिए..."
           rows="1"
         ></textarea>
 
-        <button
-          class="send-btn"
-          id="sendBtn"
-          onclick="sendMessage()"
-        >
+        <button id="send">
           ➤
         </button>
 
       </div>
-
-      <p class="disclaimer">
-        BaatAI AI Assistant 🤖
-      </p>
 
     </div>
 
@@ -421,53 +282,74 @@ textarea{
 
 </div>
 
+
 <script>
 
-const input = document.getElementById("messageInput");
+const input = document.getElementById("input");
+const sendBtn = document.getElementById("send");
 const chat = document.getElementById("chat");
-const sidebar = document.getElementById("sidebar");
-const historyList = document.getElementById("historyList");
-const sendBtn = document.getElementById("sendBtn");
+const typing = document.getElementById("typing");
+const welcome = document.getElementById("welcome");
 
 
-async function sendMessage(){
+function addMessage(text, type) {
+
+  const message = document.createElement("div");
+
+  message.className = "message " + type;
+
+  const label = document.createElement("div");
+
+  label.className = "label";
+
+  label.textContent =
+    type === "user" ? "👤 You" : "🤖 BaatAI";
+
+  const content = document.createElement("div");
+
+  content.textContent = text;
+
+  message.appendChild(label);
+  message.appendChild(content);
+
+  chat.appendChild(message);
+
+  chat.scrollTop = chat.scrollHeight;
+}
+
+
+async function sendMessage() {
 
   const text = input.value.trim();
 
-  if(!text){
+  if (!text) {
     return;
   }
 
-  const welcome = document.getElementById("welcome");
-
-  if(welcome){
+  if (welcome) {
     welcome.style.display = "none";
   }
 
-  addMessage(text,"user");
-
-  saveHistory(text);
+  addMessage(text, "user");
 
   input.value = "";
 
-  input.style.height = "45px";
-
   sendBtn.disabled = true;
 
-  showTyping();
+  typing.textContent = "🤖 BaatAI जवाब तैयार कर रहा है...";
 
-  try{
+  try {
 
-    const response = await fetch("/api/chat",{
+    const response = await fetch("/api/chat", {
 
-      method:"POST",
+      method: "POST",
 
-      headers:{
-        "Content-Type":"application/json"
+      headers: {
+        "Content-Type": "application/json"
       },
 
-      body:JSON.stringify({
-        message:text
+      body: JSON.stringify({
+        message: text
       })
 
     });
@@ -475,201 +357,91 @@ async function sendMessage(){
 
     const data = await response.json();
 
-    removeTyping();
 
+    if (!response.ok) {
 
-    if(response.ok && data.reply){
-
-      addMessage(data.reply,"bot");
-
-    }else{
-
-      addMessage(
-        data.error || "AI से जवाब नहीं मिला।",
-        "bot"
+      throw new Error(
+        data.error || "Server error"
       );
 
     }
 
-  }catch(error){
 
-    removeTyping();
+    typing.textContent = "";
 
     addMessage(
-      "Server से connection नहीं हो पाया। कृपया थोड़ी देर बाद फिर कोशिश करें।",
+      data.reply,
       "bot"
     );
 
+
+  } catch (error) {
+
     console.error(error);
 
+    typing.textContent = "";
+
+    addMessage(
+      "AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।",
+      "bot"
+    );
+
   }
+
 
   sendBtn.disabled = false;
+
+  input.focus();
 }
 
 
-function addMessage(text,type){
-
-  const message = document.createElement("div");
-
-  message.className = "message " + type;
-
-
-  const avatar = document.createElement("div");
-
-  avatar.className = "avatar";
-
-  avatar.innerText =
-    type === "user" ? "👤" : "🤖";
+sendBtn.addEventListener(
+  "click",
+  sendMessage
+);
 
 
-  const bubble = document.createElement("div");
+input.addEventListener(
+  "keydown",
+  function(event) {
 
-  bubble.className = "bubble";
+    if (
+      event.key === "Enter" &&
+      !event.shiftKey
+    ) {
 
-  bubble.innerText = text;
+      event.preventDefault();
 
+      sendMessage();
 
-  message.appendChild(avatar);
+    }
 
-  message.appendChild(bubble);
-
-  chat.appendChild(message);
-
-  chat.scrollTop = chat.scrollHeight;
-}
-
-
-function showTyping(){
-
-  removeTyping();
-
-
-  const message = document.createElement("div");
-
-  message.className = "message bot";
-
-  message.id = "typingMessage";
-
-
-  const avatar = document.createElement("div");
-
-  avatar.className = "avatar";
-
-  avatar.innerText = "🤖";
-
-
-  const bubble = document.createElement("div");
-
-  bubble.className = "bubble";
-
-
-  bubble.innerHTML =
-    '<div class="typing">' +
-    '<span class="dot"></span>' +
-    '<span class="dot"></span>' +
-    '<span class="dot"></span>' +
-    '</div>';
-
-
-  message.appendChild(avatar);
-
-  message.appendChild(bubble);
-
-  chat.appendChild(message);
-
-  chat.scrollTop = chat.scrollHeight;
-}
-
-
-function removeTyping(){
-
-  const typing =
-    document.getElementById("typingMessage");
-
-  if(typing){
-    typing.remove();
   }
-}
+);
 
 
-function newChat(){
+function newChat() {
 
-  chat.innerHTML =
+  chat.innerHTML = `
 
-    '<div class="welcome" id="welcome">' +
+    <div class="welcome" id="welcome">
 
-    '<div class="welcome-icon">🤖</div>' +
+      <h1>Namaste! 👋</h1>
 
-    '<h1>नमस्ते! 👋</h1>' +
+      <p>
+        मैं BaatAI हूँ।<br>
+        मुझसे कुछ भी पूछिए।
+      </p>
 
-    '<p>मैं BaatAI हूँ।<br>' +
+    </div>
 
-    'मुझसे कुछ भी पूछिए।</p>' +
-
-    '</div>';
+  `;
 
   input.value = "";
 
-  input.style.height = "45px";
-
-  closeMenu();
+  input.focus();
 }
 
-
-function toggleMenu(){
-
-  sidebar.classList.toggle("open");
-}
-
-
-function closeMenu(){
-
-  sidebar.classList.remove("open");
-}
-
-
-function saveHistory(text){
-
-  const item =
-    document.createElement("div");
-
-  item.className = "history-item";
-
-  item.innerText = text;
-
-  historyList.prepend(item);
-
-
-  if(historyList.children.length > 10){
-
-    historyList.lastChild.remove();
-
-  }
-}
-
-
-input.addEventListener("keydown",function(e){
-
-  if(e.key === "Enter" && !e.shiftKey){
-
-    e.preventDefault();
-
-    sendMessage();
-
-  }
-
-});
-
-
-input.addEventListener("input",function(){
-
-  this.style.height = "auto";
-
-  this.style.height =
-    Math.min(this.scrollHeight,120) + "px";
-
-});
 
 </script>
 
