@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "@google/genai": "^1.0.0"
-    "@google/genai": "^1.0.0",
     "express": "^4.21.2"
   }
 }
