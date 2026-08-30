@@ -3,15 +3,31 @@ const path = require("path");
 const { GoogleGenAI } = require("@google/genai");
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
+// JSON data पढ़ने के लिए
 app.use(express.json());
-app.use(express.static(__dirname));
 
+// CORS - frontend को backend से connect करने के लिए
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
+// Gemini API
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
 
+// Chat API
 app.post("/api/chat", async (req, res) => {
   try {
     const message = req.body.message;
@@ -29,7 +45,7 @@ app.post("/api/chat", async (req, res) => {
       contents: message,
       config: {
         systemInstruction:
-          "You are BaatAI. Answer questions clearly and helpfully. Understand Hindi, English and Hinglish. Reply in the same language as the user's question."
+          "You are BaatAI, a friendly AI assistant. Answer questions clearly and helpfully. Understand Hindi, Hinglish and English. Reply in the same language as the user."
       }
     });
 
@@ -49,10 +65,16 @@ app.post("/api/chat", async (req, res) => {
     });
   }
 });
-app.get('/*splat', (req, res) => {
+
+// Frontend files
+app.use(express.static(__dirname));
+
+// Any other route -> index.html
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
+// Start server
 app.listen(PORT, () => {
   console.log(`BaatAI running on port ${PORT}`);
 });
