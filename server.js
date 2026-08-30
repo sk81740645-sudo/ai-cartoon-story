@@ -49,8 +49,7 @@ app.post("/api/chat", async (req, res) => {
     });
   }
 });
-
-app.get("*", (req, res) => {
+app.get('/*splat', (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
