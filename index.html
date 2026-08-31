@@ -245,7 +245,17 @@
     bottom: 0;
     z-index: 1000;
   }
-
+.header {
+  height: 65px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 20px;
+  font-size: 21px;
+  font-weight: bold;
+}
   .sidebar.active {
     display: block;
   }
@@ -279,8 +289,8 @@
 
       <header class="header">
   <button class="menu-btn" onclick="toggleMenu()">☰</button>
-  🤖 BaatAI
-      </header>
+  <span>🤖 BaatAI</span>
+</header>
 
 
       <!-- Chat -->
