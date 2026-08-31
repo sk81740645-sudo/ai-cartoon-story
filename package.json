@@ -1,13 +1,13 @@
 {
   "name": "baatai-ai",
   "version": "1.0.0",
-  "description": "BaatAI - Hindi AI Chatbot",
+  "description": "BaatAI Gemini AI Chatbot",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "@google/genai": "latest",
+    "@google/genai": "^1.0.0",
     "express": "^5.1.0"
   }
 }
