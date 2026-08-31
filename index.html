@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BaatAI - AI Chatbot</title>
+
+  <title>BaatAI - AI Assistant</title>
 
   <style>
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -16,15 +18,15 @@
     body {
       background: #f5f7fb;
       height: 100vh;
-      overflow: hidden;
     }
 
     .app {
-      display: flex;
       height: 100vh;
+      display: flex;
     }
 
     /* Sidebar */
+
     .sidebar {
       width: 250px;
       background: #111827;
@@ -33,14 +35,14 @@
     }
 
     .logo {
-      font-size: 26px;
+      font-size: 27px;
       font-weight: bold;
       margin-bottom: 30px;
     }
 
     .new-chat {
       width: 100%;
-      padding: 12px;
+      padding: 13px;
       border: 1px solid #374151;
       background: #1f2937;
       color: white;
@@ -54,6 +56,7 @@
     }
 
     /* Main */
+
     .main {
       flex: 1;
       display: flex;
@@ -65,14 +68,18 @@
       height: 65px;
       background: white;
       border-bottom: 1px solid #e5e7eb;
+
       display: flex;
       align-items: center;
+
       padding: 0 20px;
-      font-size: 20px;
+
+      font-size: 21px;
       font-weight: bold;
     }
 
     /* Chat */
+
     .chat {
       flex: 1;
       overflow-y: auto;
@@ -82,29 +89,31 @@
     .welcome {
       text-align: center;
       margin-top: 100px;
-      color: #374151;
     }
 
     .welcome h1 {
-      font-size: 32px;
+      font-size: 34px;
+      color: #111827;
       margin-bottom: 10px;
     }
 
     .welcome p {
       color: #6b7280;
+      font-size: 16px;
     }
 
     .message {
-      max-width: 800px;
+      max-width: 850px;
       margin: 15px auto;
       display: flex;
     }
 
-    .message.user {
+    .user {
       justify-content: flex-end;
     }
 
     .bubble {
+      max-width: 75%;
       padding: 13px 17px;
       border-radius: 15px;
       line-height: 1.5;
@@ -126,6 +135,7 @@
     }
 
     /* Input */
+
     .input-area {
       background: white;
       border-top: 1px solid #e5e7eb;
@@ -135,16 +145,21 @@
     .input-box {
       max-width: 850px;
       margin: auto;
+
       display: flex;
       gap: 10px;
     }
 
     #messageInput {
       flex: 1;
+
       padding: 14px 16px;
+
       border: 1px solid #d1d5db;
       border-radius: 12px;
+
       outline: none;
+
       font-size: 16px;
     }
 
@@ -154,11 +169,15 @@
 
     #sendBtn {
       width: 55px;
+
       border: none;
       border-radius: 12px;
+
       background: #2563eb;
       color: white;
+
       font-size: 20px;
+
       cursor: pointer;
     }
 
@@ -171,13 +190,10 @@
       cursor: not-allowed;
     }
 
-    .typing {
-      color: #6b7280;
-      font-style: italic;
-    }
-
     /* Mobile */
+
     @media (max-width: 700px) {
+
       .sidebar {
         display: none;
       }
@@ -195,13 +211,18 @@
       }
 
       .welcome h1 {
-        font-size: 26px;
+        font-size: 27px;
+      }
+
+      .bubble {
+        max-width: 90%;
       }
 
       .input-area {
         padding: 10px;
       }
     }
+
   </style>
 </head>
 
@@ -210,78 +231,111 @@
   <div class="app">
 
     <!-- Sidebar -->
+
     <aside class="sidebar">
-      <div class="logo">🤖 BaatAI</div>
+
+      <div class="logo">
+        🤖 BaatAI
+      </div>
 
       <button class="new-chat" onclick="newChat()">
         ＋ New Chat
       </button>
+
     </aside>
 
+
     <!-- Main -->
+
     <main class="main">
 
       <header class="header">
         🤖 BaatAI
       </header>
 
-      <!-- Chat Area -->
+
+      <!-- Chat -->
+
       <section class="chat" id="chat">
 
         <div class="welcome" id="welcome">
+
           <h1>Hello 👋</h1>
-          <p>BaatAI से कुछ भी पूछिए...</p>
+
+          <p>
+            BaatAI से कुछ भी पूछिए...
+          </p>
+
         </div>
 
       </section>
 
+
       <!-- Input -->
+
       <div class="input-area">
+
         <div class="input-box">
 
           <input
-            type="text"
             id="messageInput"
+            type="text"
             placeholder="अपना सवाल लिखें..."
             autocomplete="off"
           >
 
-          <button id="sendBtn" onclick="sendMessage()">
+          <button
+            id="sendBtn"
+            onclick="sendMessage()"
+          >
             ➤
           </button>
 
         </div>
+
       </div>
 
     </main>
+
   </div>
 
 
   <script>
 
-    // IMPORTANT:
-    // हमारा working Render backend
-    const API_URL = "https://baatai-ai.onrender.com/api/chat";
+    // BaatAI का अपना backend
+    const API_URL = "/api/chat";
 
 
-    const input = document.getElementById("messageInput");
-    const sendBtn = document.getElementById("sendBtn");
-    const chat = document.getElementById("chat");
-    const welcome = document.getElementById("welcome");
+    const input =
+      document.getElementById("messageInput");
+
+    const sendBtn =
+      document.getElementById("sendBtn");
+
+    const chat =
+      document.getElementById("chat");
+
+    const welcome =
+      document.getElementById("welcome");
 
 
-    // Enter दबाने पर message भेजना
+    // Enter key
+
     input.addEventListener("keydown", function(event) {
 
-      if (event.key === "Enter" && !event.shiftKey) {
+      if (event.key === "Enter") {
+
         event.preventDefault();
+
         sendMessage();
+
       }
 
     });
 
 
-    // Message भेजना
+    // Send message
+
     async function sendMessage() {
 
       const message = input.value.trim();
@@ -291,13 +345,15 @@
       }
 
 
-      // Welcome हटाओ
-      if (welcome) {
-        welcome.remove();
+      // Remove welcome
+
+      if (document.getElementById("welcome")) {
+        document.getElementById("welcome").remove();
       }
 
 
-      // User message
+      // Show user message
+
       addMessage(message, "user");
 
       input.value = "";
@@ -305,14 +361,13 @@
       sendBtn.disabled = true;
 
 
-      // Typing message
-      const typing = addMessage("🤖 सोच रहा हूँ...", "ai");
+      // Typing
+
+      const typing =
+        addMessage("🤖 सोच रहा हूँ...", "ai");
 
 
       try {
-
-        console.log("Sending request:", message);
-
 
         const response = await fetch(API_URL, {
 
@@ -329,16 +384,9 @@
         });
 
 
-        console.log("HTTP Status:", response.status);
-
-
-        // Server response
         const data = await response.json();
 
-        console.log("Server response:", data);
 
-
-        // Typing हटाओ
         typing.remove();
 
 
@@ -351,7 +399,6 @@
         }
 
 
-        // AI reply
         addMessage(
           data.reply || "मुझे कोई जवाब नहीं मिला।",
           "ai"
@@ -360,10 +407,9 @@
 
       } catch (error) {
 
-        console.error("Chat Error:", error);
+        console.error(error);
 
         typing.remove();
-
 
         addMessage(
           "AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।",
@@ -380,15 +426,19 @@
     }
 
 
-    // Message screen पर दिखाना
+    // Add message
+
     function addMessage(text, type) {
 
-      const messageDiv = document.createElement("div");
+      const messageDiv =
+        document.createElement("div");
 
-      messageDiv.className = "message " + type;
+      messageDiv.className =
+        "message " + type;
 
 
-      const bubble = document.createElement("div");
+      const bubble =
+        document.createElement("div");
 
       bubble.className = "bubble";
 
@@ -400,8 +450,8 @@
       chat.appendChild(messageDiv);
 
 
-      // नीचे scroll
-      chat.scrollTop = chat.scrollHeight;
+      chat.scrollTop =
+        chat.scrollHeight;
 
 
       return messageDiv;
@@ -409,14 +459,22 @@
     }
 
 
-    // New Chat
+    // New chat
+
     function newChat() {
 
       chat.innerHTML = `
+
         <div class="welcome" id="welcome">
+
           <h1>Hello 👋</h1>
-          <p>BaatAI से कुछ भी पूछिए...</p>
+
+          <p>
+            BaatAI से कुछ भी पूछिए...
+          </p>
+
         </div>
+
       `;
 
       input.value = "";
