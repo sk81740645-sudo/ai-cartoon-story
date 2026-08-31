@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>BaatAI - Login</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f5f7fb;
+      padding: 20px;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 30px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 25px;
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 22px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .tab.active {
+      color: #2563eb;
+      border-bottom: 2px solid #2563eb;
+      font-weight: bold;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: #2563eb;
+    }
+
+    .submit {
+      width: 100%;
+      margin-top: 22px;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .submit:hover {
+      background: #1d4ed8;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #dc2626;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-box">
+
+    <div class="logo">🤖 BaatAI</div>
+
+    <div class="subtitle">
+      Welcome to BaatAI
+    </div>
+
+    <div class="tabs">
+
+      <button
+        class="tab active"
+        id="loginTab"
+        onclick="showLogin()">
+        Login
+      </button>
+
+      <button
+        class="tab"
+        id="signupTab"
+        onclick="showSignup()">
+        Sign Up
+      </button>
+
+    </div>
+
+    <!-- Login -->
+
+    <form id="loginForm">
+
+      <label>Email</label>
+
+      <input
+        id="loginEmail"
+        type="email"
+        placeholder="Email डालें"
+        required
+      >
+
+      <label>Password</label>
+
+      <input
+        id="loginPassword"
+        type="password"
+        placeholder="Password डालें"
+        required
+      >
+
+      <button class="submit" type="submit">
+        Login
+      </button>
+
+    </form>
+
+
+    <!-- Sign Up -->
+
+    <form id="signupForm" class="hidden">
+
+      <label>Name</label>
+
+      <input
+        id="signupName"
+        type="text"
+        placeholder="अपना नाम डालें"
+        required
+      >
+
+      <label>Email</label>
+
+      <input
+        id="signupEmail"
+        type="email"
+        placeholder="Email डालें"
+        required
+      >
+
+      <label>Password</label>
+
+      <input
+        id="signupPassword"
+        type="password"
+        placeholder="Password बनाएं"
+        minlength="6"
+        required
+      >
+
+      <button class="submit" type="submit">
+        Create Account
+      </button>
+
+    </form>
+
+    <div id="message" class="message"></div>
+
+  </div>
+
+
+  <script>
+
+    function showLogin() {
+
+      document
+        .getElementById("loginForm")
+        .classList.remove("hidden");
+
+      document
+        .getElementById("signupForm")
+        .classList.add("hidden");
+
+      document
+        .getElementById("loginTab")
+        .classList.add("active");
+
+      document
+        .getElementById("signupTab")
+        .classList.remove("active");
+
+      document.getElementById("message").textContent = "";
+    }
+
+
+    function showSignup() {
+
+      document
+        .getElementById("signupForm")
+        .classList.remove("hidden");
+
+      document
+        .getElementById("loginForm")
+        .classList.add("hidden");
+
+      document
+        .getElementById("signupTab")
+        .classList.add("active");
+
+      document
+        .getElementById("loginTab")
+        .classList.remove("active");
+
+      document.getElementById("message").textContent = "";
+    }
+
+
+    document
+      .getElementById("loginForm")
+      .addEventListener("submit", function(e) {
+
+        e.preventDefault();
+
+        document.getElementById("message").textContent =
+          "Login system अगले step में connect होगा।";
+
+      });
+
+
+    document
+      .getElementById("signupForm")
+      .addEventListener("submit", function(e) {
+
+        e.preventDefault();
+
+        document.getElementById("message").textContent =
+          "Account system अगले step में connect होगा।";
+
+      });
+
+  </script>
+
+</body>
+</html>
