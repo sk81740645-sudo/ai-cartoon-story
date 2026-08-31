@@ -5,7 +5,6 @@ const { GoogleGenAI } = require("@google/genai");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// JSON requests
 app.use(express.json());
 
 // CORS
@@ -21,12 +20,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// Gemini API
+// Gemini
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
 
-// Home page
+// BaatAI homepage
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
@@ -39,7 +38,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Chat API
+// Chat
 app.post("/api/chat", async (req, res) => {
   try {
     const message = req.body?.message;
@@ -59,11 +58,11 @@ app.post("/api/chat", async (req, res) => {
     console.log("User:", message);
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
       contents: message,
       config: {
         systemInstruction:
-          "You are BaatAI, a friendly AI assistant. Understand Hindi, Hinglish and English. Reply in the same language as the user. Give clear, simple and helpful answers."
+          "You are BaatAI, a friendly AI assistant. Understand Hindi, Hinglish and English. Reply in the same language as the user. Give clear, simple and useful answers."
       }
     });
 
@@ -71,18 +70,15 @@ app.post("/api/chat", async (req, res) => {
 
     console.log("Gemini reply received");
 
-    return res.json({
+    res.json({
       reply: reply || "मुझे कोई जवाब नहीं मिला।"
     });
 
   } catch (error) {
+    console.error("GEMINI ERROR:", error);
 
-    console.error("===== GEMINI ERROR =====");
-    console.error(error);
-    console.error("========================");
-
-    return res.status(500).json({
-      error: error?.message || "Gemini API error"
+    res.status(500).json({
+      error: error.message || "Gemini API error"
     });
   }
 });
