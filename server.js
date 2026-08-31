@@ -1,10 +1,11 @@
 const express = require("express");
+const path = require("path");
 const { GoogleGenAI } = require("@google/genai");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// JSON
+// JSON requests
 app.use(express.json());
 
 // CORS
@@ -20,14 +21,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// API Key check
-if (!process.env.GEMINI_API_KEY) {
-  console.error("ERROR: GEMINI_API_KEY is missing");
-}
-
-// Gemini
+// Gemini API
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
+});
+
+// Home page
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // Health check
@@ -51,7 +52,7 @@ app.post("/api/chat", async (req, res) => {
 
     if (!process.env.GEMINI_API_KEY) {
       return res.status(500).json({
-        error: "GEMINI_API_KEY Render Environment में नहीं मिली"
+        error: "GEMINI_API_KEY नहीं मिली"
       });
     }
 
@@ -70,8 +71,8 @@ app.post("/api/chat", async (req, res) => {
 
     console.log("Gemini reply received");
 
-    return res.status(200).json({
-      reply: reply || "मुझे अभी कोई जवाब नहीं मिला।"
+    return res.json({
+      reply: reply || "मुझे कोई जवाब नहीं मिला।"
     });
 
   } catch (error) {
@@ -86,14 +87,10 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-// Unknown routes
-app.use((req, res) => {
-  res.status(404).json({
-    error: "Route not found"
-  });
-});
+// Static files
+app.use(express.static(__dirname));
 
-// Start
+// Start server
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`BaatAI server running on port ${PORT}`);
+  console.log(`BaatAI running on port ${PORT}`);
 });
