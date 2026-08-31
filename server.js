@@ -64,14 +64,13 @@ app.post("/api/chat", async (req, res) => {
       reply: reply || "मुझे जवाब नहीं मिल पाया।"
     });
 
-  } catch (error) {
+    } catch (error) {
     console.error("Gemini Error:", error);
 
     return res.status(500).json({
-      error: "AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।"
+      error: error.message || "Gemini API में error आया है"
     });
   }
-});
 
 // IMPORTANT:
 // यह route '*' या '/*splat' इस्तेमाल नहीं करता,
