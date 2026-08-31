@@ -6,31 +6,20 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(express.static(__dirname));
 
-// CORS
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
+/* =========================
+   HOME
+========================= */
 
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
-
-// Gemini
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY
-});
-
-// BaatAI homepage
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Health check
+/* =========================
+   HEALTH CHECK
+========================= */
+
 app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
@@ -38,7 +27,10 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Chat
+/* =========================
+   GEMINI CHAT
+========================= */
+
 app.post("/api/chat", async (req, res) => {
   try {
     const message = req.body?.message;
@@ -49,44 +41,51 @@ app.post("/api/chat", async (req, res) => {
       });
     }
 
-    if (!process.env.GEMINI_API_KEY) {
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+      console.error("GEMINI_API_KEY missing");
+
       return res.status(500).json({
-        error: "GEMINI_API_KEY नहीं मिली"
+        error: "GEMINI_API_KEY Render Environment में सेट नहीं है।"
       });
     }
 
     console.log("User:", message);
 
+    const ai = new GoogleGenAI({
+      apiKey: apiKey
+    });
+
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      contents: message,
-      config: {
-        systemInstruction:
-          "You are BaatAI, a friendly AI assistant. Understand Hindi, Hinglish and English. Reply in the same language as the user. Give clear, simple and useful answers."
-      }
+      contents: message
     });
 
     const reply = response.text;
 
-    console.log("Gemini reply received");
+    console.log("Gemini response received");
 
-    res.json({
-      reply: reply || "मुझे कोई जवाब नहीं मिला।"
+    return res.json({
+      reply: reply || "मुझे जवाब नहीं मिला।"
     });
 
   } catch (error) {
-    console.error("GEMINI ERROR:", error);
 
-    res.status(500).json({
-      error: error.message || "Gemini API error"
+    console.error("========== GEMINI ERROR ==========");
+    console.error(error);
+    console.error("===================================");
+
+    return res.status(500).json({
+      error: error?.message || "Gemini API में समस्या हुई।"
     });
   }
 });
 
-// Static files
-app.use(express.static(__dirname));
+/* =========================
+   START SERVER
+========================= */
 
-// Start server
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`BaatAI running on port ${PORT}`);
 });
