@@ -222,6 +222,34 @@
         padding: 10px;
       }
     }
+    .menu-btn {
+  display: none;
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  cursor: pointer;
+  margin-right: 12px;
+  color: #111827;
+}
+
+@media (max-width: 700px) {
+  .menu-btn {
+    display: block;
+  }
+
+  .sidebar {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+  }
+
+  .sidebar.active {
+    display: block;
+  }
+}
 
   </style>
 </head>
@@ -250,7 +278,8 @@
     <main class="main">
 
       <header class="header">
-        🤖 BaatAI
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  🤖 BaatAI
       </header>
 
 
@@ -481,6 +510,10 @@
 
       input.focus();
 
+    }
+    function toggleMenu() {
+  const sidebar = document.querySelector(".sidebar");
+  sidebar.classList.toggle("active");
     }
 
   </script>
