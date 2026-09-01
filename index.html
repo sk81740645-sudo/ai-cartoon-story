@@ -7,7 +7,6 @@
   <title>BaatAI - AI Assistant</title>
 
   <style>
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -20,12 +19,125 @@
       height: 100vh;
     }
 
+    button,
+    input {
+      font-family: Arial, sans-serif;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================
+       LOGIN / SIGN UP
+    ========================= */
+
+    #authScreen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #f5f7fb;
+    }
+
+    .auth-box {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+    }
+
+    .auth-logo {
+      text-align: center;
+      font-size: 30px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 25px;
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 22px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .tab.active {
+      color: #2563eb;
+      border-bottom: 2px solid #2563eb;
+      font-weight: bold;
+    }
+
+    .auth-form label {
+      display: block;
+      margin: 12px 0 6px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .auth-form input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .auth-form input:focus {
+      border-color: #2563eb;
+    }
+
+    .auth-submit {
+      width: 100%;
+      margin-top: 22px;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .auth-submit:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .auth-message {
+      text-align: center;
+      margin-top: 15px;
+      min-height: 20px;
+      font-size: 14px;
+      color: #dc2626;
+    }
+
+    /* =========================
+       BAATAI APP
+    ========================= */
+
     .app {
       height: 100vh;
       display: flex;
     }
-
-    /* Sidebar */
 
     .sidebar {
       width: 250px;
@@ -40,7 +152,8 @@
       margin-bottom: 30px;
     }
 
-    .new-chat {
+    .new-chat,
+    .logout-btn {
       width: 100%;
       padding: 13px;
       border: 1px solid #374151;
@@ -51,11 +164,23 @@
       font-size: 15px;
     }
 
-    .new-chat:hover {
+    .new-chat:hover,
+    .logout-btn:hover {
       background: #374151;
     }
 
-    /* Main */
+    .logout-btn {
+      margin-top: 12px;
+    }
+
+    .user-info {
+      margin-top: 20px;
+      padding: 12px;
+      border-top: 1px solid #374151;
+      color: #d1d5db;
+      font-size: 13px;
+      word-break: break-word;
+    }
 
     .main {
       flex: 1;
@@ -68,17 +193,23 @@
       height: 65px;
       background: white;
       border-bottom: 1px solid #e5e7eb;
-
       display: flex;
       align-items: center;
-
+      justify-content: flex-start;
       padding: 0 20px;
-
       font-size: 21px;
       font-weight: bold;
     }
 
-    /* Chat */
+    .menu-btn {
+      display: none;
+      border: none;
+      background: transparent;
+      font-size: 28px;
+      cursor: pointer;
+      margin-right: 12px;
+      color: #111827;
+    }
 
     .chat {
       flex: 1;
@@ -134,8 +265,6 @@
       border-bottom-left-radius: 4px;
     }
 
-    /* Input */
-
     .input-area {
       background: white;
       border-top: 1px solid #e5e7eb;
@@ -145,21 +274,16 @@
     .input-box {
       max-width: 850px;
       margin: auto;
-
       display: flex;
       gap: 10px;
     }
 
     #messageInput {
       flex: 1;
-
       padding: 14px 16px;
-
       border: 1px solid #d1d5db;
       border-radius: 12px;
-
       outline: none;
-
       font-size: 16px;
     }
 
@@ -169,15 +293,11 @@
 
     #sendBtn {
       width: 55px;
-
       border: none;
       border-radius: 12px;
-
       background: #2563eb;
       color: white;
-
       font-size: 20px;
-
       cursor: pointer;
     }
 
@@ -190,16 +310,31 @@
       cursor: not-allowed;
     }
 
-    /* Mobile */
+    /* =========================
+       MOBILE
+    ========================= */
 
     @media (max-width: 700px) {
 
+      .menu-btn {
+        display: block;
+      }
+
       .sidebar {
         display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 1000;
+      }
+
+      .sidebar.active {
+        display: block;
       }
 
       .header {
-        justify-content: center;
+        padding: 0 15px;
       }
 
       .chat {
@@ -221,83 +356,204 @@
       .input-area {
         padding: 10px;
       }
+
+      .auth-box {
+        padding: 25px;
+      }
     }
-    .menu-btn {
-  display: none;
-  border: none;
-  background: transparent;
-  font-size: 28px;
-  cursor: pointer;
-  margin-right: 12px;
-  color: #111827;
-}
-
-@media (max-width: 700px) {
-  .menu-btn {
-    display: block;
-  }
-
-  .sidebar {
-    display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 1000;
-  }
-.header {
-  height: 65px;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0 20px;
-  font-size: 21px;
-  font-weight: bold;
-}
-  .sidebar.active {
-    display: block;
-  }
-}
-
   </style>
 </head>
 
 <body>
 
-  <div class="app">
+  <!-- =========================
+       LOGIN / SIGN UP SCREEN
+  ========================= -->
 
-    <!-- Sidebar -->
+  <section id="authScreen">
 
-    <aside class="sidebar">
+    <div class="auth-box">
+
+      <div class="auth-logo">
+        🤖 BaatAI
+      </div>
+
+      <div class="auth-subtitle">
+        BaatAI इस्तेमाल करने के लिए Login करें
+      </div>
+
+      <div class="tabs">
+
+        <button
+          class="tab active"
+          id="loginTab"
+          onclick="showLogin()">
+          Login
+        </button>
+
+        <button
+          class="tab"
+          id="signupTab"
+          onclick="showSignup()">
+          Sign Up
+        </button>
+
+      </div>
+
+
+      <!-- LOGIN FORM -->
+
+      <form id="loginForm" class="auth-form">
+
+        <label>Email</label>
+
+        <input
+          id="loginEmail"
+          type="email"
+          placeholder="अपना Email डालें"
+          autocomplete="email"
+          required
+        >
+
+        <label>Password</label>
+
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="अपना Password डालें"
+          autocomplete="current-password"
+          required
+        >
+
+        <button
+          id="loginBtn"
+          class="auth-submit"
+          type="submit">
+          Login
+        </button>
+
+      </form>
+
+
+      <!-- SIGN UP FORM -->
+
+      <form
+        id="signupForm"
+        class="auth-form hidden">
+
+        <label>Name</label>
+
+        <input
+          id="signupName"
+          type="text"
+          placeholder="अपना नाम डालें"
+          autocomplete="name"
+          required
+        >
+
+        <label>Email</label>
+
+        <input
+          id="signupEmail"
+          type="email"
+          placeholder="अपना Email डालें"
+          autocomplete="email"
+          required
+        >
+
+        <label>Password</label>
+
+        <input
+          id="signupPassword"
+          type="password"
+          placeholder="कम से कम 6 अक्षर"
+          autocomplete="new-password"
+          minlength="6"
+          required
+        >
+
+        <button
+          id="signupBtn"
+          class="auth-submit"
+          type="submit">
+          Create Account
+        </button>
+
+      </form>
+
+
+      <div
+        id="authMessage"
+        class="auth-message">
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       BAATAI CHAT APP
+  ========================= -->
+
+  <div
+    id="appScreen"
+    class="app hidden">
+
+    <aside
+      id="sidebar"
+      class="sidebar">
 
       <div class="logo">
         🤖 BaatAI
       </div>
 
-      <button class="new-chat" onclick="newChat()">
+      <button
+        class="new-chat"
+        onclick="newChat()">
         ＋ New Chat
       </button>
+
+      <button
+        class="logout-btn"
+        onclick="logout()">
+        🚪 Logout
+      </button>
+
+      <div
+        id="userInfo"
+        class="user-info">
+      </div>
 
     </aside>
 
 
-    <!-- Main -->
-
     <main class="main">
 
       <header class="header">
-  <button class="menu-btn" onclick="toggleMenu()">☰</button>
-  <span>🤖 BaatAI</span>
-</header>
+
+        <button
+          class="menu-btn"
+          onclick="toggleMenu()">
+          ☰
+        </button>
+
+        <span>
+          🤖 BaatAI
+        </span>
+
+      </header>
 
 
-      <!-- Chat -->
+      <!-- CHAT -->
 
-      <section class="chat" id="chat">
+      <section
+        id="chat"
+        class="chat">
 
-        <div class="welcome" id="welcome">
+        <div
+          id="welcome"
+          class="welcome">
 
           <h1>Hello 👋</h1>
 
@@ -310,7 +566,7 @@
       </section>
 
 
-      <!-- Input -->
+      <!-- INPUT -->
 
       <div class="input-area">
 
@@ -325,8 +581,7 @@
 
           <button
             id="sendBtn"
-            onclick="sendMessage()"
-          >
+            onclick="sendMessage()">
             ➤
           </button>
 
@@ -341,9 +596,39 @@
 
   <script>
 
-    // BaatAI का अपना backend
-    const API_URL = "/api/chat";
+    /* =========================
+       API
+    ========================= */
 
+    const CHAT_API = "/api/chat";
+    const LOGIN_API = "/api/login";
+    const SIGNUP_API = "/api/signup";
+
+
+    /* =========================
+       ELEMENTS
+    ========================= */
+
+    const authScreen =
+      document.getElementById("authScreen");
+
+    const appScreen =
+      document.getElementById("appScreen");
+
+    const authMessage =
+      document.getElementById("authMessage");
+
+    const loginForm =
+      document.getElementById("loginForm");
+
+    const signupForm =
+      document.getElementById("signupForm");
+
+    const loginBtn =
+      document.getElementById("loginBtn");
+
+    const signupBtn =
+      document.getElementById("signupBtn");
 
     const input =
       document.getElementById("messageInput");
@@ -354,76 +639,550 @@
     const chat =
       document.getElementById("chat");
 
-    const welcome =
-      document.getElementById("welcome");
 
+    /* =========================
+       START
+    ========================= */
 
-    // Enter key
+    window.addEventListener("load", function() {
 
-    input.addEventListener("keydown", function(event) {
+      const savedUser =
+        localStorage.getItem("baatai_user");
 
-      if (event.key === "Enter") {
+      if (savedUser) {
 
-        event.preventDefault();
+        try {
 
-        sendMessage();
+          const user =
+            JSON.parse(savedUser);
+
+          showApp(user);
+
+        } catch {
+
+          localStorage.removeItem("baatai_user");
+
+        }
 
       }
 
     });
 
 
-    // Send message
+    /* =========================
+       LOGIN TAB
+    ========================= */
+
+    function showLogin() {
+
+      loginForm.classList.remove("hidden");
+
+      signupForm.classList.add("hidden");
+
+      document
+        .getElementById("loginTab")
+        .classList.add("active");
+
+      document
+        .getElementById("signupTab")
+        .classList.remove("active");
+
+      authMessage.textContent = "";
+    }
+
+
+    /* =========================
+       SIGN UP TAB
+    ========================= */
+
+    function showSignup() {
+
+      signupForm.classList.remove("hidden");
+
+      loginForm.classList.add("hidden");
+
+      document
+        .getElementById("signupTab")
+        .classList.add("active");
+
+      document
+        .getElementById("loginTab")
+        .classList.remove("active");
+
+      authMessage.textContent = "";
+    }
+
+
+    /* =========================
+       SIGN UP
+    ========================= */
+
+    signupForm.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        const name =
+          document
+            .getElementById("signupName")
+            .value
+            .trim();
+
+        const email =
+          document
+            .getElementById("signupEmail")
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById("signupPassword")
+            .value;
+
+
+        if (!name || !email || !password) {
+
+          authMessage.textContent =
+            "सभी जानकारी भरें।";
+
+          return;
+        }
+
+
+        if (password.length < 6) {
+
+          authMessage.textContent =
+            "Password कम से कम 6 अक्षर का होना चाहिए।";
+
+          return;
+        }
+
+
+        signupBtn.disabled = true;
+
+        signupBtn.textContent =
+          "Account बना रहा हूँ...";
+
+        authMessage.textContent = "";
+
+
+        try {
+
+          const response =
+            await fetch(
+              SIGNUP_API,
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  name: name,
+                  email: email,
+                  password: password
+                })
+              }
+            );
+
+
+          const data =
+            await response.json();
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              data.error ||
+              "Account बनाने में समस्या हुई।"
+            );
+
+          }
+
+
+          /*
+            Account successfully created.
+            अब automatically Login करेंगे।
+          */
+
+          authMessage.style.color =
+            "#16a34a";
+
+          authMessage.textContent =
+            "Account बन गया! Login किया जा रहा है...";
+
+
+          const loginResponse =
+            await fetch(
+              LOGIN_API,
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  email: email,
+                  password: password
+                })
+              }
+            );
+
+
+          const loginData =
+            await loginResponse.json();
+
+
+          if (!loginResponse.ok) {
+
+            throw new Error(
+              loginData.error ||
+              "Login नहीं हो पाया।"
+            );
+
+          }
+
+
+          saveUser(
+            loginData.user
+          );
+
+          showApp(
+            loginData.user
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "SIGNUP ERROR:",
+            error
+          );
+
+          authMessage.style.color =
+            "#dc2626";
+
+          authMessage.textContent =
+            error.message ||
+            "Account बनाने में समस्या हुई।";
+
+        }
+
+
+        signupBtn.disabled = false;
+
+        signupBtn.textContent =
+          "Create Account";
+
+      }
+    );
+
+
+    /* =========================
+       LOGIN
+    ========================= */
+
+    loginForm.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        const email =
+          document
+            .getElementById("loginEmail")
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById("loginPassword")
+            .value;
+
+
+        if (!email || !password) {
+
+          authMessage.style.color =
+            "#dc2626";
+
+          authMessage.textContent =
+            "Email और Password डालें।";
+
+          return;
+        }
+
+
+        loginBtn.disabled = true;
+
+        loginBtn.textContent =
+          "Login हो रहा है...";
+
+        authMessage.textContent = "";
+
+
+        try {
+
+          const response =
+            await fetch(
+              LOGIN_API,
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  email: email,
+                  password: password
+                })
+              }
+            );
+
+
+          const data =
+            await response.json();
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              data.error ||
+              "Login में समस्या हुई।"
+            );
+
+          }
+
+
+          saveUser(
+            data.user
+          );
+
+          showApp(
+            data.user
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "LOGIN ERROR:",
+            error
+          );
+
+          authMessage.style.color =
+            "#dc2626";
+
+          authMessage.textContent =
+            error.message ||
+            "Login में समस्या हुई।";
+
+        }
+
+
+        loginBtn.disabled = false;
+
+        loginBtn.textContent =
+          "Login";
+
+      }
+    );
+
+
+    /* =========================
+       SAVE USER
+    ========================= */
+
+    function saveUser(user) {
+
+      localStorage.setItem(
+        "baatai_user",
+        JSON.stringify(user)
+      );
+
+    }
+
+
+    /* =========================
+       SHOW APP
+    ========================= */
+
+    function showApp(user) {
+
+      authScreen.classList.add(
+        "hidden"
+      );
+
+      appScreen.classList.remove(
+        "hidden"
+      );
+
+
+      const userInfo =
+        document.getElementById(
+          "userInfo"
+        );
+
+
+      if (user && user.name) {
+
+        userInfo.textContent =
+          "👤 " + user.name;
+
+      } else if (user && user.email) {
+
+        userInfo.textContent =
+          "👤 " + user.email;
+
+      }
+
+
+      input.focus();
+
+    }
+
+
+    /* =========================
+       LOGOUT
+    ========================= */
+
+    function logout() {
+
+      localStorage.removeItem(
+        "baatai_user"
+      );
+
+      appScreen.classList.add(
+        "hidden"
+      );
+
+      authScreen.classList.remove(
+        "hidden"
+      );
+
+      document
+        .getElementById("loginEmail")
+        .value = "";
+
+      document
+        .getElementById("loginPassword")
+        .value = "";
+
+      showLogin();
+
+    }
+
+
+    /* =========================
+       THREE MENU
+    ========================= */
+
+    function toggleMenu() {
+
+      const sidebar =
+        document.getElementById(
+          "sidebar"
+        );
+
+      sidebar.classList.toggle(
+        "active"
+      );
+
+    }
+
+
+    /* =========================
+       ENTER KEY
+    ========================= */
+
+    input.addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Enter") {
+
+          event.preventDefault();
+
+          sendMessage();
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       SEND MESSAGE
+    ========================= */
 
     async function sendMessage() {
 
-      const message = input.value.trim();
+      const message =
+        input.value.trim();
+
 
       if (!message) {
         return;
       }
 
 
-      // Remove welcome
+      const welcome =
+        document.getElementById(
+          "welcome"
+        );
 
-      if (document.getElementById("welcome")) {
-        document.getElementById("welcome").remove();
+
+      if (welcome) {
+        welcome.remove();
       }
 
 
-      // Show user message
+      addMessage(
+        message,
+        "user"
+      );
 
-      addMessage(message, "user");
 
       input.value = "";
 
       sendBtn.disabled = true;
 
 
-      // Typing
-
       const typing =
-        addMessage("🤖 सोच रहा हूँ...", "ai");
+        addMessage(
+          "🤖 सोच रहा हूँ...",
+          "ai"
+        );
 
 
       try {
 
-        const response = await fetch(API_URL, {
+        const response =
+          await fetch(
+            CHAT_API,
+            {
+              method: "POST",
 
-          method: "POST",
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
 
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            message: message
-          })
-
-        });
+              body: JSON.stringify({
+                message: message
+              })
+            }
+          );
 
 
-        const data = await response.json();
+        const data =
+          await response.json();
 
 
         typing.remove();
@@ -432,23 +1191,29 @@
         if (!response.ok) {
 
           throw new Error(
-            data.error || "Server error"
+            data.error ||
+            "Server error"
           );
 
         }
 
 
         addMessage(
-          data.reply || "मुझे कोई जवाब नहीं मिला।",
+          data.reply ||
+          "मुझे कोई जवाब नहीं मिला।",
           "ai"
         );
 
 
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          "CHAT ERROR:",
+          error
+        );
 
         typing.remove();
+
 
         addMessage(
           "AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।",
@@ -465,28 +1230,47 @@
     }
 
 
-    // Add message
+    /* =========================
+       ADD MESSAGE
+    ========================= */
 
-    function addMessage(text, type) {
+    function addMessage(
+      text,
+      type
+    ) {
 
       const messageDiv =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
+
 
       messageDiv.className =
         "message " + type;
 
 
       const bubble =
-        document.createElement("div");
-
-      bubble.className = "bubble";
-
-      bubble.textContent = text;
+        document.createElement(
+          "div"
+        );
 
 
-      messageDiv.appendChild(bubble);
+      bubble.className =
+        "bubble";
 
-      chat.appendChild(messageDiv);
+
+      bubble.textContent =
+        text;
+
+
+      messageDiv.appendChild(
+        bubble
+      );
+
+
+      chat.appendChild(
+        messageDiv
+      );
 
 
       chat.scrollTop =
@@ -498,13 +1282,17 @@
     }
 
 
-    // New chat
+    /* =========================
+       NEW CHAT
+    ========================= */
 
     function newChat() {
 
       chat.innerHTML = `
 
-        <div class="welcome" id="welcome">
+        <div
+          class="welcome"
+          id="welcome">
 
           <h1>Hello 👋</h1>
 
@@ -516,14 +1304,22 @@
 
       `;
 
+
       input.value = "";
 
       input.focus();
 
-    }
-    function toggleMenu() {
-  const sidebar = document.querySelector(".sidebar");
-  sidebar.classList.toggle("active");
+
+      const sidebar =
+        document.getElementById(
+          "sidebar"
+        );
+
+
+      sidebar.classList.remove(
+        "active"
+      );
+
     }
 
   </script>
