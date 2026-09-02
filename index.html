@@ -29,7 +29,7 @@
     }
 
     /* =========================
-       LOGIN / SIGN UP
+       AUTH SCREEN
     ========================= */
 
     #authScreen {
@@ -127,7 +127,21 @@
       margin-top: 15px;
       min-height: 20px;
       font-size: 14px;
-      color: #dc2626;
+    }
+
+    .switch-text {
+      text-align: center;
+      margin-top: 15px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .switch-btn {
+      border: none;
+      background: none;
+      color: #2563eb;
+      cursor: pointer;
+      font-weight: bold;
     }
 
     /* =========================
@@ -300,10 +314,6 @@
       cursor: pointer;
     }
 
-    #sendBtn:hover {
-      background: #1d4ed8;
-    }
-
     #sendBtn:disabled {
       background: #9ca3af;
       cursor: not-allowed;
@@ -330,10 +340,6 @@
 
       .sidebar.active {
         display: block;
-      }
-
-      .header {
-        padding: 0 15px;
       }
 
       .chat {
@@ -366,7 +372,7 @@
 <body>
 
   <!-- =========================
-       LOGIN / SIGN UP SCREEN
+       LOGIN / SIGN UP
   ========================= -->
 
   <section id="authScreen">
@@ -399,9 +405,12 @@
 
       </div>
 
+
       <!-- LOGIN -->
 
-      <form id="loginForm" class="auth-form">
+      <form
+        id="loginForm"
+        class="auth-form">
 
         <label>Email</label>
 
@@ -431,6 +440,7 @@
         </button>
 
       </form>
+
 
       <!-- SIGN UP -->
 
@@ -478,9 +488,38 @@
 
       </form>
 
+
       <div
         id="authMessage"
         class="auth-message">
+      </div>
+
+      <div
+        id="loginSwitch"
+        class="switch-text">
+
+        नया account बनाना है?
+
+        <button
+          class="switch-btn"
+          onclick="showSignup()">
+          Sign Up
+        </button>
+
+      </div>
+
+      <div
+        id="signupSwitch"
+        class="switch-text hidden">
+
+        पहले से account है?
+
+        <button
+          class="switch-btn"
+          onclick="showLogin()">
+          Login
+        </button>
+
       </div>
 
     </div>
@@ -489,7 +528,7 @@
 
 
   <!-- =========================
-       BAATAI CHAT
+       BAATAI APP
   ========================= -->
 
   <div
@@ -541,6 +580,8 @@
       </header>
 
 
+      <!-- CHAT -->
+
       <section
         id="chat"
         class="chat">
@@ -559,6 +600,8 @@
 
       </section>
 
+
+      <!-- INPUT -->
 
       <div class="input-area">
 
@@ -633,45 +676,44 @@
 
 
     /* =========================
-       START
+       MESSAGE
     ========================= */
 
-    window.addEventListener("load", function() {
+    function showAuthMessage(
+      message,
+      success = false
+    ) {
 
-      const savedUser =
-        localStorage.getItem("baatai_user");
+      authMessage.textContent =
+        message;
 
-      if (savedUser) {
+      authMessage.style.color =
+        success
+          ? "#16a34a"
+          : "#dc2626";
+    }
 
-        try {
 
-          const user =
-            JSON.parse(savedUser);
+    function clearAuthMessage() {
 
-          showApp(user);
+      authMessage.textContent = "";
 
-        } catch (error) {
-
-          localStorage.removeItem(
-            "baatai_user"
-          );
-
-        }
-
-      }
-
-    });
+    }
 
 
     /* =========================
-       LOGIN TAB
+       SHOW LOGIN
     ========================= */
 
     function showLogin() {
 
-      loginForm.classList.remove("hidden");
+      loginForm.classList.remove(
+        "hidden"
+      );
 
-      signupForm.classList.add("hidden");
+      signupForm.classList.add(
+        "hidden"
+      );
 
       document
         .getElementById("loginTab")
@@ -681,21 +723,31 @@
         .getElementById("signupTab")
         .classList.remove("active");
 
-      authMessage.textContent = "";
+      document
+        .getElementById("loginSwitch")
+        .classList.remove("hidden");
 
-      authMessage.style.color = "#dc2626";
+      document
+        .getElementById("signupSwitch")
+        .classList.add("hidden");
+
+      clearAuthMessage();
     }
 
 
     /* =========================
-       SIGN UP TAB
+       SHOW SIGNUP
     ========================= */
 
     function showSignup() {
 
-      signupForm.classList.remove("hidden");
+      signupForm.classList.remove(
+        "hidden"
+      );
 
-      loginForm.classList.add("hidden");
+      loginForm.classList.add(
+        "hidden"
+      );
 
       document
         .getElementById("signupTab")
@@ -705,293 +757,16 @@
         .getElementById("loginTab")
         .classList.remove("active");
 
-      authMessage.textContent = "";
+      document
+        .getElementById("signupSwitch")
+        .classList.remove("hidden");
 
-      authMessage.style.color = "#dc2626";
+      document
+        .getElementById("loginSwitch")
+        .classList.add("hidden");
+
+      clearAuthMessage();
     }
-
-
-    /* =========================
-       SIGN UP
-    ========================= */
-
-    signupForm.addEventListener(
-      "submit",
-      async function(event) {
-
-        event.preventDefault();
-
-        const name =
-          document
-            .getElementById("signupName")
-            .value
-            .trim();
-
-        const email =
-          document
-            .getElementById("signupEmail")
-            .value
-            .trim();
-
-        const password =
-          document
-            .getElementById("signupPassword")
-            .value;
-
-
-        if (!name || !email || !password) {
-
-          authMessage.textContent =
-            "सभी जानकारी भरें।";
-
-          return;
-        }
-
-
-        if (password.length < 6) {
-
-          authMessage.textContent =
-            "Password कम से कम 6 अक्षर का होना चाहिए।";
-
-          return;
-        }
-
-
-        signupBtn.disabled = true;
-
-        signupBtn.textContent =
-          "Account बना रहा हूँ...";
-
-        authMessage.textContent = "";
-
-
-        try {
-
-          const response =
-            await fetch(
-              SIGNUP_API,
-              {
-                method: "POST",
-
-                headers: {
-                  "Content-Type":
-                    "application/json"
-                },
-
-                credentials: "include",
-
-                body: JSON.stringify({
-                  name: name,
-                  email: email,
-                  password: password
-                })
-              }
-            );
-
-
-          const data =
-            await response.json();
-
-
-          if (!response.ok) {
-
-            throw new Error(
-              data.error ||
-              "Account बनाने में समस्या हुई।"
-            );
-
-          }
-
-
-          authMessage.style.color =
-            "#16a34a";
-
-          authMessage.textContent =
-            "Account बन गया! Login किया जा रहा है...";
-
-
-          const loginResponse =
-            await fetch(
-              LOGIN_API,
-              {
-                method: "POST",
-
-                headers: {
-                  "Content-Type":
-                    "application/json"
-                },
-
-                credentials: "include",
-
-                body: JSON.stringify({
-                  email: email,
-                  password: password
-                })
-              }
-            );
-
-
-          const loginData =
-            await loginResponse.json();
-
-
-          if (!loginResponse.ok) {
-
-            throw new Error(
-              loginData.error ||
-              "Login नहीं हो पाया।"
-            );
-
-          }
-
-
-          saveUser(
-            loginData.user
-          );
-
-          showApp(
-            loginData.user
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            "SIGNUP ERROR:",
-            error
-          );
-
-          authMessage.style.color =
-            "#dc2626";
-
-          authMessage.textContent =
-            error.message ||
-            "Account बनाने में समस्या हुई।";
-
-        }
-
-
-        signupBtn.disabled = false;
-
-        signupBtn.textContent =
-          "Create Account";
-
-      }
-    );
-
-
-    /* =========================
-       LOGIN
-    ========================= */
-
-    loginForm.addEventListener(
-      "submit",
-      async function(event) {
-
-        event.preventDefault();
-
-        const email =
-          document
-            .getElementById("loginEmail")
-            .value
-            .trim();
-
-        const password =
-          document
-            .getElementById("loginPassword")
-            .value;
-
-
-        if (!email || !password) {
-
-          authMessage.style.color =
-            "#dc2626";
-
-          authMessage.textContent =
-            "Email और Password डालें।";
-
-          return;
-        }
-
-
-        loginBtn.disabled = true;
-
-        loginBtn.textContent =
-          "Login हो रहा है...";
-
-        authMessage.textContent = "";
-
-
-        try {
-
-          const response =
-            await fetch(
-              LOGIN_API,
-              {
-                method: "POST",
-
-                headers: {
-                  "Content-Type":
-                    "application/json"
-                },
-
-                credentials: "include",
-
-                body: JSON.stringify({
-                  email: email,
-                  password: password
-                })
-              }
-            );
-
-
-          const data =
-            await response.json();
-
-
-          if (!response.ok) {
-
-            throw new Error(
-              data.error ||
-              "Login में समस्या हुई।"
-            );
-
-          }
-
-
-          saveUser(
-            data.user
-          );
-
-          showApp(
-            data.user
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            "LOGIN ERROR:",
-            error
-          );
-
-          authMessage.style.color =
-            "#dc2626";
-
-          authMessage.textContent =
-            error.message ||
-            "Login में समस्या हुई।";
-
-        }
-
-
-        loginBtn.disabled = false;
-
-        loginBtn.textContent =
-          "Login";
-
-      }
-    );
 
 
     /* =========================
@@ -1022,12 +797,10 @@
         "hidden"
       );
 
-
       const userInfo =
         document.getElementById(
           "userInfo"
         );
-
 
       if (user && user.name) {
 
@@ -1041,44 +814,334 @@
 
       }
 
-
-      setTimeout(function() {
+      setTimeout(() => {
         input.focus();
       }, 100);
-
     }
+
+
+    /* =========================
+       CHECK SAVED LOGIN
+    ========================= */
+
+    window.addEventListener(
+      "load",
+      function() {
+
+        const savedUser =
+          localStorage.getItem(
+            "baatai_user"
+          );
+
+        if (!savedUser) {
+          showLogin();
+          return;
+        }
+
+        try {
+
+          const user =
+            JSON.parse(savedUser);
+
+          if (
+            user &&
+            (user.id || user.email)
+          ) {
+
+            showApp(user);
+
+          } else {
+
+            localStorage.removeItem(
+              "baatai_user"
+            );
+
+            showLogin();
+
+          }
+
+        } catch {
+
+          localStorage.removeItem(
+            "baatai_user"
+          );
+
+          showLogin();
+        }
+
+      }
+    );
+
+
+    /* =========================
+       SIGN UP
+    ========================= */
+
+    signupForm.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        clearAuthMessage();
+
+        const name =
+          document
+            .getElementById("signupName")
+            .value
+            .trim();
+
+        const email =
+          document
+            .getElementById("signupEmail")
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById("signupPassword")
+            .value;
+
+
+        if (!name || !email || !password) {
+
+          showAuthMessage(
+            "कृपया सभी जानकारी भरें।"
+          );
+
+          return;
+        }
+
+
+        if (password.length < 6) {
+
+          showAuthMessage(
+            "Password कम से कम 6 अक्षर का होना चाहिए।"
+          );
+
+          return;
+        }
+
+
+        signupBtn.disabled = true;
+
+        signupBtn.textContent =
+          "Account बन रहा है...";
+
+
+        try {
+
+          const response =
+            await fetch(
+              SIGNUP_API,
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  name,
+                  email,
+                  password
+                })
+              }
+            );
+
+
+          const data =
+            await response.json();
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              data.error ||
+              "Account बनाने में समस्या हुई।"
+            );
+
+          }
+
+
+          showAuthMessage(
+            "Account बन गया! अब Login करें। ✅",
+            true
+          );
+
+
+          document
+            .getElementById("loginEmail")
+            .value = email;
+
+
+          document
+            .getElementById("loginPassword")
+            .value = "";
+
+
+          showLogin();
+
+
+          showAuthMessage(
+            "Account बन गया! अब Login करें। ✅",
+            true
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "SIGNUP ERROR:",
+            error
+          );
+
+          showAuthMessage(
+            error.message ||
+            "Account बनाने में समस्या हुई।"
+          );
+
+        }
+
+
+        signupBtn.disabled = false;
+
+        signupBtn.textContent =
+          "Create Account";
+
+      }
+    );
+
+
+    /* =========================
+       LOGIN
+    ========================= */
+
+    loginForm.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        clearAuthMessage();
+
+
+        const email =
+          document
+            .getElementById("loginEmail")
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById("loginPassword")
+            .value;
+
+
+        if (!email || !password) {
+
+          showAuthMessage(
+            "Email और Password डालें।"
+          );
+
+          return;
+        }
+
+
+        loginBtn.disabled = true;
+
+        loginBtn.textContent =
+          "Login हो रहा है...";
+
+
+        try {
+
+          const response =
+            await fetch(
+              LOGIN_API,
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  email,
+                  password
+                })
+              }
+            );
+
+
+          const data =
+            await response.json();
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              data.error ||
+              "Login में समस्या हुई।"
+            );
+
+          }
+
+
+          if (!data.user) {
+
+            throw new Error(
+              "Server ने user information नहीं भेजी।"
+            );
+
+          }
+
+
+          saveUser(
+            data.user
+          );
+
+
+          showApp(
+            data.user
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "LOGIN ERROR:",
+            error
+          );
+
+          showAuthMessage(
+            error.message ||
+            "Login में समस्या हुई।"
+          );
+
+        }
+
+
+        loginBtn.disabled = false;
+
+        loginBtn.textContent =
+          "Login";
+
+      }
+    );
 
 
     /* =========================
        LOGOUT
     ========================= */
 
-    async function logout() {
-
-      try {
-
-        await fetch(
-          "/api/logout",
-          {
-            method: "POST",
-            credentials: "include"
-          }
-        );
-
-      } catch (error) {
-
-        console.error(
-          "LOGOUT ERROR:",
-          error
-        );
-
-      }
-
+    function logout() {
 
       localStorage.removeItem(
         "baatai_user"
       );
-
 
       appScreen.classList.add(
         "hidden"
@@ -1088,7 +1151,6 @@
         "hidden"
       );
 
-
       document
         .getElementById("loginEmail")
         .value = "";
@@ -1097,14 +1159,13 @@
         .getElementById("loginPassword")
         .value = "";
 
-
       showLogin();
 
     }
 
 
     /* =========================
-       MOBILE MENU
+       MENU
     ========================= */
 
     function toggleMenu() {
@@ -1198,10 +1259,8 @@
                   "application/json"
               },
 
-              credentials: "include",
-
               body: JSON.stringify({
-                message: message
+                message
               })
             }
           );
@@ -1336,15 +1395,9 @@
       input.focus();
 
 
-      const sidebar =
-        document.getElementById(
-          "sidebar"
-        );
-
-
-      sidebar.classList.remove(
-        "active"
-      );
+      document
+        .getElementById("sidebar")
+        .classList.remove("active");
 
     }
 
