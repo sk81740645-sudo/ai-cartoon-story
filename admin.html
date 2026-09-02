@@ -20,7 +20,7 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: auto;
       padding: 20px;
     }
@@ -76,6 +76,11 @@
       color: white;
     }
 
+    .reset-btn {
+      background: #f59e0b;
+      color: white;
+    }
+
     .topbar {
       display: flex;
       justify-content: space-between;
@@ -116,6 +121,7 @@
       padding: 13px;
       border-bottom: 1px solid #e5e7eb;
       text-align: left;
+      white-space: nowrap;
     }
 
     th {
@@ -127,7 +133,12 @@
       color: #6b7280;
     }
 
+    .action-cell {
+      min-width: 150px;
+    }
+
     @media (max-width: 600px) {
+
       .container {
         padding: 10px;
       }
@@ -141,6 +152,11 @@
         align-items: flex-start;
         flex-direction: column;
       }
+
+      th,
+      td {
+        padding: 10px;
+      }
     }
   </style>
 </head>
@@ -149,7 +165,9 @@
 
   <div class="container">
 
-    <!-- ADMIN LOGIN -->
+    <!-- =========================
+         ADMIN LOGIN
+    ========================= -->
 
     <div class="login-box" id="loginBox">
 
@@ -187,7 +205,9 @@
     </div>
 
 
-    <!-- ADMIN DASHBOARD -->
+    <!-- =========================
+         ADMIN DASHBOARD
+    ========================= -->
 
     <div
       class="dashboard"
@@ -197,11 +217,13 @@
       <div class="topbar">
 
         <div>
+
           <h1>👥 BaatAI Users</h1>
 
           <p class="subtitle">
             Registered users
           </p>
+
         </div>
 
         <button
@@ -212,10 +234,12 @@
 
       </div>
 
+
       <div
         id="dashboardMessage"
         class="message">
       </div>
+
 
       <p
         class="count"
@@ -223,17 +247,21 @@
         Users: 0
       </p>
 
+
       <div class="table-wrap">
 
         <table>
 
           <thead>
+
             <tr>
               <th>ID</th>
               <th>Name</th>
               <th>Email</th>
               <th>Created</th>
+              <th>Action</th>
             </tr>
+
           </thead>
 
           <tbody id="usersTable">
@@ -250,53 +278,69 @@
 
   <script>
 
+    /* =========================
+       ADMIN LOGIN
+    ========================= */
+
     async function adminLogin() {
 
       const email =
-        document.getElementById("adminEmail")
-          .value.trim();
+        document
+          .getElementById("adminEmail")
+          .value
+          .trim();
 
       const password =
-        document.getElementById("adminPassword")
+        document
+          .getElementById("adminPassword")
           .value;
 
       const message =
-        document.getElementById("loginMessage");
+        document
+          .getElementById("loginMessage");
+
 
       message.style.display = "none";
+
 
       if (!email || !password) {
 
         message.textContent =
           "Email और Password डालें।";
 
-        message.style.display = "block";
+        message.style.display =
+          "block";
 
         return;
       }
 
+
       try {
 
         const response =
-          await fetch("/api/admin/login", {
+          await fetch(
+            "/api/admin/login",
+            {
+              method: "POST",
 
-            method: "POST",
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
 
-            headers: {
-              "Content-Type": "application/json"
-            },
+              credentials: "include",
 
-            credentials: "include",
+              body: JSON.stringify({
+                email: email,
+                password: password
+              })
+            }
+          );
 
-            body: JSON.stringify({
-              email: email,
-              password: password
-            })
-
-          });
 
         const data =
           await response.json();
+
 
         if (!response.ok) {
 
@@ -307,27 +351,36 @@
 
         }
 
-        document.getElementById(
-          "loginBox"
-        ).style.display = "none";
 
-        document.getElementById(
-          "dashboard"
-        ).style.display = "block";
+        document
+          .getElementById("loginBox")
+          .style.display = "none";
+
+
+        document
+          .getElementById("dashboard")
+          .style.display = "block";
+
 
         loadUsers();
+
 
       } catch (error) {
 
         message.textContent =
           error.message;
 
-        message.style.display = "block";
+        message.style.display =
+          "block";
 
       }
 
     }
 
+
+    /* =========================
+       LOAD USERS
+    ========================= */
 
     async function loadUsers() {
 
@@ -336,10 +389,12 @@
           "usersTable"
         );
 
+
       const count =
         document.getElementById(
           "userCount"
         );
+
 
       try {
 
@@ -351,8 +406,10 @@
             }
           );
 
+
         const data =
           await response.json();
+
 
         if (!response.ok) {
 
@@ -363,16 +420,20 @@
 
         }
 
+
         table.innerHTML = "";
 
+
         count.textContent =
-          "Users: " + data.users.length;
+          "Users: " +
+          data.users.length;
+
 
         if (data.users.length === 0) {
 
           table.innerHTML = `
             <tr>
-              <td colspan="4">
+              <td colspan="5">
                 अभी कोई user नहीं है।
               </td>
             </tr>
@@ -381,46 +442,236 @@
           return;
         }
 
+
         data.users.forEach(user => {
 
           const row =
             document.createElement("tr");
+
 
           const date =
             new Date(
               user.created_at
             ).toLocaleString("hi-IN");
 
+
           row.innerHTML = `
-            <td>${escapeHtml(user.id)}</td>
-            <td>${escapeHtml(user.name)}</td>
-            <td>${escapeHtml(user.email)}</td>
-            <td>${escapeHtml(date)}</td>
+
+            <td>
+              ${escapeHtml(user.id)}
+            </td>
+
+            <td>
+              ${escapeHtml(user.name)}
+            </td>
+
+            <td>
+              ${escapeHtml(user.email)}
+            </td>
+
+            <td>
+              ${escapeHtml(date)}
+            </td>
+
+            <td class="action-cell">
+
+              <button
+                class="reset-btn"
+                onclick="resetPassword(
+                  ${Number(user.id)},
+                  '${escapeJs(user.name)}',
+                  '${escapeJs(user.email)}'
+                )">
+                🔑 Reset Password
+              </button>
+
+            </td>
+
           `;
+
 
           table.appendChild(row);
 
         });
 
+
       } catch (error) {
 
-        const message =
-          document.getElementById(
-            "dashboardMessage"
-          );
+        showDashboardMessage(
+          error.message,
+          "error"
+        );
 
-        message.textContent =
-          error.message;
-
-        message.className =
-          "message error";
-
-        message.style.display =
-          "block";
       }
 
     }
 
+
+    /* =========================
+       RESET PASSWORD
+    ========================= */
+
+    async function resetPassword(
+      userId,
+      userName,
+      userEmail
+    ) {
+
+      const newPassword =
+        prompt(
+          "नया Password डालें:\n\n" +
+          "User: " +
+          userName +
+          "\nEmail: " +
+          userEmail +
+          "\n\n" +
+          "Password कम से कम 6 अक्षर का होना चाहिए।"
+        );
+
+
+      if (newPassword === null) {
+        return;
+      }
+
+
+      if (!newPassword) {
+
+        alert(
+          "Password खाली नहीं हो सकता।"
+        );
+
+        return;
+      }
+
+
+      if (newPassword.length < 6) {
+
+        alert(
+          "Password कम से कम 6 अक्षर का होना चाहिए।"
+        );
+
+        return;
+      }
+
+
+      const confirmPassword =
+        prompt(
+          "नया Password दोबारा डालें:"
+        );
+
+
+      if (confirmPassword === null) {
+        return;
+      }
+
+
+      if (newPassword !== confirmPassword) {
+
+        alert(
+          "दोनों Password अलग हैं।"
+        );
+
+        return;
+      }
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/admin/reset-password",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              credentials: "include",
+
+              body: JSON.stringify({
+                userId: userId,
+                newPassword: newPassword
+              })
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Password reset नहीं हुआ।"
+          );
+
+        }
+
+
+        showDashboardMessage(
+          "✅ " +
+          userEmail +
+          " का password successfully reset हो गया।",
+          "success"
+        );
+
+
+      } catch (error) {
+
+        showDashboardMessage(
+          error.message,
+          "error"
+        );
+
+      }
+
+    }
+
+
+    /* =========================
+       DASHBOARD MESSAGE
+    ========================= */
+
+    function showDashboardMessage(
+      text,
+      type
+    ) {
+
+      const message =
+        document.getElementById(
+          "dashboardMessage"
+        );
+
+
+      message.textContent =
+        text;
+
+
+      message.className =
+        "message " + type;
+
+
+      message.style.display =
+        "block";
+
+
+      setTimeout(() => {
+
+        message.style.display =
+          "none";
+
+      }, 5000);
+
+    }
+
+
+    /* =========================
+       ADMIN LOGOUT
+    ========================= */
 
     async function adminLogout() {
 
@@ -435,22 +686,71 @@
         );
 
       } catch (error) {
+
         console.error(error);
+
       }
+
 
       location.reload();
 
     }
 
 
+    /* =========================
+       HTML ESCAPE
+    ========================= */
+
     function escapeHtml(value) {
 
       return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+
+    }
+
+
+    /* =========================
+       JAVASCRIPT STRING ESCAPE
+    ========================= */
+
+    function escapeJs(value) {
+
+      return String(value)
+        .replaceAll(
+          "\\",
+          "\\\\"
+        )
+        .replaceAll(
+          "'",
+          "\\'"
+        )
+        .replaceAll(
+          "\n",
+          "\\n"
+        )
+        .replaceAll(
+          "\r",
+          "\\r"
+        );
 
     }
 
