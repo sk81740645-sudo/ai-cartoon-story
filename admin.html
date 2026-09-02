@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>BaatAI Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f3f4f6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .login-box,
+    .dashboard {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .login-box {
+      max-width: 450px;
+      margin: 80px auto;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #111827;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .login-btn {
+      width: 100%;
+      background: #2563eb;
+      color: white;
+    }
+
+    .logout-btn {
+      background: #dc2626;
+      color: white;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th,
+    td {
+      padding: 13px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    th {
+      background: #f9fafb;
+    }
+
+    .count {
+      margin-bottom: 10px;
+      color: #6b7280;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 10px;
+      }
+
+      .login-box,
+      .dashboard {
+        padding: 18px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- ADMIN LOGIN -->
+
+    <div class="login-box" id="loginBox">
+
+      <h1>🔐 BaatAI Admin</h1>
+
+      <p class="subtitle">
+        केवल Admin के लिए
+      </p>
+
+      <div
+        id="loginMessage"
+        class="message error">
+      </div>
+
+      <input
+        id="adminEmail"
+        type="email"
+        placeholder="Admin Email"
+        autocomplete="username"
+      >
+
+      <input
+        id="adminPassword"
+        type="password"
+        placeholder="Admin Password"
+        autocomplete="current-password"
+      >
+
+      <button
+        class="login-btn"
+        onclick="adminLogin()">
+        Login
+      </button>
+
+    </div>
+
+
+    <!-- ADMIN DASHBOARD -->
+
+    <div
+      class="dashboard"
+      id="dashboard"
+      style="display:none;">
+
+      <div class="topbar">
+
+        <div>
+          <h1>👥 BaatAI Users</h1>
+
+          <p class="subtitle">
+            Registered users
+          </p>
+        </div>
+
+        <button
+          class="logout-btn"
+          onclick="adminLogout()">
+          Logout
+        </button>
+
+      </div>
+
+      <div
+        id="dashboardMessage"
+        class="message">
+      </div>
+
+      <p
+        class="count"
+        id="userCount">
+        Users: 0
+      </p>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Created</th>
+            </tr>
+          </thead>
+
+          <tbody id="usersTable">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    async function adminLogin() {
+
+      const email =
+        document.getElementById("adminEmail")
+          .value.trim();
+
+      const password =
+        document.getElementById("adminPassword")
+          .value;
+
+      const message =
+        document.getElementById("loginMessage");
+
+      message.style.display = "none";
+
+      if (!email || !password) {
+
+        message.textContent =
+          "Email और Password डालें।";
+
+        message.style.display = "block";
+
+        return;
+      }
+
+      try {
+
+        const response =
+          await fetch("/api/admin/login", {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            credentials: "include",
+
+            body: JSON.stringify({
+              email: email,
+              password: password
+            })
+
+          });
+
+        const data =
+          await response.json();
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Admin login failed"
+          );
+
+        }
+
+        document.getElementById(
+          "loginBox"
+        ).style.display = "none";
+
+        document.getElementById(
+          "dashboard"
+        ).style.display = "block";
+
+        loadUsers();
+
+      } catch (error) {
+
+        message.textContent =
+          error.message;
+
+        message.style.display = "block";
+
+      }
+
+    }
+
+
+    async function loadUsers() {
+
+      const table =
+        document.getElementById(
+          "usersTable"
+        );
+
+      const count =
+        document.getElementById(
+          "userCount"
+        );
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/admin/users",
+            {
+              credentials: "include"
+            }
+          );
+
+        const data =
+          await response.json();
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Users load नहीं हुए।"
+          );
+
+        }
+
+        table.innerHTML = "";
+
+        count.textContent =
+          "Users: " + data.users.length;
+
+        if (data.users.length === 0) {
+
+          table.innerHTML = `
+            <tr>
+              <td colspan="4">
+                अभी कोई user नहीं है।
+              </td>
+            </tr>
+          `;
+
+          return;
+        }
+
+        data.users.forEach(user => {
+
+          const row =
+            document.createElement("tr");
+
+          const date =
+            new Date(
+              user.created_at
+            ).toLocaleString("hi-IN");
+
+          row.innerHTML = `
+            <td>${escapeHtml(user.id)}</td>
+            <td>${escapeHtml(user.name)}</td>
+            <td>${escapeHtml(user.email)}</td>
+            <td>${escapeHtml(date)}</td>
+          `;
+
+          table.appendChild(row);
+
+        });
+
+      } catch (error) {
+
+        const message =
+          document.getElementById(
+            "dashboardMessage"
+          );
+
+        message.textContent =
+          error.message;
+
+        message.className =
+          "message error";
+
+        message.style.display =
+          "block";
+      }
+
+    }
+
+
+    async function adminLogout() {
+
+      try {
+
+        await fetch(
+          "/api/admin/logout",
+          {
+            method: "POST",
+            credentials: "include"
+          }
+        );
+
+      } catch (error) {
+        console.error(error);
+      }
+
+      location.reload();
+
+    }
+
+
+    function escapeHtml(value) {
+
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+    }
+
+  </script>
+
+</body>
+</html>
