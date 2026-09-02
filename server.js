@@ -8,8 +8,11 @@ const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+/* =========================
+   MIDDLEWARE
+========================= */
+
 app.use(express.json());
-app.use(express.static(__dirname));
 
 /* =========================
    DATABASE
@@ -23,56 +26,137 @@ const pool = new Pool({
 });
 
 /* =========================
+   GOOGLE ROBOTS.TXT
+========================= */
+
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+
+  res.send(`User-agent: *
+Allow: /
+
+Sitemap: https://baatai-ai.onrender.com/sitemap.xml`);
+});
+
+/* =========================
+   GOOGLE SITEMAP
+========================= */
+
+app.get("/sitemap.xml", (req, res) => {
+  res.type("application/xml");
+
+  res.send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://baatai-ai.onrender.com/</loc>
+  </url>
+
+</urlset>`);
+});
+
+/* =========================
+   STATIC FILES
+========================= */
+
+app.use(express.static(__dirname));
+
+/* =========================
    ADMIN SESSION SETTINGS
 ========================= */
 
-const SESSION_SECRET = process.env.SESSION_SECRET;
+const SESSION_SECRET =
+  process.env.SESSION_SECRET;
+
+/* =========================
+   CREATE ADMIN TOKEN
+========================= */
 
 function createAdminToken() {
-  const expires = Date.now() + (24 * 60 * 60 * 1000);
 
-  const data = `admin:${expires}`;
+  const expires =
+    Date.now() + (24 * 60 * 60 * 1000);
 
-  const signature = crypto
-    .createHmac("sha256", SESSION_SECRET)
-    .update(data)
-    .digest("hex");
+  const data =
+    `admin:${expires}`;
+
+  const signature =
+    crypto
+      .createHmac(
+        "sha256",
+        SESSION_SECRET
+      )
+      .update(data)
+      .digest("hex");
 
   return Buffer
-    .from(`${data}:${signature}`)
+    .from(
+      `${data}:${signature}`
+    )
     .toString("base64url");
 }
 
-function verifyAdminToken(token) {
-  try {
-    const decoded = Buffer
-      .from(token, "base64url")
-      .toString("utf8");
+/* =========================
+   VERIFY ADMIN TOKEN
+========================= */
 
-    const parts = decoded.split(":");
+function verifyAdminToken(token) {
+
+  try {
+
+    const decoded =
+      Buffer
+        .from(
+          token,
+          "base64url"
+        )
+        .toString("utf8");
+
+    const parts =
+      decoded.split(":");
 
     if (parts.length !== 3) {
       return false;
     }
 
-    const role = parts[0];
-    const expires = Number(parts[1]);
-    const signature = parts[2];
+    const role =
+      parts[0];
+
+    const expires =
+      Number(parts[1]);
+
+    const signature =
+      parts[2];
 
     if (role !== "admin") {
       return false;
     }
 
-    if (!expires || Date.now() > expires) {
+    if (
+      !expires ||
+      Date.now() > expires
+    ) {
       return false;
     }
 
-    const data = `${role}:${expires}`;
+    const data =
+      `${role}:${expires}`;
 
-    const expectedSignature = crypto
-      .createHmac("sha256", SESSION_SECRET)
-      .update(data)
-      .digest("hex");
+    const expectedSignature =
+      crypto
+        .createHmac(
+          "sha256",
+          SESSION_SECRET
+        )
+        .update(data)
+        .digest("hex");
+
+    if (
+      signature.length !==
+      expectedSignature.length
+    ) {
+      return false;
+    }
 
     return crypto.timingSafeEqual(
       Buffer.from(signature),
@@ -80,33 +164,71 @@ function verifyAdminToken(token) {
     );
 
   } catch (error) {
+
     return false;
+
   }
 }
 
-function getCookie(req, name) {
-  const cookies = req.headers.cookie || "";
+/* =========================
+   GET COOKIE
+========================= */
 
-  const parts = cookies.split(";");
+function getCookie(req, name) {
+
+  const cookies =
+    req.headers.cookie || "";
+
+  const parts =
+    cookies.split(";");
 
   for (const part of parts) {
-    const [key, ...value] = part.trim().split("=");
+
+    const [
+      key,
+      ...value
+    ] =
+      part.trim().split("=");
 
     if (key === name) {
-      return decodeURIComponent(value.join("="));
+
+      return decodeURIComponent(
+        value.join("=")
+      );
+
     }
+
   }
 
   return null;
 }
 
-function requireAdmin(req, res, next) {
-  const token = getCookie(req, "admin_session");
+/* =========================
+   REQUIRE ADMIN
+========================= */
 
-  if (!token || !verifyAdminToken(token)) {
+function requireAdmin(
+  req,
+  res,
+  next
+) {
+
+  const token =
+    getCookie(
+      req,
+      "admin_session"
+    );
+
+  if (
+    !token ||
+    !verifyAdminToken(token)
+  ) {
+
     return res.status(401).json({
-      error: "Admin login required"
+      error:
+        "Admin login required"
     });
+
   }
 
   next();
@@ -117,7 +239,9 @@ function requireAdmin(req, res, next) {
 ========================= */
 
 async function createUsersTable() {
+
   try {
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -128,14 +252,19 @@ async function createUsersTable() {
       )
     `);
 
-    console.log("Users table ready");
+    console.log(
+      "Users table ready"
+    );
 
   } catch (error) {
+
     console.error(
       "Database table error:",
       error.message
     );
+
   }
+
 }
 
 /* =========================
@@ -143,258 +272,439 @@ async function createUsersTable() {
 ========================= */
 
 app.get("/", (req, res) => {
+
   res.sendFile(
-    path.join(__dirname, "index.html")
+    path.join(
+      __dirname,
+      "index.html"
+    )
   );
+
 });
 
 /* =========================
    HEALTH CHECK
 ========================= */
 
-app.get("/api/health", async (req, res) => {
-  try {
+app.get(
+  "/api/health",
+  async (req, res) => {
 
-    await pool.query("SELECT 1");
+    try {
 
-    res.json({
-      status: "ok",
-      database: "connected",
-      message: "BaatAI server is running"
-    });
+      await pool.query(
+        "SELECT 1"
+      );
 
-  } catch (error) {
+      res.json({
 
-    res.status(500).json({
-      status: "error",
-      database: "not connected",
-      error: error.message
-    });
+        status: "ok",
+
+        database:
+          "connected",
+
+        message:
+          "BaatAI server is running"
+
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+
+        status: "error",
+
+        database:
+          "not connected",
+
+        error:
+          error.message
+
+      });
+
+    }
 
   }
-});
+);
 
 /* =========================
    SIGN UP
 ========================= */
 
-app.post("/api/signup", async (req, res) => {
-  try {
+app.post(
+  "/api/signup",
+  async (req, res) => {
 
-    const { name, email, password } = req.body;
+    try {
 
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        error:
-          "Name, Email और Password जरूरी हैं।"
-      });
-    }
+      const {
+        name,
+        email,
+        password
+      } = req.body;
 
-    if (password.length < 6) {
-      return res.status(400).json({
-        error:
-          "Password कम से कम 6 अक्षर का होना चाहिए।"
-      });
-    }
+      /* CHECK INPUT */
 
-    const cleanEmail =
-      email.trim().toLowerCase();
+      if (
+        !name ||
+        !email ||
+        !password
+      ) {
 
-    const existingUser =
+        return res.status(400).json({
+
+          error:
+            "Name, Email और Password जरूरी हैं।"
+
+        });
+
+      }
+
+      /* PASSWORD LENGTH */
+
+      if (
+        password.length < 6
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "Password कम से कम 6 अक्षर का होना चाहिए।"
+
+        });
+
+      }
+
+      /* CLEAN EMAIL */
+
+      const cleanEmail =
+        email
+          .trim()
+          .toLowerCase();
+
+      /* CHECK EXISTING USER */
+
+      const existingUser =
+        await pool.query(
+          "SELECT id FROM users WHERE email = $1",
+          [cleanEmail]
+        );
+
+      if (
+        existingUser.rows.length > 0
+      ) {
+
+        return res.status(409).json({
+
+          error:
+            "इस Email से account पहले से मौजूद है।"
+
+        });
+
+      }
+
+      /* HASH PASSWORD */
+
+      const hashedPassword =
+        await bcrypt.hash(
+          password,
+          10
+        );
+
+      /* CREATE USER */
+
       await pool.query(
-        "SELECT id FROM users WHERE email = $1",
-        [cleanEmail]
+        `INSERT INTO users
+        (name, email, password)
+        VALUES ($1, $2, $3)`,
+        [
+          name.trim(),
+          cleanEmail,
+          hashedPassword
+        ]
       );
 
-    if (existingUser.rows.length > 0) {
-      return res.status(409).json({
-        error:
-          "इस Email से account पहले से मौजूद है।"
+      res.json({
+
+        success: true,
+
+        message:
+          "Account successfully created"
+
       });
+
+    } catch (error) {
+
+      console.error(
+        "SIGNUP ERROR:",
+        error
+      );
+
+      res.status(500).json({
+
+        error:
+          "Account बनाने में समस्या हुई।"
+
+      });
+
     }
 
-    const hashedPassword =
-      await bcrypt.hash(password, 10);
-
-    await pool.query(
-      `INSERT INTO users
-       (name, email, password)
-       VALUES ($1, $2, $3)`,
-      [
-        name.trim(),
-        cleanEmail,
-        hashedPassword
-      ]
-    );
-
-    res.json({
-      success: true,
-      message:
-        "Account successfully created"
-    });
-
-  } catch (error) {
-
-    console.error(
-      "SIGNUP ERROR:",
-      error
-    );
-
-    res.status(500).json({
-      error:
-        "Account बनाने में समस्या हुई।"
-    });
   }
-});
+);
 
 /* =========================
    LOGIN
 ========================= */
 
-app.post("/api/login", async (req, res) => {
-  try {
+app.post(
+  "/api/login",
+  async (req, res) => {
 
-    const { email, password } = req.body;
+    try {
 
-    if (!email || !password) {
-      return res.status(400).json({
-        error:
-          "Email और Password डालें।"
-      });
-    }
+      const {
+        email,
+        password
+      } = req.body;
 
-    const cleanEmail =
-      email.trim().toLowerCase();
+      /* CHECK INPUT */
 
-    const result =
-      await pool.query(
-        `SELECT id, name, email, password
-         FROM users
-         WHERE email = $1`,
-        [cleanEmail]
-      );
+      if (
+        !email ||
+        !password
+      ) {
 
-    if (result.rows.length === 0) {
-      return res.status(401).json({
-        error:
-          "Email या Password गलत है।"
-      });
-    }
+        return res.status(400).json({
 
-    const user = result.rows[0];
+          error:
+            "Email और Password डालें।"
 
-    const passwordMatch =
-      await bcrypt.compare(
-        password,
-        user.password
-      );
+        });
 
-    if (!passwordMatch) {
-      return res.status(401).json({
-        error:
-          "Email या Password गलत है।"
-      });
-    }
-
-    res.json({
-      success: true,
-      message:
-        "Login successful",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email
       }
-    });
 
-  } catch (error) {
+      /* CLEAN EMAIL */
 
-    console.error(
-      "LOGIN ERROR:",
-      error
-    );
+      const cleanEmail =
+        email
+          .trim()
+          .toLowerCase();
 
-    res.status(500).json({
-      error:
-        "Login में समस्या हुई।"
-    });
+      /* FIND USER */
+
+      const result =
+        await pool.query(
+          `SELECT
+             id,
+             name,
+             email,
+             password
+           FROM users
+           WHERE email = $1`,
+          [cleanEmail]
+        );
+
+      /* USER NOT FOUND */
+
+      if (
+        result.rows.length === 0
+      ) {
+
+        return res.status(401).json({
+
+          error:
+            "Email या Password गलत है।"
+
+        });
+
+      }
+
+      const user =
+        result.rows[0];
+
+      /* CHECK PASSWORD */
+
+      const passwordMatch =
+        await bcrypt.compare(
+          password,
+          user.password
+        );
+
+      if (!passwordMatch) {
+
+        return res.status(401).json({
+
+          error:
+            "Email या Password गलत है।"
+
+        });
+
+      }
+
+      /* LOGIN SUCCESS */
+
+      res.json({
+
+        success: true,
+
+        message:
+          "Login successful",
+
+        user: {
+
+          id:
+            user.id,
+
+          name:
+            user.name,
+
+          email:
+            user.email
+
+        }
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "LOGIN ERROR:",
+        error
+      );
+
+      res.status(500).json({
+
+        error:
+          "Login में समस्या हुई।"
+
+      });
+
+    }
+
   }
-});
+);
 
 /* =========================
    ADMIN LOGIN
 ========================= */
 
-app.post("/api/admin/login", (req, res) => {
-  try {
+app.post(
+  "/api/admin/login",
+  (req, res) => {
 
-    const { email, password } = req.body;
+    try {
 
-    const adminEmail =
-      process.env.ADMIN_EMAIL;
+      const {
+        email,
+        password
+      } = req.body;
 
-    const adminPassword =
-      process.env.ADMIN_PASSWORD;
+      const adminEmail =
+        process.env.ADMIN_EMAIL;
 
-    if (!SESSION_SECRET) {
-      return res.status(500).json({
-        error:
-          "SESSION_SECRET Render में सेट नहीं है।"
+      const adminPassword =
+        process.env.ADMIN_PASSWORD;
+
+      /* SESSION SECRET CHECK */
+
+      if (!SESSION_SECRET) {
+
+        return res.status(500).json({
+
+          error:
+            "SESSION_SECRET Render में सेट नहीं है।"
+
+        });
+
+      }
+
+      /* ADMIN ENV CHECK */
+
+      if (
+        !adminEmail ||
+        !adminPassword
+      ) {
+
+        return res.status(500).json({
+
+          error:
+            "ADMIN_EMAIL या ADMIN_PASSWORD Render में सेट नहीं है।"
+
+        });
+
+      }
+
+      /* LOGIN CHECK */
+
+      if (
+        !email ||
+        !password ||
+        email
+          .trim()
+          .toLowerCase() !==
+          adminEmail
+            .trim()
+            .toLowerCase() ||
+        password !==
+          adminPassword
+      ) {
+
+        return res.status(401).json({
+
+          error:
+            "Admin Email या Password गलत है।"
+
+        });
+
+      }
+
+      /* CREATE TOKEN */
+
+      const token =
+        createAdminToken();
+
+      const secure =
+        process.env.NODE_ENV ===
+        "production"
+          ? "; Secure"
+          : "";
+
+      /* SET COOKIE */
+
+      res.setHeader(
+        "Set-Cookie",
+        `admin_session=${encodeURIComponent(
+          token
+        )}; HttpOnly; Path=/; Max-Age=86400; SameSite=Lax${secure}`
+      );
+
+      res.json({
+
+        success: true,
+
+        message:
+          "Admin login successful"
+
       });
+
+    } catch (error) {
+
+      console.error(
+        "ADMIN LOGIN ERROR:",
+        error
+      );
+
+      res.status(500).json({
+
+        error:
+          "Admin login में समस्या हुई।"
+
+      });
+
     }
 
-    if (!adminEmail || !adminPassword) {
-      return res.status(500).json({
-        error:
-          "ADMIN_EMAIL या ADMIN_PASSWORD Render में सेट नहीं है।"
-      });
-    }
-
-    if (
-      !email ||
-      !password ||
-      email.trim().toLowerCase() !==
-        adminEmail.trim().toLowerCase() ||
-      password !== adminPassword
-    ) {
-      return res.status(401).json({
-        error:
-          "Admin Email या Password गलत है।"
-      });
-    }
-
-    const token =
-      createAdminToken();
-
-    const secure =
-      process.env.NODE_ENV === "production"
-        ? "; Secure"
-        : "";
-
-    res.setHeader(
-      "Set-Cookie",
-      `admin_session=${encodeURIComponent(token)}; HttpOnly; Path=/; Max-Age=86400; SameSite=Lax${secure}`
-    );
-
-    res.json({
-      success: true,
-      message:
-        "Admin login successful"
-    });
-
-  } catch (error) {
-
-    console.error(
-      "ADMIN LOGIN ERROR:",
-      error
-    );
-
-    res.status(500).json({
-      error:
-        "Admin login में समस्या हुई।"
-    });
   }
-});
+);
 
 /* =========================
    ADMIN CHECK
@@ -406,8 +716,11 @@ app.get(
   (req, res) => {
 
     res.json({
+
       success: true,
+
       admin: true
+
     });
 
   }
@@ -436,8 +749,12 @@ app.get(
         );
 
       res.json({
+
         success: true,
-        users: result.rows
+
+        users:
+          result.rows
+
       });
 
     } catch (error) {
@@ -448,10 +765,131 @@ app.get(
       );
 
       res.status(500).json({
+
         error:
           "Users की जानकारी प्राप्त नहीं हो सकी।"
+
       });
+
     }
+
+  }
+);
+
+/* =========================
+   ADMIN RESET USER PASSWORD
+========================= */
+
+app.post(
+  "/api/admin/reset-password",
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const {
+        userId,
+        newPassword
+      } = req.body;
+
+      /* CHECK INPUT */
+
+      if (
+        !userId ||
+        !newPassword
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "User ID और नया Password जरूरी है।"
+
+        });
+
+      }
+
+      /* PASSWORD LENGTH */
+
+      if (
+        newPassword.length < 6
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "Password कम से कम 6 अक्षर का होना चाहिए।"
+
+        });
+
+      }
+
+      /* HASH NEW PASSWORD */
+
+      const hashedPassword =
+        await bcrypt.hash(
+          newPassword,
+          10
+        );
+
+      /* UPDATE PASSWORD */
+
+      const result =
+        await pool.query(
+          `UPDATE users
+           SET password = $1
+           WHERE id = $2
+           RETURNING id, name, email`,
+          [
+            hashedPassword,
+            userId
+          ]
+        );
+
+      /* USER NOT FOUND */
+
+      if (
+        result.rows.length === 0
+      ) {
+
+        return res.status(404).json({
+
+          error:
+            "User नहीं मिला।"
+
+        });
+
+      }
+
+      /* SUCCESS */
+
+      res.json({
+
+        success: true,
+
+        message:
+          "Password successfully reset हो गया।",
+
+        user:
+          result.rows[0]
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "RESET PASSWORD ERROR:",
+        error
+      );
+
+      res.status(500).json({
+
+        error:
+          "Password reset नहीं हो पाया।"
+
+      });
+
+    }
+
   }
 );
 
@@ -469,9 +907,12 @@ app.post(
     );
 
     res.json({
+
       success: true,
+
       message:
         "Admin logout successful"
+
     });
 
   }
@@ -481,82 +922,116 @@ app.post(
    GEMINI CHAT
 ========================= */
 
-app.post("/api/chat", async (req, res) => {
-  try {
+app.post(
+  "/api/chat",
+  async (req, res) => {
 
-    const message =
-      req.body?.message;
+    try {
 
-    if (!message || !message.trim()) {
-      return res.status(400).json({
-        error:
-          "Message खाली है"
-      });
-    }
+      const message =
+        req.body?.message;
 
-    const apiKey =
-      process.env.GEMINI_API_KEY;
+      /* CHECK MESSAGE */
 
-    if (!apiKey) {
+      if (
+        !message ||
+        !message.trim()
+      ) {
 
-      console.error(
-        "GEMINI_API_KEY missing"
+        return res.status(400).json({
+
+          error:
+            "Message खाली है"
+
+        });
+
+      }
+
+      /* API KEY */
+
+      const apiKey =
+        process.env.GEMINI_API_KEY;
+
+      if (!apiKey) {
+
+        console.error(
+          "GEMINI_API_KEY missing"
+        );
+
+        return res.status(500).json({
+
+          error:
+            "GEMINI_API_KEY Render Environment में सेट नहीं है।"
+
+        });
+
+      }
+
+      console.log(
+        "User:",
+        message
       );
 
-      return res.status(500).json({
-        error:
-          "GEMINI_API_KEY Render Environment में सेट नहीं है।"
+      /* GEMINI */
+
+      const ai =
+        new GoogleGenAI({
+          apiKey:
+            apiKey
+        });
+
+      const response =
+        await ai.models.generateContent({
+
+          model:
+            "gemini-3.6-flash",
+
+          contents:
+            message
+
+        });
+
+      const reply =
+        response.text;
+
+      console.log(
+        "Gemini response received"
+      );
+
+      res.json({
+
+        reply:
+          reply ||
+          "मुझे जवाब नहीं मिला।"
+
       });
+
+    } catch (error) {
+
+      console.error(
+        "========== GEMINI ERROR =========="
+      );
+
+      console.error(
+        error
+      );
+
+      console.error(
+        "==================================="
+      );
+
+      res.status(500).json({
+
+        error:
+          error?.message ||
+          "Gemini API में समस्या हुई।"
+
+      });
+
     }
 
-    console.log(
-      "User:",
-      message
-    );
-
-    const ai =
-      new GoogleGenAI({
-        apiKey: apiKey
-      });
-
-    const response =
-      await ai.models.generateContent({
-        model: "gemini-3.6-flash",
-        contents: message
-      });
-
-    const reply =
-      response.text;
-
-    console.log(
-      "Gemini response received"
-    );
-
-    return res.json({
-      reply:
-        reply ||
-        "मुझे जवाब नहीं मिला।"
-    });
-
-  } catch (error) {
-
-    console.error(
-      "========== GEMINI ERROR =========="
-    );
-
-    console.error(error);
-
-    console.error(
-      "==================================="
-    );
-
-    return res.status(500).json({
-      error:
-        error?.message ||
-        "Gemini API में समस्या हुई।"
-    });
   }
-});
+);
 
 /* =========================
    START SERVER
@@ -564,19 +1039,33 @@ app.post("/api/chat", async (req, res) => {
 
 async function startServer() {
 
-  await createUsersTable();
+  try {
 
-  app.listen(
-    PORT,
-    "0.0.0.0",
-    () => {
+    await createUsersTable();
 
-      console.log(
-        `BaatAI running on port ${PORT}`
-      );
+    app.listen(
+      PORT,
+      "0.0.0.0",
+      () => {
 
-    }
-  );
+        console.log(
+          `BaatAI running on port ${PORT}`
+        );
+
+      }
+    );
+
+  } catch (error) {
+
+    console.error(
+      "SERVER START ERROR:",
+      error
+    );
+
+    process.exit(1);
+
+  }
+
 }
 
 startServer();
