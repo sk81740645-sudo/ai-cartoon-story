@@ -365,7 +365,119 @@
 </head>
 
 <body>
+<div id="authScreen" style="
+  position:fixed;
+  inset:0;
+  background:#f5f7fb;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+">
 
+  <div style="
+    width:100%;
+    max-width:400px;
+    background:white;
+    padding:25px;
+    border-radius:18px;
+    box-shadow:0 5px 25px rgba(0,0,0,.1);
+  ">
+
+    <h1 style="text-align:center;margin-bottom:10px;">
+      🤖 BaatAI
+    </h1>
+
+    <p style="text-align:center;color:#6b7280;margin-bottom:20px;">
+      पहले Login या Sign Up करें
+    </p>
+
+    <div id="authMessage" style="
+      display:none;
+      padding:10px;
+      margin-bottom:15px;
+      border-radius:8px;
+      background:#fee2e2;
+      color:#991b1b;
+    "></div>
+
+    <div id="signupForm">
+
+      <input
+        id="signupName"
+        placeholder="आपका नाम"
+        style="width:100%;padding:13px;margin-bottom:10px;border:1px solid #ddd;border-radius:10px;"
+      >
+
+      <input
+        id="signupEmail"
+        type="email"
+        placeholder="Email"
+        style="width:100%;padding:13px;margin-bottom:10px;border:1px solid #ddd;border-radius:10px;"
+      >
+
+      <input
+        id="signupPassword"
+        type="password"
+        placeholder="Password (कम से कम 6 अक्षर)"
+        style="width:100%;padding:13px;margin-bottom:10px;border:1px solid #ddd;border-radius:10px;"
+      >
+
+      <button
+        onclick="signupUser()"
+        style="width:100%;padding:13px;background:#2563eb;color:white;border:0;border-radius:10px;font-size:16px;">
+        Sign Up
+      </button>
+
+      <p style="text-align:center;margin-top:15px;">
+        पहले से account है?
+        <button
+          onclick="showLogin()"
+          style="border:0;background:none;color:#2563eb;cursor:pointer;">
+          Login
+        </button>
+      </p>
+
+    </div>
+
+
+    <div id="loginForm" style="display:none;">
+
+      <input
+        id="loginEmail"
+        type="email"
+        placeholder="Email"
+        style="width:100%;padding:13px;margin-bottom:10px;border:1px solid #ddd;border-radius:10px;"
+      >
+
+      <input
+        id="loginPassword"
+        type="password"
+        placeholder="Password"
+        style="width:100%;padding:13px;margin-bottom:10px;border:1px solid #ddd;border-radius:10px;"
+      >
+
+      <button
+        onclick="loginUser()"
+        style="width:100%;padding:13px;background:#2563eb;color:white;border:0;border-radius:10px;font-size:16px;">
+        Login
+      </button>
+
+      <p style="text-align:center;margin-top:15px;">
+        नया account बनाना है?
+        <button
+          onclick="showSignup()"
+          style="border:0;background:none;color:#2563eb;cursor:pointer;">
+          Sign Up
+        </button>
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
   <!-- =========================
        LOGIN / SIGN UP SCREEN
   ========================= -->
@@ -1321,7 +1433,162 @@
       );
 
     }
+/* =========================
+   AUTH
+========================= */
 
+function showLogin() {
+  document.getElementById("signupForm").style.display = "none";
+  document.getElementById("loginForm").style.display = "block";
+  clearAuthMessage();
+}
+
+function showSignup() {
+  document.getElementById("loginForm").style.display = "none";
+  document.getElementById("signupForm").style.display = "block";
+  clearAuthMessage();
+}
+
+function showAuthMessage(message) {
+  const box = document.getElementById("authMessage");
+
+  box.textContent = message;
+  box.style.display = "block";
+}
+
+function clearAuthMessage() {
+  const box = document.getElementById("authMessage");
+
+  box.textContent = "";
+  box.style.display = "none";
+}
+
+
+async function signupUser() {
+
+  clearAuthMessage();
+
+  const name =
+    document.getElementById("signupName").value.trim();
+
+  const email =
+    document.getElementById("signupEmail").value.trim();
+
+  const password =
+    document.getElementById("signupPassword").value;
+
+  if (!name || !email || !password) {
+    showAuthMessage(
+      "कृपया Name, Email और Password भरें।"
+    );
+    return;
+  }
+
+  if (password.length < 6) {
+    showAuthMessage(
+      "Password कम से कम 6 अक्षर का होना चाहिए।"
+    );
+    return;
+  }
+
+  try {
+
+    const response = await fetch("/api/signup", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        name,
+        email,
+        password
+      })
+
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Sign Up failed"
+      );
+    }
+
+    alert(
+      "Account बन गया! अब Login करें। ✅"
+    );
+
+    document.getElementById("loginEmail").value = email;
+
+    showLogin();
+
+  } catch (error) {
+
+    showAuthMessage(error.message);
+
+  }
+}
+
+
+async function loginUser() {
+
+  clearAuthMessage();
+
+  const email =
+    document.getElementById("loginEmail").value.trim();
+
+  const password =
+    document.getElementById("loginPassword").value;
+
+  if (!email || !password) {
+    showAuthMessage(
+      "Email और Password डालें।"
+    );
+    return;
+  }
+
+  try {
+
+    const response = await fetch("/api/login", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        email,
+        password
+      })
+
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Login failed"
+      );
+    }
+
+    document.getElementById(
+      "authScreen"
+    ).style.display = "none";
+
+    alert(
+      "Login successful! 🎉"
+    );
+
+  } catch (error) {
+
+    showAuthMessage(error.message);
+
+  }
+}
   </script>
 
 </body>
