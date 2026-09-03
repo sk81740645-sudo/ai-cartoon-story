@@ -32,201 +32,6 @@ const pool = new Pool({
 app.use(express.static(__dirname));
 
 /* =========================
-   SESSION SECRET
-========================= */
-
-const SESSION_SECRET =
-  process.env.SESSION_SECRET;
-
-/* =========================
-   ADMIN TOKEN
-========================= */
-
-function createAdminToken() {
-  const expires =
-    Date.now() + 24 * 60 * 60 * 1000;
-
-  const data = `admin:${expires}`;
-
-  const signature =
-    crypto
-      .createHmac("sha256", SESSION_SECRET)
-      .update(data)
-      .digest("hex");
-
-  return Buffer
-    .from(`${data}:${signature}`)
-    .toString("base64url");
-}
-
-/* =========================
-   VERIFY ADMIN TOKEN
-========================= */
-
-function verifyAdminToken(token) {
-  try {
-    const decoded =
-      Buffer
-        .from(token, "base64url")
-        .toString("utf8");
-
-    const parts = decoded.split(":");
-
-    if (parts.length !== 3) {
-      return false;
-    }
-
-    const role = parts[0];
-    const expires = Number(parts[1]);
-    const signature = parts[2];
-
-    if (role !== "admin") {
-      return false;
-    }
-
-    if (!expires || Date.now() > expires) {
-      return false;
-    }
-
-    const data = `${role}:${expires}`;
-
-    const expectedSignature =
-      crypto
-        .createHmac("sha256", SESSION_SECRET)
-        .update(data)
-        .digest("hex");
-
-    if (
-      signature.length !==
-      expectedSignature.length
-    ) {
-      return false;
-    }
-
-    return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature)
-    );
-
-  } catch (error) {
-    return false;
-  }
-}
-
-/* =========================
-   GET COOKIE
-========================= */
-
-function getCookie(req, name) {
-  const cookies =
-    req.headers.cookie || "";
-
-  const parts = cookies.split(";");
-
-  for (const part of parts) {
-    const [key, ...value] =
-      part.trim().split("=");
-
-    if (key === name) {
-      return decodeURIComponent(
-        value.join("=")
-      );
-    }
-  }
-
-  return null;
-}
-
-/* =========================
-   REQUIRE ADMIN
-========================= */
-
-function requireAdmin(req, res, next) {
-  const token =
-    getCookie(req, "admin_session");
-
-  if (
-    !token ||
-    !verifyAdminToken(token)
-  ) {
-    return res.status(401).json({
-      error: "Admin login required"
-    });
-  }
-
-  next();
-}
-
-/* =========================
-   CREATE DATABASE TABLES
-========================= */
-
-async function createTables() {
-  try {
-
-    /* USERS */
-
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    /* CHATS */
-
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS chats (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL
-          REFERENCES users(id)
-          ON DELETE CASCADE,
-        title TEXT NOT NULL DEFAULT 'New Chat',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    /* MESSAGES */
-
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS messages (
-        id SERIAL PRIMARY KEY,
-        chat_id INTEGER NOT NULL
-          REFERENCES chats(id)
-          ON DELETE CASCADE,
-        role TEXT NOT NULL,
-        content TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    console.log(
-      "Users, chats and messages tables ready"
-    );
-
-  } catch (error) {
-    console.error(
-      "Database table error:",
-      error.message
-    );
-  }
-}
-
-/* =========================
-   HOME
-========================= */
-
-app.get("/", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "index.html")
-  );
-});
-
-/* =========================
    ROBOTS.TXT
 ========================= */
 
@@ -248,715 +53,434 @@ app.get("/sitemap.xml", (req, res) => {
 
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
   <url>
     <loc>https://baatai-ai.onrender.com/</loc>
   </url>
-
 </urlset>`);
+});
+
+/* =========================
+   SESSION SECRET
+========================= */
+
+const SESSION_SECRET =
+  process.env.SESSION_SECRET;
+
+/* =========================
+   CREATE USERS TABLE
+========================= */
+
+async function createUsersTable() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    console.log("Users table ready");
+
+  } catch (error) {
+    console.error(
+      "Database table error:",
+      error.message
+    );
+  }
+}
+
+/* =========================
+   HOME
+========================= */
+
+app.get("/", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "index.html")
+  );
 });
 
 /* =========================
    HEALTH CHECK
 ========================= */
 
-app.get(
-  "/api/health",
-  async (req, res) => {
-    try {
+app.get("/api/health", async (req, res) => {
+  try {
 
-      await pool.query("SELECT 1");
+    await pool.query("SELECT 1");
 
-      res.json({
-        status: "ok",
-        database: "connected",
-        message: "BaatAI server is running"
-      });
+    res.json({
+      status: "ok",
+      database: "connected",
+      message: "BaatAI server is running"
+    });
 
-    } catch (error) {
+  } catch (error) {
 
-      res.status(500).json({
-        status: "error",
-        database: "not connected",
-        error: error.message
-      });
+    res.status(500).json({
+      status: "error",
+      database: "not connected",
+      error: error.message
+    });
 
-    }
   }
-);
+});
 
 /* =========================
    SIGN UP
 ========================= */
 
-app.post(
-  "/api/signup",
-  async (req, res) => {
+app.post("/api/signup", async (req, res) => {
 
-    try {
+  try {
 
-      const {
-        name,
-        email,
-        password
-      } = req.body;
+    const {
+      name,
+      email,
+      password
+    } = req.body;
 
-      if (
-        !name ||
-        !email ||
-        !password
-      ) {
-        return res.status(400).json({
-          error:
-            "Name, Email और Password जरूरी हैं।"
-        });
-      }
+    if (!name || !email || !password) {
 
-      if (password.length < 6) {
-        return res.status(400).json({
-          error:
-            "Password कम से कम 6 अक्षर का होना चाहिए।"
-        });
-      }
-
-      const cleanEmail =
-        email.trim().toLowerCase();
-
-      const existingUser =
-        await pool.query(
-          "SELECT id FROM users WHERE email = $1",
-          [cleanEmail]
-        );
-
-      if (existingUser.rows.length > 0) {
-        return res.status(409).json({
-          error:
-            "इस Email से account पहले से मौजूद है।"
-        });
-      }
-
-      const hashedPassword =
-        await bcrypt.hash(password, 10);
-
-      await pool.query(
-        `INSERT INTO users
-        (name, email, password)
-        VALUES ($1, $2, $3)`,
-        [
-          name.trim(),
-          cleanEmail,
-          hashedPassword
-        ]
-      );
-
-      res.json({
-        success: true,
-        message:
-          "Account successfully created"
-      });
-
-    } catch (error) {
-
-      console.error(
-        "SIGNUP ERROR:",
-        error
-      );
-
-      res.status(500).json({
+      return res.status(400).json({
         error:
-          "Account बनाने में समस्या हुई।"
+          "Name, Email और Password जरूरी हैं।"
       });
+
     }
+
+    if (password.length < 6) {
+
+      return res.status(400).json({
+        error:
+          "Password कम से कम 6 अक्षर का होना चाहिए।"
+      });
+
+    }
+
+    const cleanEmail =
+      email.trim().toLowerCase();
+
+    const existingUser =
+      await pool.query(
+        "SELECT id FROM users WHERE email = $1",
+        [cleanEmail]
+      );
+
+    if (existingUser.rows.length > 0) {
+
+      return res.status(409).json({
+        error:
+          "इस Email से account पहले से मौजूद है।"
+      });
+
+    }
+
+    const hashedPassword =
+      await bcrypt.hash(password, 10);
+
+    await pool.query(
+      `INSERT INTO users
+       (name, email, password)
+       VALUES ($1, $2, $3)`,
+      [
+        name.trim(),
+        cleanEmail,
+        hashedPassword
+      ]
+    );
+
+    res.json({
+      success: true,
+      message:
+        "Account successfully created"
+    });
+
+  } catch (error) {
+
+    console.error(
+      "SIGNUP ERROR:",
+      error
+    );
+
+    res.status(500).json({
+      error:
+        "Account बनाने में समस्या हुई।"
+    });
+
   }
-);
+
+});
 
 /* =========================
    LOGIN
 ========================= */
 
-app.post(
-  "/api/login",
-  async (req, res) => {
+app.post("/api/login", async (req, res) => {
 
-    try {
+  try {
 
-      const {
-        email,
-        password
-      } = req.body;
+    const {
+      email,
+      password
+    } = req.body;
 
-      if (!email || !password) {
-        return res.status(400).json({
-          error:
-            "Email और Password डालें।"
-        });
-      }
+    if (!email || !password) {
 
-      const cleanEmail =
-        email.trim().toLowerCase();
-
-      const result =
-        await pool.query(
-          `SELECT
-             id,
-             name,
-             email,
-             password
-           FROM users
-           WHERE email = $1`,
-          [cleanEmail]
-        );
-
-      if (result.rows.length === 0) {
-        return res.status(401).json({
-          error:
-            "Email या Password गलत है।"
-        });
-      }
-
-      const user =
-        result.rows[0];
-
-      const passwordMatch =
-        await bcrypt.compare(
-          password,
-          user.password
-        );
-
-      if (!passwordMatch) {
-        return res.status(401).json({
-          error:
-            "Email या Password गलत है।"
-        });
-      }
-
-      res.json({
-        success: true,
-        message:
-          "Login successful",
-
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email
-        }
+      return res.status(400).json({
+        error:
+          "Email और Password डालें।"
       });
 
-    } catch (error) {
+    }
 
-      console.error(
-        "LOGIN ERROR:",
-        error
+    const cleanEmail =
+      email.trim().toLowerCase();
+
+    const result =
+      await pool.query(
+        `SELECT
+           id,
+           name,
+           email,
+           password
+         FROM users
+         WHERE email = $1`,
+        [cleanEmail]
       );
 
-      res.status(500).json({
+    if (result.rows.length === 0) {
+
+      return res.status(401).json({
         error:
-          "Login में समस्या हुई।"
+          "Email या Password गलत है।"
       });
+
     }
-  }
-);
 
-/* =========================
-   CREATE CHAT
-========================= */
+    const user =
+      result.rows[0];
 
-app.post(
-  "/api/chats",
-  async (req, res) => {
-
-    try {
-
-      const {
-        userId,
-        title
-      } = req.body;
-
-      if (!userId) {
-        return res.status(400).json({
-          error: "User ID जरूरी है।"
-        });
-      }
-
-      const result =
-        await pool.query(
-          `INSERT INTO chats
-           (user_id, title)
-           VALUES ($1, $2)
-           RETURNING id, title, created_at, updated_at`,
-          [
-            userId,
-            title || "New Chat"
-          ]
-        );
-
-      res.json({
-        success: true,
-        chat: result.rows[0]
-      });
-
-    } catch (error) {
-
-      console.error(
-        "CREATE CHAT ERROR:",
-        error
+    const passwordMatch =
+      await bcrypt.compare(
+        password,
+        user.password
       );
 
-      res.status(500).json({
+    if (!passwordMatch) {
+
+      return res.status(401).json({
         error:
-          "Chat बनाने में समस्या हुई।"
+          "Email या Password गलत है।"
       });
+
     }
+
+    res.json({
+
+      success: true,
+
+      message:
+        "Login successful",
+
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      }
+
+    });
+
+  } catch (error) {
+
+    console.error(
+      "LOGIN ERROR:",
+      error
+    );
+
+    res.status(500).json({
+      error:
+        "Login में समस्या हुई।"
+    });
+
   }
-);
+
+});
 
 /* =========================
-   GET PREVIOUS CHATS
+   ADMIN TOKEN
 ========================= */
 
-app.get(
-  "/api/chats/:userId",
-  async (req, res) => {
+function createAdminToken() {
 
-    try {
-
-      const userId =
-        Number(req.params.userId);
-
-      if (!userId) {
-        return res.status(400).json({
-          error: "Invalid user ID"
-        });
-      }
-
-      const result =
-        await pool.query(
-          `SELECT
-             id,
-             title,
-             created_at,
-             updated_at
-           FROM chats
-           WHERE user_id = $1
-           ORDER BY updated_at DESC`,
-          [userId]
-        );
-
-      res.json({
-        success: true,
-        chats: result.rows
-      });
-
-    } catch (error) {
-
-      console.error(
-        "GET CHATS ERROR:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Previous chats प्राप्त नहीं हो सकीं।"
-      });
-    }
+  if (!SESSION_SECRET) {
+    throw new Error(
+      "SESSION_SECRET missing"
+    );
   }
-);
 
-/* =========================
-   GET CHAT MESSAGES
-========================= */
+  const expires =
+    Date.now() +
+    24 * 60 * 60 * 1000;
 
-app.get(
-  "/api/chats/:chatId/messages",
-  async (req, res) => {
+  const data =
+    `admin:${expires}`;
 
-    try {
+  const signature =
+    crypto
+      .createHmac(
+        "sha256",
+        SESSION_SECRET
+      )
+      .update(data)
+      .digest("hex");
 
-      const chatId =
-        Number(req.params.chatId);
-
-      const userId =
-        Number(req.query.userId);
-
-      if (!chatId || !userId) {
-        return res.status(400).json({
-          error: "Invalid chat information"
-        });
-      }
-
-      /* CHECK CHAT BELONGS TO USER */
-
-      const chatCheck =
-        await pool.query(
-          `SELECT id
-           FROM chats
-           WHERE id = $1
-           AND user_id = $2`,
-          [chatId, userId]
-        );
-
-      if (chatCheck.rows.length === 0) {
-        return res.status(403).json({
-          error:
-            "यह chat आपके account की नहीं है।"
-        });
-      }
-
-      const result =
-        await pool.query(
-          `SELECT
-             id,
-             role,
-             content,
-             created_at
-           FROM messages
-           WHERE chat_id = $1
-           ORDER BY created_at ASC`,
-          [chatId]
-        );
-
-      res.json({
-        success: true,
-        messages: result.rows
-      });
-
-    } catch (error) {
-
-      console.error(
-        "GET MESSAGES ERROR:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Messages प्राप्त नहीं हो सके।"
-      });
-    }
-  }
-);
-
-/* =========================
-   DELETE CHAT
-========================= */
-
-app.delete(
-  "/api/chats/:chatId",
-  async (req, res) => {
-
-    try {
-
-      const chatId =
-        Number(req.params.chatId);
-
-      const userId =
-        Number(req.query.userId);
-
-      if (!chatId || !userId) {
-        return res.status(400).json({
-          error: "Invalid information"
-        });
-      }
-
-      const result =
-        await pool.query(
-          `DELETE FROM chats
-           WHERE id = $1
-           AND user_id = $2
-           RETURNING id`,
-          [chatId, userId]
-        );
-
-      if (result.rows.length === 0) {
-        return res.status(404).json({
-          error: "Chat नहीं मिली।"
-        });
-      }
-
-      res.json({
-        success: true,
-        message:
-          "Chat delete हो गई।"
-      });
-
-    } catch (error) {
-
-      console.error(
-        "DELETE CHAT ERROR:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Chat delete नहीं हो सकी।"
-      });
-    }
-  }
-);
-
-/* =========================
-   SAVE MESSAGE
-========================= */
-
-async function saveMessage(
-  chatId,
-  role,
-  content
-) {
-
-  await pool.query(
-    `INSERT INTO messages
-     (chat_id, role, content)
-     VALUES ($1, $2, $3)`,
-    [
-      chatId,
-      role,
-      content
-    ]
-  );
-
-  await pool.query(
-    `UPDATE chats
-     SET updated_at = CURRENT_TIMESTAMP
-     WHERE id = $1`,
-    [chatId]
-  );
+  return Buffer
+    .from(
+      `${data}:${signature}`
+    )
+    .toString("base64url");
 }
 
 /* =========================
-   UPDATE CHAT TITLE
+   VERIFY ADMIN TOKEN
 ========================= */
 
-async function updateChatTitle(
-  chatId,
-  title
-) {
+function verifyAdminToken(token) {
 
-  await pool.query(
-    `UPDATE chats
-     SET title = $1,
-         updated_at = CURRENT_TIMESTAMP
-     WHERE id = $2`,
-    [title, chatId]
-  );
+  try {
+
+    if (!SESSION_SECRET) {
+      return false;
+    }
+
+    const decoded =
+      Buffer
+        .from(
+          token,
+          "base64url"
+        )
+        .toString("utf8");
+
+    const parts =
+      decoded.split(":");
+
+    if (parts.length !== 3) {
+      return false;
+    }
+
+    const role = parts[0];
+    const expires = Number(parts[1]);
+    const signature = parts[2];
+
+    if (role !== "admin") {
+      return false;
+    }
+
+    if (
+      !expires ||
+      Date.now() > expires
+    ) {
+      return false;
+    }
+
+    const data =
+      `${role}:${expires}`;
+
+    const expectedSignature =
+      crypto
+        .createHmac(
+          "sha256",
+          SESSION_SECRET
+        )
+        .update(data)
+        .digest("hex");
+
+    if (
+      signature.length !==
+      expectedSignature.length
+    ) {
+      return false;
+    }
+
+    return crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expectedSignature)
+    );
+
+  } catch (error) {
+
+    return false;
+
+  }
+
 }
 
 /* =========================
-   GEMINI CHAT
+   GET COOKIE
 ========================= */
 
-app.post(
-  "/api/chat",
-  async (req, res) => {
+function getCookie(req, name) {
 
-    try {
+  const cookies =
+    req.headers.cookie || "";
 
-      const {
-        message,
-        userId,
-        chatId
-      } = req.body;
+  const parts =
+    cookies.split(";");
 
-      if (
-        !message ||
-        !message.trim()
-      ) {
-        return res.status(400).json({
-          error:
-            "Message खाली है"
-        });
-      }
+  for (const part of parts) {
 
-      if (!userId) {
-        return res.status(400).json({
-          error:
-            "User ID जरूरी है।"
-        });
-      }
+    const [
+      key,
+      ...value
+    ] =
+      part.trim().split("=");
 
-      let currentChatId =
-        Number(chatId);
+    if (key === name) {
 
-      /* =========================
-         CREATE CHAT IF NEEDED
-      ========================= */
-
-      if (!currentChatId) {
-
-        const chatResult =
-          await pool.query(
-            `INSERT INTO chats
-             (user_id, title)
-             VALUES ($1, $2)
-             RETURNING id`,
-            [
-              userId,
-              message.trim().substring(0, 50)
-            ]
-          );
-
-        currentChatId =
-          chatResult.rows[0].id;
-
-      } else {
-
-        /* CHECK CHAT OWNER */
-
-        const ownerCheck =
-          await pool.query(
-            `SELECT id
-             FROM chats
-             WHERE id = $1
-             AND user_id = $2`,
-            [
-              currentChatId,
-              userId
-            ]
-          );
-
-        if (ownerCheck.rows.length === 0) {
-          return res.status(403).json({
-            error:
-              "यह chat आपके account की नहीं है।"
-          });
-        }
-      }
-
-      /* =========================
-         API KEY
-      ========================= */
-
-      const apiKey =
-        process.env.GEMINI_API_KEY;
-
-      if (!apiKey) {
-
-        return res.status(500).json({
-          error:
-            "GEMINI_API_KEY Render Environment में सेट नहीं है।"
-        });
-      }
-
-      /* =========================
-         SAVE USER MESSAGE
-      ========================= */
-
-      await saveMessage(
-        currentChatId,
-        "user",
-        message.trim()
+      return decodeURIComponent(
+        value.join("=")
       );
 
-      /* =========================
-         GET CHAT HISTORY
-      ========================= */
-
-      const historyResult =
-        await pool.query(
-          `SELECT
-             role,
-             content
-           FROM messages
-           WHERE chat_id = $1
-           ORDER BY created_at ASC`,
-          [currentChatId]
-        );
-
-      /* =========================
-         GEMINI
-      ========================= */
-
-      const ai =
-        new GoogleGenAI({
-          apiKey
-        });
-
-      const contents =
-        historyResult.rows.map(
-          (item) => ({
-            role:
-              item.role === "user"
-                ? "user"
-                : "model",
-
-            parts: [
-              {
-                text: item.content
-              }
-            ]
-          })
-        );
-
-      const response =
-        await ai.models.generateContent({
-
-          model:
-            "gemini-3.6-flash",
-
-          contents
-
-        });
-
-      const reply =
-        response.text ||
-        "मुझे जवाब नहीं मिला।";
-
-      /* =========================
-         SAVE AI MESSAGE
-      ========================= */
-
-      await saveMessage(
-        currentChatId,
-        "model",
-        reply
-      );
-
-      /* =========================
-         CHAT TITLE
-      ========================= */
-
-      const messageCount =
-        historyResult.rows.length;
-
-      if (messageCount <= 1) {
-
-        await updateChatTitle(
-          currentChatId,
-          message
-            .trim()
-            .substring(0, 50)
-        );
-      }
-
-      console.log(
-        "Gemini response saved"
-      );
-
-      res.json({
-        success: true,
-        chatId: currentChatId,
-        reply
-      });
-
-    } catch (error) {
-
-      console.error(
-        "========== GEMINI ERROR =========="
-      );
-
-      console.error(error);
-
-      console.error(
-        "==================================="
-      );
-
-      res.status(500).json({
-        error:
-          error?.message ||
-          "Gemini API में समस्या हुई।"
-      });
     }
+
   }
-);
+
+  return null;
+}
+
+/* =========================
+   REQUIRE ADMIN
+========================= */
+
+function requireAdmin(
+  req,
+  res,
+  next
+) {
+
+  const token =
+    getCookie(
+      req,
+      "admin_session"
+    );
+
+  if (
+    !token ||
+    !verifyAdminToken(token)
+  ) {
+
+    return res.status(401).json({
+      error:
+        "Admin login required"
+    });
+
+  }
+
+  next();
+}
 
 /* =========================
    ADMIN LOGIN
@@ -980,20 +504,24 @@ app.post(
         process.env.ADMIN_PASSWORD;
 
       if (!SESSION_SECRET) {
+
         return res.status(500).json({
           error:
             "SESSION_SECRET Render में सेट नहीं है।"
         });
+
       }
 
       if (
         !adminEmail ||
         !adminPassword
       ) {
+
         return res.status(500).json({
           error:
             "ADMIN_EMAIL या ADMIN_PASSWORD Render में सेट नहीं है।"
         });
+
       }
 
       if (
@@ -1003,26 +531,22 @@ app.post(
           adminEmail.trim().toLowerCase() ||
         password !== adminPassword
       ) {
+
         return res.status(401).json({
           error:
             "Admin Email या Password गलत है।"
         });
+
       }
 
       const token =
         createAdminToken();
 
-      const secure =
-        process.env.NODE_ENV ===
-        "production"
-          ? "; Secure"
-          : "";
-
       res.setHeader(
         "Set-Cookie",
         `admin_session=${encodeURIComponent(
           token
-        )}; HttpOnly; Path=/; Max-Age=86400; SameSite=Lax${secure}`
+        )}; HttpOnly; Path=/; Max-Age=86400; SameSite=Lax; Secure`
       );
 
       res.json({
@@ -1042,7 +566,9 @@ app.post(
         error:
           "Admin login में समस्या हुई।"
       });
+
     }
+
   }
 );
 
@@ -1059,6 +585,7 @@ app.get(
       success: true,
       admin: true
     });
+
   }
 );
 
@@ -1086,8 +613,7 @@ app.get(
 
       res.json({
         success: true,
-        users:
-          result.rows
+        users: result.rows
       });
 
     } catch (error) {
@@ -1101,7 +627,9 @@ app.get(
         error:
           "Users की जानकारी प्राप्त नहीं हो सकी।"
       });
+
     }
+
   }
 );
 
@@ -1125,17 +653,23 @@ app.post(
         !userId ||
         !newPassword
       ) {
+
         return res.status(400).json({
           error:
             "User ID और नया Password जरूरी है।"
         });
+
       }
 
-      if (newPassword.length < 6) {
+      if (
+        newPassword.length < 6
+      ) {
+
         return res.status(400).json({
           error:
             "Password कम से कम 6 अक्षर का होना चाहिए।"
         });
+
       }
 
       const hashedPassword =
@@ -1156,19 +690,27 @@ app.post(
           ]
         );
 
-      if (result.rows.length === 0) {
+      if (
+        result.rows.length === 0
+      ) {
+
         return res.status(404).json({
           error:
             "User नहीं मिला।"
         });
+
       }
 
       res.json({
+
         success: true,
+
         message:
           "Password successfully reset हो गया।",
+
         user:
           result.rows[0]
+
       });
 
     } catch (error) {
@@ -1182,7 +724,9 @@ app.post(
         error:
           "Password reset नहीं हो पाया।"
       });
+
     }
+
   }
 );
 
@@ -1196,7 +740,7 @@ app.post(
 
     res.setHeader(
       "Set-Cookie",
-      "admin_session=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax"
+      "admin_session=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax; Secure"
     );
 
     res.json({
@@ -1204,6 +748,121 @@ app.post(
       message:
         "Admin logout successful"
     });
+
+  }
+);
+
+/* =========================
+   GEMINI CHAT
+========================= */
+
+app.post(
+  "/api/chat",
+  async (req, res) => {
+
+    try {
+
+      const message =
+        req.body?.message;
+
+      if (
+        typeof message !== "string" ||
+        !message.trim()
+      ) {
+
+        return res.status(400).json({
+          error:
+            "Message खाली है।"
+        });
+
+      }
+
+      const apiKey =
+        process.env.GEMINI_API_KEY;
+
+      if (!apiKey) {
+
+        console.error(
+          "GEMINI_API_KEY missing"
+        );
+
+        return res.status(500).json({
+          error:
+            "GEMINI_API_KEY Render Environment में सेट नहीं है।"
+        });
+
+      }
+
+      console.log(
+        "Gemini request:",
+        message
+      );
+
+      const ai =
+        new GoogleGenAI({
+          apiKey: apiKey
+        });
+
+      const response =
+        await ai.models.generateContent({
+
+          model:
+            "gemini-2.5-flash",
+
+          contents:
+            message.trim()
+
+        });
+
+      const reply =
+        response?.text;
+
+      if (!reply) {
+
+        return res.status(500).json({
+          error:
+            "Gemini ने कोई जवाब नहीं दिया।"
+        });
+
+      }
+
+      console.log(
+        "Gemini response received"
+      );
+
+      res.json({
+        reply: reply
+      });
+
+    } catch (error) {
+
+      console.error(
+        "========== GEMINI ERROR =========="
+      );
+
+      console.error(
+        error?.message || error
+      );
+
+      console.error(
+        "==================================="
+      );
+
+      res.status(500).json({
+
+        error:
+          "Gemini API से जवाब नहीं मिल पाया।",
+
+        details:
+          process.env.NODE_ENV ===
+          "production"
+            ? undefined
+            : error?.message
+
+      });
+
+    }
+
   }
 );
 
@@ -1215,7 +874,7 @@ async function startServer() {
 
   try {
 
-    await createTables();
+    await createUsersTable();
 
     app.listen(
       PORT,
@@ -1237,7 +896,9 @@ async function startServer() {
     );
 
     process.exit(1);
+
   }
+
 }
 
 startServer();
