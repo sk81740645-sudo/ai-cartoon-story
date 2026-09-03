@@ -8,7 +8,11 @@ const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json({ limit: "10mb" }));
+/* =========================
+   MIDDLEWARE
+========================= */
+
+app.use(express.json({ limit: "15mb" }));
 
 /* =========================
    DATABASE
@@ -20,6 +24,12 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
+
+/* =========================
+   STATIC FILES
+========================= */
+
+app.use(express.static(__dirname));
 
 /* =========================
    ROBOTS
@@ -44,18 +54,12 @@ app.get("/sitemap.xml", (req, res) => {
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-  <url>
-    <loc>https://baatai-ai.onrender.com/</loc>
-  </url>
+<url>
+<loc>https://baatai-ai.onrender.com/</loc>
+</url>
 
 </urlset>`);
 });
-
-/* =========================
-   STATIC
-========================= */
-
-app.use(express.static(__dirname));
 
 /* =========================
    SESSION
@@ -71,7 +75,7 @@ const SESSION_SECRET =
 function createAdminToken() {
 
   const expires =
-    Date.now() + (24 * 60 * 60 * 1000);
+    Date.now() + 24 * 60 * 60 * 1000;
 
   const data =
     `admin:${expires}`;
@@ -86,12 +90,14 @@ function createAdminToken() {
       .digest("hex");
 
   return Buffer
-    .from(`${data}:${signature}`)
+    .from(
+      `${data}:${signature}`
+    )
     .toString("base64url");
 }
 
 /* =========================
-   VERIFY ADMIN
+   VERIFY ADMIN TOKEN
 ========================= */
 
 function verifyAdminToken(token) {
@@ -100,7 +106,10 @@ function verifyAdminToken(token) {
 
     const decoded =
       Buffer
-        .from(token, "base64url")
+        .from(
+          token,
+          "base64url"
+        )
         .toString("utf8");
 
     const parts =
@@ -210,6 +219,7 @@ function requireAdmin(req, res, next) {
   }
 
   next();
+
 }
 
 /* =========================
@@ -219,6 +229,8 @@ function requireAdmin(req, res, next) {
 async function createTables() {
 
   try {
+
+    /* USERS */
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -230,20 +242,25 @@ async function createTables() {
       )
     `);
 
+    /* CHATS */
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS chats (
         id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        title TEXT NOT NULL DEFAULT 'New Chat',
+        user_id INTEGER NOT NULL,
+        title TEXT DEFAULT 'New Chat',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
+    /* MESSAGES */
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS messages (
         id SERIAL PRIMARY KEY,
-        chat_id INTEGER NOT NULL REFERENCES chats(id) ON DELETE CASCADE,
+        chat_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
         role TEXT NOT NULL,
         content TEXT,
         image_data TEXT,
@@ -256,7 +273,7 @@ async function createTables() {
   } catch (error) {
 
     console.error(
-      "Database table error:",
+      "DATABASE TABLE ERROR:",
       error.message
     );
 
@@ -289,12 +306,15 @@ app.get(
 
     try {
 
-      await pool.query("SELECT 1");
+      await pool.query(
+        "SELECT 1"
+      );
 
       res.json({
         status: "ok",
         database: "connected",
-        message: "BaatAI server is running"
+        message:
+          "BaatAI server is running"
       });
 
     } catch (error) {
@@ -311,7 +331,7 @@ app.get(
 );
 
 /* =========================
-   SIGNUP
+   SIGN UP
 ========================= */
 
 app.post(
@@ -353,13 +373,13 @@ app.post(
           .trim()
           .toLowerCase();
 
-      const existingUser =
+      const existing =
         await pool.query(
           "SELECT id FROM users WHERE email = $1",
           [cleanEmail]
         );
 
-      if (existingUser.rows.length > 0) {
+      if (existing.rows.length > 0) {
 
         return res.status(409).json({
           error:
@@ -423,7 +443,10 @@ app.post(
         password
       } = req.body;
 
-      if (!email || !password) {
+      if (
+        !email ||
+        !password
+      ) {
 
         return res.status(400).json({
           error:
@@ -440,10 +463,10 @@ app.post(
       const result =
         await pool.query(
           `SELECT
-             id,
-             name,
-             email,
-             password
+            id,
+            name,
+            email,
+            password
            FROM users
            WHERE email = $1`,
           [cleanEmail]
@@ -461,13 +484,13 @@ app.post(
       const user =
         result.rows[0];
 
-      const passwordMatch =
+      const match =
         await bcrypt.compare(
           password,
           user.password
         );
 
-      if (!passwordMatch) {
+      if (!match) {
 
         return res.status(401).json({
           error:
@@ -477,8 +500,11 @@ app.post(
       }
 
       res.json({
+
         success: true,
-        message: "Login successful",
+
+        message:
+          "Login successful",
 
         user: {
           id: user.id,
@@ -632,17 +658,18 @@ app.get(
       const result =
         await pool.query(
           `SELECT
-             id,
-             name,
-             email,
-             created_at
+            id,
+            name,
+            email,
+            created_at
            FROM users
            ORDER BY created_at DESC`
         );
 
       res.json({
         success: true,
-        users: result.rows
+        users:
+          result.rows
       });
 
     } catch (error) {
@@ -690,7 +717,9 @@ app.post(
 
       }
 
-      if (newPassword.length < 6) {
+      if (
+        newPassword.length < 6
+      ) {
 
         return res.status(400).json({
           error:
@@ -699,7 +728,7 @@ app.post(
 
       }
 
-      const hashedPassword =
+      const hashed =
         await bcrypt.hash(
           newPassword,
           10
@@ -712,12 +741,14 @@ app.post(
            WHERE id = $2
            RETURNING id, name, email`,
           [
-            hashedPassword,
+            hashed,
             userId
           ]
         );
 
-      if (result.rows.length === 0) {
+      if (
+        result.rows.length === 0
+      ) {
 
         return res.status(404).json({
           error:
@@ -773,9 +804,9 @@ app.post(
   }
 );
 
-/* =========================================================
+/* =========================
    CREATE CHAT
-========================================================= */
+========================= */
 
 app.post(
   "/api/chats",
@@ -791,7 +822,8 @@ app.post(
       if (!userId) {
 
         return res.status(400).json({
-          error: "User ID जरूरी है।"
+          error:
+            "User ID जरूरी है।"
         });
 
       }
@@ -801,17 +833,18 @@ app.post(
           `INSERT INTO chats
            (user_id, title)
            VALUES ($1, $2)
-           RETURNING id, title, created_at, updated_at`,
+           RETURNING *`,
           [
             userId,
-            title?.trim() ||
+            title ||
               "New Chat"
           ]
         );
 
       res.json({
         success: true,
-        chat: result.rows[0]
+        chat:
+          result.rows[0]
       });
 
     } catch (error) {
@@ -823,7 +856,7 @@ app.post(
 
       res.status(500).json({
         error:
-          "New chat बनाने में समस्या हुई।"
+          "Chat create नहीं हो सकी।"
       });
 
     }
@@ -831,9 +864,9 @@ app.post(
   }
 );
 
-/* =========================================================
+/* =========================
    GET PREVIOUS CHATS
-========================================================= */
+========================= */
 
 app.get(
   "/api/chats/:userId",
@@ -842,24 +875,11 @@ app.get(
     try {
 
       const userId =
-        Number(req.params.userId);
-
-      if (!userId) {
-
-        return res.status(400).json({
-          error:
-            "Invalid user ID"
-        });
-
-      }
+        req.params.userId;
 
       const result =
         await pool.query(
-          `SELECT
-             id,
-             title,
-             created_at,
-             updated_at
+          `SELECT *
            FROM chats
            WHERE user_id = $1
            ORDER BY updated_at DESC`,
@@ -868,7 +888,8 @@ app.get(
 
       res.json({
         success: true,
-        chats: result.rows
+        chats:
+          result.rows
       });
 
     } catch (error) {
@@ -880,7 +901,7 @@ app.get(
 
       res.status(500).json({
         error:
-          "Previous chats प्राप्त नहीं हो सकीं।"
+          "Previous chats नहीं मिल सके।"
       });
 
     }
@@ -888,9 +909,9 @@ app.get(
   }
 );
 
-/* =========================================================
-   GET ONE CHAT
-========================================================= */
+/* =========================
+   GET CHAT MESSAGES
+========================= */
 
 app.get(
   "/api/chats/:userId/:chatId",
@@ -898,19 +919,14 @@ app.get(
 
     try {
 
-      const userId =
-        Number(req.params.userId);
-
-      const chatId =
-        Number(req.params.chatId);
+      const {
+        userId,
+        chatId
+      } = req.params;
 
       const chatResult =
         await pool.query(
-          `SELECT
-             id,
-             title,
-             created_at,
-             updated_at
+          `SELECT *
            FROM chats
            WHERE id = $1
            AND user_id = $2`,
@@ -931,7 +947,7 @@ app.get(
 
       }
 
-      const messagesResult =
+      const messages =
         await pool.query(
           `SELECT
              id,
@@ -946,10 +962,15 @@ app.get(
         );
 
       res.json({
+
         success: true,
-        chat: chatResult.rows[0],
+
+        chat:
+          chatResult.rows[0],
+
         messages:
-          messagesResult.rows
+          messages.rows
+
       });
 
     } catch (error) {
@@ -969,9 +990,9 @@ app.get(
   }
 );
 
-/* =========================================================
+/* =========================
    SAVE MESSAGE
-========================================================= */
+========================= */
 
 app.post(
   "/api/messages",
@@ -1000,37 +1021,21 @@ app.post(
 
       }
 
-      const chatCheck =
-        await pool.query(
-          `SELECT id
-           FROM chats
-           WHERE id = $1
-           AND user_id = $2`,
-          [
-            chatId,
-            userId
-          ]
-        );
-
-      if (
-        chatCheck.rows.length === 0
-      ) {
-
-        return res.status(404).json({
-          error:
-            "Chat नहीं मिली।"
-        });
-
-      }
-
       const result =
         await pool.query(
           `INSERT INTO messages
-           (chat_id, role, content, image_data)
-           VALUES ($1, $2, $3, $4)
-           RETURNING id, role, content, image_data, created_at`,
+           (
+             chat_id,
+             user_id,
+             role,
+             content,
+             image_data
+           )
+           VALUES ($1,$2,$3,$4,$5)
+           RETURNING *`,
           [
             chatId,
+            userId,
             role,
             content || "",
             imageData || null
@@ -1043,29 +1048,6 @@ app.post(
          WHERE id = $1`,
         [chatId]
       );
-
-      /* First user message becomes title */
-
-      if (
-        role === "user" &&
-        content
-      ) {
-
-        await pool.query(
-          `UPDATE chats
-           SET title = CASE
-             WHEN title = 'New Chat'
-             THEN LEFT($1, 50)
-             ELSE title
-           END
-           WHERE id = $2`,
-          [
-            content.trim(),
-            chatId
-          ]
-        );
-
-      }
 
       res.json({
         success: true,
@@ -1090,69 +1072,10 @@ app.post(
   }
 );
 
-/* =========================================================
-   DELETE CHAT
-========================================================= */
-
-app.delete(
-  "/api/chats/:userId/:chatId",
-  async (req, res) => {
-
-    try {
-
-      const userId =
-        Number(req.params.userId);
-
-      const chatId =
-        Number(req.params.chatId);
-
-      const result =
-        await pool.query(
-          `DELETE FROM chats
-           WHERE id = $1
-           AND user_id = $2
-           RETURNING id`,
-          [
-            chatId,
-            userId
-          ]
-        );
-
-      if (result.rows.length === 0) {
-
-        return res.status(404).json({
-          error:
-            "Chat नहीं मिली।"
-        });
-
-      }
-
-      res.json({
-        success: true,
-        message:
-          "Chat deleted"
-      });
-
-    } catch (error) {
-
-      console.error(
-        "DELETE CHAT ERROR:",
-        error
-      );
-
-      res.status(500).json({
-        error:
-          "Chat delete नहीं हो सकी।"
-      });
-
-    }
-
-  }
-);
-
-/* =========================================================
+/* =========================
    GEMINI CHAT
-========================================================= */
+   TEXT + IMAGE
+========================= */
 
 app.post(
   "/api/chat",
@@ -1163,6 +1086,9 @@ app.post(
       const message =
         req.body?.message;
 
+      const image =
+        req.body?.image;
+
       if (
         !message ||
         !message.trim()
@@ -1170,7 +1096,7 @@ app.post(
 
         return res.status(400).json({
           error:
-            "Message खाली है"
+            "Message खाली है।"
         });
 
       }
@@ -1196,21 +1122,100 @@ app.post(
           apiKey
         });
 
+      let contents;
+
+      /* =========================
+         TEXT ONLY
+      ========================= */
+
+      if (!image) {
+
+        contents = message;
+
+      }
+
+      /* =========================
+         IMAGE + TEXT
+      ========================= */
+
+      else {
+
+        /*
+          Expected image format:
+
+          data:image/jpeg;base64,AAAA...
+
+        */
+
+        const match =
+          image.match(
+            /^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/
+          );
+
+        if (!match) {
+
+          return res.status(400).json({
+            error:
+              "Image format सही नहीं है।"
+          });
+
+        }
+
+        const mimeType =
+          match[1];
+
+        const base64Data =
+          match[2];
+
+        contents = [
+
+          {
+            text:
+              message
+          },
+
+          {
+            inlineData: {
+              mimeType,
+              data:
+                base64Data
+            }
+          }
+
+        ];
+
+      }
+
+      console.log(
+        "Gemini request received",
+        image
+          ? "(with image)"
+          : "(text only)"
+      );
+
       const response =
         await ai.models.generateContent({
 
           model:
             "gemini-3.6-flash",
 
-          contents:
-            message
+          contents
 
         });
 
+      const reply =
+        response.text;
+
+      console.log(
+        "Gemini response received"
+      );
+
       res.json({
 
+        success: true,
+
         reply:
-          response.text ||
+          reply ||
           "मुझे जवाब नहीं मिला।"
 
       });
@@ -1240,179 +1245,9 @@ app.post(
   }
 );
 
-/* =========================================================
-   GEMINI IMAGE GENERATION
-========================================================= */
-
-app.post(
-  "/api/image",
-  async (req, res) => {
-
-    try {
-
-      const prompt =
-        req.body?.prompt;
-
-      if (
-        !prompt ||
-        !prompt.trim()
-      ) {
-
-        return res.status(400).json({
-          error:
-            "Image prompt खाली है।"
-        });
-
-      }
-
-      const apiKey =
-        process.env.GEMINI_API_KEY;
-
-      if (!apiKey) {
-
-        return res.status(500).json({
-          error:
-            "GEMINI_API_KEY Render Environment में सेट नहीं है।"
-        });
-
-      }
-
-      console.log(
-        "Image prompt:",
-        prompt
-      );
-
-      const ai =
-        new GoogleGenAI({
-          apiKey
-        });
-
-      const interaction =
-        await ai.interactions.create({
-
-          model:
-            "gemini-3.1-flash-image",
-
-          input:
-            prompt.trim(),
-
-          response_format: {
-            type: "image",
-            aspect_ratio: "1:1"
-          }
-
-        });
-
-      let imageData = null;
-      let mimeType = "image/png";
-
-      /* Convenience output */
-
-      if (
-        interaction.output_image
-      ) {
-
-        imageData =
-          interaction.output_image.data;
-
-        mimeType =
-          interaction.output_image.mime_type ||
-          "image/png";
-
-      }
-
-      /* Fallback: steps */
-
-      if (!imageData) {
-
-        for (
-          const step
-          of interaction.steps || []
-        ) {
-
-          if (
-            step.type !==
-            "model_output"
-          ) {
-            continue;
-          }
-
-          for (
-            const block
-            of step.content || []
-          ) {
-
-            if (
-              block.type === "image"
-            ) {
-
-              imageData =
-                block.data;
-
-              mimeType =
-                block.mime_type ||
-                "image/png";
-
-              break;
-
-            }
-
-          }
-
-          if (imageData) {
-            break;
-          }
-
-        }
-
-      }
-
-      if (!imageData) {
-
-        return res.status(500).json({
-          error:
-            "AI ने image generate नहीं की।"
-        });
-
-      }
-
-      res.json({
-
-        success: true,
-
-        image:
-          `data:${mimeType};base64,${imageData}`
-
-      });
-
-    } catch (error) {
-
-      console.error(
-        "========== IMAGE ERROR =========="
-      );
-
-      console.error(error);
-
-      console.error(
-        "================================="
-      );
-
-      res.status(500).json({
-
-        error:
-          error?.message ||
-          "Image generate करने में समस्या हुई।"
-
-      });
-
-    }
-
-  }
-);
-
-/* =========================================================
+/* =========================
    START SERVER
-========================================================= */
+========================= */
 
 async function startServer() {
 
