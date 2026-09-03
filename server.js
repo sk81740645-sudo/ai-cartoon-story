@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const crypto = require("crypto");
-const { GoogleGenAI } = require("@google/genai");
+const Groq = require("groq-sdk");
 const { Pool } = require("pg");
 const bcrypt = require("bcryptjs");
 
@@ -23,6 +23,14 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false
   }
+});
+
+/* =========================
+   GROQ
+========================= */
+
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY
 });
 
 /* =========================
@@ -1073,7 +1081,7 @@ app.post(
 );
 
 /* =========================
-   GEMINI CHAT
+   GROQ CHAT
    TEXT + IMAGE
 ========================= */
 
@@ -1101,28 +1109,25 @@ app.post(
 
       }
 
-      const apiKey =
-        process.env.GEMINI_API_KEY;
+      /* =========================
+         CHECK GROQ API KEY
+      ========================= */
 
-      if (!apiKey) {
+      if (!process.env.GROQ_API_KEY) {
 
         console.error(
-          "GEMINI_API_KEY missing"
+          "GROQ_API_KEY missing"
         );
 
         return res.status(500).json({
           error:
-            "GEMINI_API_KEY Render Environment में सेट नहीं है।"
+            "GROQ_API_KEY Render Environment में सेट नहीं है।"
         });
 
       }
 
-      const ai =
-        new GoogleGenAI({
-          apiKey
-        });
-
-      let contents;
+      let model;
+      let userContent;
 
       /* =========================
          TEXT ONLY
@@ -1130,7 +1135,11 @@ app.post(
 
       if (!image) {
 
-        contents = message;
+        model =
+          "openai/gpt-oss-20b";
+
+        userContent =
+          message;
 
       }
 
@@ -1139,13 +1148,6 @@ app.post(
       ========================= */
 
       else {
-
-        /*
-          Expected image format:
-
-          data:image/jpeg;base64,AAAA...
-
-        */
 
         const match =
           image.match(
@@ -1167,18 +1169,21 @@ app.post(
         const base64Data =
           match[2];
 
-        contents = [
+        model =
+          "qwen/qwen3.6-27b";
+
+        userContent = [
 
           {
-            text:
-              message
+            type: "text",
+            text: message
           },
 
           {
-            inlineData: {
-              mimeType,
-              data:
-                base64Data
+            type: "image_url",
+            image_url: {
+              url:
+                `data:${mimeType};base64,${base64Data}`
             }
           }
 
@@ -1187,27 +1192,59 @@ app.post(
       }
 
       console.log(
-        "Gemini request received",
+        "Groq request received",
         image
           ? "(with image)"
           : "(text only)"
       );
 
-      const response =
-        await ai.models.generateContent({
+      /* =========================
+         GROQ REQUEST
+      ========================= */
 
-          model:
-            "gemini-3.6-flash",
+      const completion =
+        await groq.chat.completions.create({
 
-          contents
+          model,
+
+          messages: [
+
+            {
+              role: "system",
+
+              content:
+                "आप BaatAI हैं। हिंदी में दोस्ताना, आसान और उपयोगी जवाब दें। जरूरत होने पर Hinglish भी समझें। सवाल का सीधा, सही और मददगार जवाब दें। अनावश्यक रूप से बहुत लंबा जवाब न दें।"
+            },
+
+            {
+              role: "user",
+
+              content:
+                userContent
+            }
+
+          ],
+
+          temperature: 0.7,
+
+          max_completion_tokens: 2048,
+
+          stream: false
 
         });
 
+      /* =========================
+         GET RESPONSE
+      ========================= */
+
       const reply =
-        response.text;
+        completion
+          ?.choices?.[0]
+          ?.message
+          ?.content;
 
       console.log(
-        "Gemini response received"
+        "Groq response received"
       );
 
       res.json({
@@ -1223,20 +1260,23 @@ app.post(
     } catch (error) {
 
       console.error(
-        "========== GEMINI ERROR =========="
+        "========== GROQ ERROR =========="
       );
 
-      console.error(error);
+      console.error(
+        error?.message ||
+        error
+      );
 
       console.error(
-        "==================================="
+        "================================"
       );
 
       res.status(500).json({
 
         error:
           error?.message ||
-          "Gemini API में समस्या हुई।"
+          "Groq API में समस्या हुई।"
 
       });
 
