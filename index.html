@@ -114,6 +114,10 @@ button,input{
   cursor:pointer;
 }
 
+.auth-submit:disabled{
+  background:#9ca3af;
+}
+
 .auth-message{
   text-align:center;
   margin-top:15px;
@@ -325,7 +329,7 @@ button,input{
 }
 
 /* =========================
-   INPUT AREA
+   INPUT
 ========================= */
 
 .input-area{
@@ -349,8 +353,6 @@ button,input{
   padding:8px;
   box-shadow:0 2px 8px rgba(0,0,0,.06);
 }
-
-/* IMAGE PREVIEW */
 
 .preview-area{
   padding:8px;
@@ -384,8 +386,6 @@ button,input{
   cursor:pointer;
   font-size:15px;
 }
-
-/* INPUT ROW */
 
 .input-row{
   display:flex;
@@ -445,7 +445,15 @@ button,input{
 }
 
 /* =========================
-   MOBILE
+   MENU OVERLAY
+========================= */
+
+.menu-overlay{
+  display:none;
+}
+
+/* =========================
+   MOBILE CHATGPT STYLE MENU
 ========================= */
 
 @media(max-width:700px){
@@ -455,16 +463,34 @@ button,input{
   }
 
   .sidebar{
-    display:none;
+    display:flex;
     position:fixed;
     left:0;
     top:0;
     bottom:0;
-    z-index:1000;
+    width:280px;
+    z-index:2000;
+
+    transform:translateX(-100%);
+    transition:transform .25s ease;
+
+    box-shadow:5px 0 25px rgba(0,0,0,.25);
   }
 
   .sidebar.active{
-    display:flex;
+    transform:translateX(0);
+  }
+
+  .menu-overlay{
+    display:block;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:1500;
+  }
+
+  .menu-overlay.hidden{
+    display:none;
   }
 
   .chat{
@@ -504,7 +530,7 @@ button,input{
 <body>
 
 <!-- =========================
-     AUTH SCREEN
+     AUTH
 ========================= -->
 
 <section id="authScreen">
@@ -537,9 +563,7 @@ Sign Up
 
 </div>
 
-<form
-id="loginForm"
-class="auth-form">
+<form id="loginForm" class="auth-form">
 
 <label>Email</label>
 
@@ -643,6 +667,17 @@ Login
 
 
 <!-- =========================
+     MENU OVERLAY
+========================= -->
+
+<div
+id="menuOverlay"
+class="menu-overlay hidden"
+onclick="closeMenu()">
+</div>
+
+
+<!-- =========================
      APP
 ========================= -->
 
@@ -718,13 +753,13 @@ BaatAI से कुछ भी पूछिए या फोटो upload कर
 </section>
 
 
-<!-- INPUT -->
+<!-- =========================
+     INPUT
+========================= -->
 
 <div class="input-area">
 
 <div class="input-box">
-
-<!-- PREVIEW -->
 
 <div
 id="previewArea"
@@ -735,7 +770,7 @@ class="preview-area hidden">
 <img
 id="previewImage"
 src=""
-alt="Preview">
+alt="Image Preview">
 
 <button
 class="remove-image"
@@ -750,8 +785,6 @@ onclick="removeImage()">
 
 <div class="input-row">
 
-<!-- IMAGE BUTTON -->
-
 <button
 class="icon-btn"
 onclick="openImagePicker()"
@@ -765,13 +798,11 @@ type="file"
 accept="image/*"
 onchange="handleImage(event)">
 
-
 <input
 id="messageInput"
 type="text"
 placeholder="Message BaatAI..."
 autocomplete="off">
-
 
 <button
 id="sendBtn"
@@ -800,52 +831,50 @@ BaatAI कभी-कभी गलत जानकारी दे सकता �
    API
 ========================= */
 
-const CHAT_API = "/api/chat";
-const LOGIN_API = "/api/login";
-const SIGNUP_API = "/api/signup";
+const CHAT_API="/api/chat";
+const LOGIN_API="/api/login";
+const SIGNUP_API="/api/signup";
+
+
+/* =========================
+   VARIABLES
+========================= */
+
+let currentUser=null;
+let currentChatId=null;
+let selectedImage=null;
 
 
 /* =========================
    ELEMENTS
 ========================= */
 
-const authScreen =
+const authScreen=
 document.getElementById("authScreen");
 
-const appScreen =
+const appScreen=
 document.getElementById("appScreen");
 
-const chat =
+const chat=
 document.getElementById("chat");
 
-const input =
+const input=
 document.getElementById("messageInput");
 
-const sendBtn =
+const sendBtn=
 document.getElementById("sendBtn");
 
-const imageInput =
+const imageInput=
 document.getElementById("imageInput");
 
-const previewArea =
+const previewArea=
 document.getElementById("previewArea");
 
-const previewImage =
+const previewImage=
 document.getElementById("previewImage");
 
-const chatList =
+const chatList=
 document.getElementById("chatList");
-
-
-/* =========================
-   CURRENT USER
-========================= */
-
-let currentUser = null;
-
-let currentChatId = null;
-
-let selectedImage = null;
 
 
 /* =========================
@@ -857,23 +886,23 @@ message,
 success=false
 ){
 
-const box =
+const box=
 document.getElementById(
 "authMessage"
 );
 
-box.textContent = message;
+box.textContent=message;
 
-box.style.color =
+box.style.color=
 success
-? "#16a34a"
-: "#dc2626";
+?"#16a34a"
+:"#dc2626";
 
 }
 
 
 /* =========================
-   LOGIN / SIGNUP
+   SHOW LOGIN
 ========================= */
 
 function showLogin(){
@@ -903,6 +932,11 @@ document
 .classList.add("hidden");
 
 }
+
+
+/* =========================
+   SHOW SIGNUP
+========================= */
 
 function showSignup(){
 
@@ -939,12 +973,12 @@ document
 
 function saveUser(user){
 
+currentUser=user;
+
 localStorage.setItem(
 "baatai_user",
 JSON.stringify(user)
 );
-
-currentUser = user;
 
 }
 
@@ -955,7 +989,7 @@ currentUser = user;
 
 function showApp(user){
 
-currentUser = user;
+currentUser=user;
 
 authScreen.classList.add("hidden");
 
@@ -971,14 +1005,14 @@ input.focus();
 
 
 /* =========================
-   LOAD LOGIN
+   CHECK LOGIN
 ========================= */
 
 window.addEventListener(
 "load",
 ()=>{
 
-const saved =
+const saved=
 localStorage.getItem(
 "baatai_user"
 );
@@ -992,7 +1026,7 @@ return;
 
 try{
 
-const user =
+const user=
 JSON.parse(saved);
 
 if(user && user.id){
@@ -1035,28 +1069,24 @@ async(event)=>{
 
 event.preventDefault();
 
-const name =
+const name=
 document
 .getElementById("signupName")
 .value
 .trim();
 
-const email =
+const email=
 document
 .getElementById("signupEmail")
 .value
 .trim();
 
-const password =
+const password=
 document
 .getElementById("signupPassword")
 .value;
 
-if(
-!name ||
-!email ||
-!password
-){
+if(!name || !email || !password){
 
 showAuthMessage(
 "सभी जानकारी भरें।"
@@ -1066,7 +1096,17 @@ return;
 
 }
 
-const btn =
+if(password.length<6){
+
+showAuthMessage(
+"Password कम से कम 6 अक्षर का होना चाहिए।"
+);
+
+return;
+
+}
+
+const btn=
 document.getElementById(
 "signupBtn"
 );
@@ -1078,7 +1118,7 @@ btn.textContent=
 
 try{
 
-const response =
+const response=
 await fetch(
 SIGNUP_API,
 {
@@ -1095,7 +1135,7 @@ password
 }
 );
 
-const data =
+const data=
 await response.json();
 
 if(!response.ok){
@@ -1147,18 +1187,18 @@ async(event)=>{
 
 event.preventDefault();
 
-const email =
+const email=
 document
 .getElementById("loginEmail")
 .value
 .trim();
 
-const password =
+const password=
 document
 .getElementById("loginPassword")
 .value;
 
-const btn =
+const btn=
 document.getElementById(
 "loginBtn"
 );
@@ -1170,7 +1210,7 @@ btn.textContent=
 
 try{
 
-const response =
+const response=
 await fetch(
 LOGIN_API,
 {
@@ -1186,7 +1226,7 @@ password
 }
 );
 
-const data =
+const data=
 await response.json();
 
 if(!response.ok){
@@ -1237,8 +1277,9 @@ localStorage.removeItem(
 );
 
 currentUser=null;
-
 currentChatId=null;
+
+closeMenu();
 
 appScreen.classList.add(
 "hidden"
@@ -1254,15 +1295,54 @@ showLogin();
 
 
 /* =========================
-   MENU
+   CHATGPT STYLE MENU
 ========================= */
 
 function toggleMenu(){
 
-document
-.getElementById("sidebar")
-.classList.toggle(
+const sidebar=
+document.getElementById(
+"sidebar"
+);
+
+const overlay=
+document.getElementById(
+"menuOverlay"
+);
+
+sidebar.classList.toggle(
 "active"
+);
+
+overlay.classList.toggle(
+"hidden"
+);
+
+}
+
+
+/* =========================
+   CLOSE MENU
+========================= */
+
+function closeMenu(){
+
+const sidebar=
+document.getElementById(
+"sidebar"
+);
+
+const overlay=
+document.getElementById(
+"menuOverlay"
+);
+
+sidebar.classList.remove(
+"active"
+);
+
+overlay.classList.add(
+"hidden"
 );
 
 }
@@ -1285,36 +1365,26 @@ imageInput.click();
 
 function handleImage(event){
 
-const file =
+const file=
 event.target.files[0];
 
 if(!file){
-
 return;
-
 }
 
-
-/* CHECK TYPE */
-
-if(
-!file.type.startsWith("image/")
-){
+if(!file.type.startsWith("image/")){
 
 alert(
 "कृपया image file चुनें।"
 );
 
+imageInput.value="";
+
 return;
 
 }
 
-
-/* LIMIT */
-
-if(
-file.size > 10 * 1024 * 1024
-){
+if(file.size>10*1024*1024){
 
 alert(
 "Image 10MB से छोटी होनी चाहिए।"
@@ -1326,18 +1396,16 @@ return;
 
 }
 
-
-/* FILE READER */
-
-const reader =
+const reader=
 new FileReader();
 
-reader.onload = function(e){
+reader.onload=
+function(e){
 
-selectedImage =
+selectedImage=
 e.target.result;
 
-previewImage.src =
+previewImage.src=
 selectedImage;
 
 previewArea.classList.remove(
@@ -1403,19 +1471,20 @@ type,
 image=null
 ){
 
-const div =
-document.createElement("div");
+const div=
+document.createElement(
+"div"
+);
 
-div.className =
-"message " + type;
-
-
-/* IMAGE */
+div.className=
+"message "+type;
 
 if(image){
 
-const img =
-document.createElement("img");
+const img=
+document.createElement(
+"img"
+);
 
 img.src=image;
 
@@ -1426,13 +1495,12 @@ div.appendChild(img);
 
 }
 
-
-/* TEXT */
-
 if(text){
 
-const bubble =
-document.createElement("div");
+const bubble=
+document.createElement(
+"div"
+);
 
 bubble.className="bubble";
 
@@ -1442,10 +1510,9 @@ div.appendChild(bubble);
 
 }
 
-
 chat.appendChild(div);
 
-chat.scrollTop =
+chat.scrollTop=
 chat.scrollHeight;
 
 return div;
@@ -1460,14 +1527,12 @@ return div;
 async function createChat(){
 
 if(!currentUser){
-
 return null;
-
 }
 
 try{
 
-const response =
+const response=
 await fetch(
 "/api/chats",
 {
@@ -1483,7 +1548,7 @@ title:"New Chat"
 }
 );
 
-const data =
+const data=
 await response.json();
 
 if(!response.ok){
@@ -1495,7 +1560,7 @@ data.error ||
 
 }
 
-currentChatId =
+currentChatId=
 data.chat.id;
 
 await loadPreviousChats();
@@ -1517,32 +1582,28 @@ return null;
 
 
 /* =========================
-   LOAD PREVIOUS CHATS
+   PREVIOUS CHATS
 ========================= */
 
 async function loadPreviousChats(){
 
 if(!currentUser){
-
 return;
-
 }
 
 try{
 
-const response =
+const response=
 await fetch(
-"/api/chats/" +
+"/api/chats/"+
 currentUser.id
 );
 
-const data =
+const data=
 await response.json();
 
 if(!response.ok){
-
 return;
-
 }
 
 chatList.innerHTML="";
@@ -1550,14 +1611,16 @@ chatList.innerHTML="";
 data.chats.forEach(
 (chatData)=>{
 
-const item =
-document.createElement("div");
+const item=
+document.createElement(
+"div"
+);
 
 item.className=
 "chat-item";
 
 if(
-String(chatData.id) ===
+String(chatData.id)===
 String(currentChatId)
 ){
 
@@ -1567,11 +1630,12 @@ item.classList.add(
 
 }
 
-item.textContent =
+item.textContent=
 chatData.title ||
 "New Chat";
 
-item.onclick=()=>{
+item.onclick=
+()=>{
 openChat(
 chatData.id
 );
@@ -1600,17 +1664,21 @@ error
 
 async function openChat(chatId){
 
+if(!currentUser){
+return;
+}
+
 try{
 
-const response =
+const response=
 await fetch(
-"/api/chats/" +
-currentUser.id +
-"/" +
+"/api/chats/"+
+currentUser.id+
+"/"+
 chatId
 );
 
-const data =
+const data=
 await response.json();
 
 if(!response.ok){
@@ -1622,8 +1690,7 @@ data.error ||
 
 }
 
-currentChatId =
-chatId;
+currentChatId=chatId;
 
 chat.innerHTML="";
 
@@ -1632,9 +1699,9 @@ data.messages.forEach(
 
 addMessage(
 msg.content,
-msg.role === "user"
-? "user"
-: "ai",
+msg.role==="user"
+?"user"
+:"ai",
 msg.image_data
 );
 
@@ -1643,11 +1710,7 @@ msg.image_data
 
 await loadPreviousChats();
 
-document
-.getElementById("sidebar")
-.classList.remove(
-"active"
-);
+closeMenu();
 
 }catch(error){
 
@@ -1728,7 +1791,7 @@ error
 
 async function sendMessage(){
 
-const message =
+const message=
 input.value.trim();
 
 if(
@@ -1740,12 +1803,18 @@ return;
 
 }
 
+if(!currentUser){
+
+return;
+
+}
+
 
 /* CREATE CHAT */
 
 if(!currentChatId){
 
-const id =
+const id=
 await createChat();
 
 if(!id){
@@ -1763,21 +1832,19 @@ return;
 
 /* REMOVE WELCOME */
 
-const welcome =
+const welcome=
 document.getElementById(
 "welcome"
 );
 
 if(welcome){
-
 welcome.remove();
-
 }
 
 
-/* SAVE IMAGE BEFORE REMOVE */
+/* IMAGE */
 
-const imageToSend =
+const imageToSend=
 selectedImage;
 
 
@@ -1798,7 +1865,7 @@ imageToSend
 );
 
 
-/* CLEAR INPUT */
+/* CLEAR */
 
 input.value="";
 
@@ -1807,9 +1874,9 @@ removeImage();
 sendBtn.disabled=true;
 
 
-/* TYPING */
+/* THINKING */
 
-const typing =
+const typing=
 addMessage(
 "🤖 सोच रहा हूँ...",
 "ai"
@@ -1818,7 +1885,7 @@ addMessage(
 
 try{
 
-const response =
+const response=
 await fetch(
 CHAT_API,
 {
@@ -1840,13 +1907,10 @@ imageToSend || null
 }
 );
 
-
-const data =
+const data=
 await response.json();
 
-
 typing.remove();
-
 
 if(!response.ok){
 
@@ -1857,17 +1921,14 @@ data.error ||
 
 }
 
-
-const reply =
+const reply=
 data.reply ||
 "मुझे कोई जवाब नहीं मिला।";
-
 
 addMessage(
 reply,
 "ai"
 );
-
 
 await saveMessage(
 "ai",
@@ -1875,9 +1936,7 @@ reply,
 null
 );
 
-
 await loadPreviousChats();
-
 
 }catch(error){
 
@@ -1888,17 +1947,12 @@ error
 
 typing.remove();
 
-const errorText =
-"AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।";
-
-
 addMessage(
-errorText,
+"AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।",
 "ai"
 );
 
 }
-
 
 sendBtn.disabled=false;
 
@@ -1911,11 +1965,9 @@ input.focus();
    NEW CHAT
 ========================= */
 
-async function newChat(){
+function newChat(){
 
 currentChatId=null;
-
-selectedImage=null;
 
 removeImage();
 
@@ -1937,11 +1989,7 @@ BaatAI से कुछ भी पूछिए या फोटो upload कर
 
 input.value="";
 
-document
-.getElementById("sidebar")
-.classList.remove(
-"active"
-);
+closeMenu();
 
 input.focus();
 
