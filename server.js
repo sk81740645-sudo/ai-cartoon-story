@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 ========================= */
 
 app.use(express.json());
+app.use(express.static(__dirname));
 
 /* =========================
    DATABASE
@@ -26,10 +27,11 @@ const pool = new Pool({
 });
 
 /* =========================
-   STATIC FILES
+   SESSION SECRET
 ========================= */
 
-app.use(express.static(__dirname));
+const SESSION_SECRET =
+  process.env.SESSION_SECRET;
 
 /* =========================
    ROBOTS.TXT
@@ -60,18 +62,23 @@ app.get("/sitemap.xml", (req, res) => {
 });
 
 /* =========================
-   SESSION SECRET
+   HOME
 ========================= */
 
-const SESSION_SECRET =
-  process.env.SESSION_SECRET;
+app.get("/", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "index.html")
+  );
+});
 
 /* =========================
-   CREATE USERS TABLE
+   DATABASE TABLE
 ========================= */
 
 async function createUsersTable() {
+
   try {
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -85,28 +92,22 @@ async function createUsersTable() {
     console.log("Users table ready");
 
   } catch (error) {
+
     console.error(
       "Database table error:",
       error.message
     );
+
   }
+
 }
-
-/* =========================
-   HOME
-========================= */
-
-app.get("/", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "index.html")
-  );
-});
 
 /* =========================
    HEALTH CHECK
 ========================= */
 
 app.get("/api/health", async (req, res) => {
+
   try {
 
     await pool.query("SELECT 1");
@@ -126,6 +127,7 @@ app.get("/api/health", async (req, res) => {
     });
 
   }
+
 });
 
 /* =========================
@@ -279,7 +281,6 @@ app.post("/api/login", async (req, res) => {
     }
 
     res.json({
-
       success: true,
 
       message:
@@ -290,7 +291,6 @@ app.post("/api/login", async (req, res) => {
         name: user.name,
         email: user.email
       }
-
     });
 
   } catch (error) {
@@ -310,7 +310,7 @@ app.post("/api/login", async (req, res) => {
 });
 
 /* =========================
-   ADMIN TOKEN
+   CREATE ADMIN TOKEN
 ========================= */
 
 function createAdminToken() {
@@ -371,9 +371,14 @@ function verifyAdminToken(token) {
       return false;
     }
 
-    const role = parts[0];
-    const expires = Number(parts[1]);
-    const signature = parts[2];
+    const role =
+      parts[0];
+
+    const expires =
+      Number(parts[1]);
+
+    const signature =
+      parts[2];
 
     if (role !== "admin") {
       return false;
@@ -702,7 +707,6 @@ app.post(
       }
 
       res.json({
-
         success: true,
 
         message:
@@ -710,7 +714,6 @@ app.post(
 
         user:
           result.rows[0]
-
       });
 
     } catch (error) {
@@ -777,6 +780,10 @@ app.post(
 
       }
 
+      /* =========================
+         GEMINI API KEY
+      ========================= */
+
       const apiKey =
         process.env.GEMINI_API_KEY;
 
@@ -798,16 +805,24 @@ app.post(
         message
       );
 
+      /* =========================
+         GEMINI AI
+      ========================= */
+
       const ai =
         new GoogleGenAI({
           apiKey: apiKey
         });
 
+      /* =========================
+         GEMINI 3.6 FLASH
+      ========================= */
+
       const response =
         await ai.models.generateContent({
 
           model:
-            "gemini-2.5-flash",
+            "gemini-3.6-flash",
 
           contents:
             message.trim()
@@ -854,8 +869,7 @@ app.post(
           "Gemini API से जवाब नहीं मिल पाया।",
 
         details:
-          process.env.NODE_ENV ===
-          "production"
+          process.env.NODE_ENV === "production"
             ? undefined
             : error?.message
 
