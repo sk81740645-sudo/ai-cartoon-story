@@ -1081,6 +1081,61 @@ body.dark .mic-btn:hover {
     font-size: 16px;  
   }  
 }  
+  /* =========================
+   SEND BUTTON
+========================= */
+
+#sendBtn {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: #111827;
+  color: white;
+  font-size: 21px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.2s ease;
+}
+
+#sendBtn:hover {
+  transform: scale(1.05);
+  background: #000000;
+}
+
+#sendBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Dark Mode */
+
+body.dark #sendBtn {
+  background: white;
+  color: #111827;
+}
+
+body.dark #sendBtn:hover {
+  background: #e5e5e5;
+}
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+  #sendBtn {
+    width: 42px;
+    height: 42px;
+    font-size: 19px;
+  }
+
+}
   
 </style>  </head>  <body>  <!-- =========================  
      AUTH SCREEN  
