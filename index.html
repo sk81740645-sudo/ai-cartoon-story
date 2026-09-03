@@ -1,536 +1,510 @@
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="hi">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>BaatAI - AI Assistant</title>
 
 <style>
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
 }
 
-body {
-  background: #f5f7fb;
-  height: 100vh;
+body{
+  background:#f7f7f8;
+  height:100vh;
+  overflow:hidden;
 }
 
-button,
-input,
-textarea {
-  font-family: Arial, sans-serif;
+button,input{
+  font-family:Arial,sans-serif;
 }
 
-.hidden {
-  display: none !important;
+.hidden{
+  display:none!important;
 }
 
 /* =========================
-   AUTH SCREEN
+   AUTH
 ========================= */
 
-#authScreen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: #f5f7fb;
+#authScreen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:#f5f7fb;
 }
 
-.auth-box {
-  width: 100%;
-  max-width: 400px;
-  background: white;
-  padding: 30px;
-  border-radius: 18px;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+.auth-box{
+  width:100%;
+  max-width:400px;
+  background:white;
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 10px 35px rgba(0,0,0,.08);
 }
 
-.auth-logo {
-  text-align: center;
-  font-size: 30px;
-  font-weight: bold;
-  margin-bottom: 8px;
+.auth-logo{
+  text-align:center;
+  font-size:30px;
+  font-weight:bold;
+  margin-bottom:8px;
 }
 
-.auth-subtitle {
-  text-align: center;
-  color: #6b7280;
-  margin-bottom: 25px;
+.auth-subtitle{
+  text-align:center;
+  color:#6b7280;
+  margin-bottom:25px;
 }
 
-.tabs {
-  display: flex;
-  margin-bottom: 22px;
-  border-bottom: 1px solid #e5e7eb;
+.tabs{
+  display:flex;
+  margin-bottom:22px;
+  border-bottom:1px solid #e5e7eb;
 }
 
-.tab {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 16px;
+.tab{
+  flex:1;
+  padding:12px;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  font-size:16px;
 }
 
-.tab.active {
-  color: #2563eb;
-  border-bottom: 2px solid #2563eb;
-  font-weight: bold;
+.tab.active{
+  color:#2563eb;
+  border-bottom:2px solid #2563eb;
+  font-weight:bold;
 }
 
-.auth-form label {
-  display: block;
-  margin: 12px 0 6px;
-  font-size: 14px;
-  font-weight: bold;
+.auth-form label{
+  display:block;
+  margin:12px 0 6px;
+  font-size:14px;
+  font-weight:bold;
 }
 
-.auth-form input {
-  width: 100%;
-  padding: 13px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  outline: none;
-  font-size: 15px;
+.auth-form input{
+  width:100%;
+  padding:13px;
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  outline:none;
+  font-size:15px;
 }
 
-.auth-form input:focus {
-  border-color: #2563eb;
+.auth-submit{
+  width:100%;
+  margin-top:22px;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
 }
 
-.auth-submit {
-  width: 100%;
-  margin-top: 22px;
-  padding: 14px;
-  border: none;
-  border-radius: 10px;
-  background: #2563eb;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
+.auth-message{
+  text-align:center;
+  margin-top:15px;
+  min-height:20px;
+  font-size:14px;
 }
 
-.auth-submit:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
+.switch-text{
+  text-align:center;
+  margin-top:15px;
+  color:#555;
+  font-size:14px;
 }
 
-.auth-message {
-  text-align: center;
-  margin-top: 15px;
-  min-height: 20px;
-  font-size: 14px;
-}
-
-.switch-text {
-  text-align: center;
-  margin-top: 15px;
-  color: #555;
-  font-size: 14px;
-}
-
-.switch-btn {
-  border: none;
-  background: none;
-  color: #2563eb;
-  cursor: pointer;
-  font-weight: bold;
+.switch-btn{
+  border:none;
+  background:none;
+  color:#2563eb;
+  cursor:pointer;
+  font-weight:bold;
 }
 
 /* =========================
    APP
 ========================= */
 
-.app {
-  height: 100vh;
-  display: flex;
-}
-
-.sidebar {
-  width: 270px;
-  background: #111827;
-  color: white;
-  padding: 18px;
-  overflow-y: auto;
-}
-
-.logo {
-  font-size: 27px;
-  font-weight: bold;
-  margin-bottom: 22px;
-}
-
-.sidebar-btn {
-  width: 100%;
-  padding: 13px;
-  border: 1px solid #374151;
-  background: #1f2937;
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 15px;
-  margin-bottom: 9px;
-  text-align: left;
-}
-
-.sidebar-btn:hover {
-  background: #374151;
-}
-
-.previous-title {
-  margin-top: 20px;
-  margin-bottom: 10px;
-  color: #9ca3af;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.history {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.history-item {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  background: transparent;
-  color: #e5e7eb;
-  text-align: left;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.history-item:hover {
-  background: #1f2937;
-}
-
-.history-item.active {
-  background: #374151;
-}
-
-.user-info {
-  margin-top: 20px;
-  padding: 12px 0;
-  border-top: 1px solid #374151;
-  color: #d1d5db;
-  font-size: 13px;
-  word-break: break-word;
-}
-
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.header {
-  height: 65px;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  font-size: 21px;
-  font-weight: bold;
-}
-
-.menu-btn {
-  display: none;
-  border: none;
-  background: transparent;
-  font-size: 28px;
-  cursor: pointer;
-  margin-right: 12px;
-  color: #111827;
-}
-
-.chat {
-  flex: 1;
-  overflow-y: auto;
-  padding: 25px;
-}
-
-.welcome {
-  text-align: center;
-  margin-top: 100px;
-}
-
-.welcome h1 {
-  font-size: 34px;
-  color: #111827;
-  margin-bottom: 10px;
-}
-
-.welcome p {
-  color: #6b7280;
-  font-size: 16px;
-}
-
-.message {
-  max-width: 850px;
-  margin: 15px auto;
-  display: flex;
-}
-
-.user {
-  justify-content: flex-end;
-}
-
-.bubble {
-  max-width: 75%;
-  padding: 13px 17px;
-  border-radius: 15px;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.user .bubble {
-  background: #2563eb;
-  color: white;
-  border-bottom-right-radius: 4px;
-}
-
-.ai .bubble {
-  background: white;
-  color: #111827;
-  border: 1px solid #e5e7eb;
-  border-bottom-left-radius: 4px;
+.app{
+  height:100vh;
+  display:flex;
 }
 
 /* =========================
-   IMAGE
+   SIDEBAR
 ========================= */
 
-.image-message {
-  max-width: 850px;
-  margin: 15px auto;
+.sidebar{
+  width:260px;
+  background:#171717;
+  color:white;
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  flex-shrink:0;
 }
 
-.image-bubble {
-  background: white;
-  border: 1px solid #e5e7eb;
-  padding: 12px;
-  border-radius: 15px;
-  width: max-content;
-  max-width: 90%;
+.logo{
+  font-size:27px;
+  font-weight:bold;
+  margin-bottom:22px;
 }
 
-.image-caption {
-  margin-bottom: 8px;
-  color: #374151;
-  font-size: 14px;
+.new-chat{
+  width:100%;
+  padding:13px;
+  border:1px solid #404040;
+  background:#212121;
+  color:white;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:15px;
+  text-align:left;
 }
 
-.generated-image {
-  display: block;
-  max-width: 100%;
-  width: 500px;
-  border-radius: 12px;
+.new-chat:hover{
+  background:#303030;
+}
+
+.previous-title{
+  margin-top:25px;
+  margin-bottom:10px;
+  font-size:13px;
+  color:#9ca3af;
+}
+
+.chat-list{
+  flex:1;
+  overflow-y:auto;
+}
+
+.chat-item{
+  padding:11px;
+  margin-bottom:5px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.chat-item:hover{
+  background:#2f2f2f;
+}
+
+.chat-item.active{
+  background:#343434;
+}
+
+.logout-btn{
+  width:100%;
+  padding:12px;
+  border:1px solid #404040;
+  background:#212121;
+  color:white;
+  border-radius:10px;
+  cursor:pointer;
+  margin-top:12px;
 }
 
 /* =========================
-   INPUT
+   MAIN
 ========================= */
 
-.input-area {
-  background: white;
-  border-top: 1px solid #e5e7eb;
-  padding: 15px;
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-width:0;
 }
 
-.input-box {
-  max-width: 850px;
-  margin: auto;
-  display: flex;
-  gap: 8px;
+.header{
+  height:65px;
+  background:white;
+  border-bottom:1px solid #e5e7eb;
+  display:flex;
+  align-items:center;
+  padding:0 20px;
+  font-size:20px;
+  font-weight:bold;
 }
 
-#messageInput {
-  flex: 1;
-  padding: 14px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 12px;
-  outline: none;
-  font-size: 16px;
-}
-
-#messageInput:focus {
-  border-color: #2563eb;
-}
-
-.action-btn {
-  width: 52px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 20px;
-}
-
-#imageBtn {
-  background: #f3f4f6;
-}
-
-#sendBtn {
-  background: #2563eb;
-  color: white;
-}
-
-.action-btn:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
+.menu-btn{
+  display:none;
+  border:none;
+  background:transparent;
+  font-size:28px;
+  cursor:pointer;
+  margin-right:12px;
 }
 
 /* =========================
-   IMAGE MODAL
+   CHAT
 ========================= */
 
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  padding: 20px;
+.chat{
+  flex:1;
+  overflow-y:auto;
+  padding:25px 15px 160px;
 }
 
-.modal-box {
-  background: white;
-  width: 100%;
-  max-width: 500px;
-  border-radius: 18px;
-  padding: 22px;
+.welcome{
+  text-align:center;
+  margin-top:100px;
 }
 
-.modal-title {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 15px;
+.welcome h1{
+  font-size:34px;
+  margin-bottom:10px;
 }
 
-#imagePrompt {
-  width: 100%;
-  min-height: 120px;
-  resize: vertical;
-  padding: 13px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  outline: none;
-  font-size: 15px;
+.welcome p{
+  color:#6b7280;
 }
 
-.modal-buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
+.message{
+  max-width:850px;
+  margin:18px auto;
+  display:flex;
+  flex-direction:column;
 }
 
-.modal-buttons button {
-  flex: 1;
-  padding: 13px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
+.message.user{
+  align-items:flex-end;
 }
 
-.cancel-btn {
-  background: #e5e7eb;
+.message.ai{
+  align-items:flex-start;
 }
 
-.generate-btn {
-  background: #2563eb;
-  color: white;
+.bubble{
+  max-width:78%;
+  padding:13px 17px;
+  border-radius:15px;
+  line-height:1.55;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.user .bubble{
+  background:#2563eb;
+  color:white;
+  border-bottom-right-radius:4px;
+}
+
+.ai .bubble{
+  background:white;
+  color:#171717;
+  border:1px solid #e5e7eb;
+  border-bottom-left-radius:4px;
+}
+
+.message-image{
+  max-width:320px;
+  max-height:320px;
+  object-fit:contain;
+  border-radius:12px;
+  margin-bottom:8px;
+  border:1px solid #ddd;
+}
+
+/* =========================
+   INPUT AREA
+========================= */
+
+.input-area{
+  position:absolute;
+  bottom:0;
+  left:260px;
+  right:0;
+  background:linear-gradient(
+    transparent,
+    #f7f7f8 20%
+  );
+  padding:20px 15px;
+}
+
+.input-box{
+  max-width:850px;
+  margin:auto;
+  background:white;
+  border:1px solid #d9d9d9;
+  border-radius:18px;
+  padding:8px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+
+/* IMAGE PREVIEW */
+
+.preview-area{
+  padding:8px;
+  display:flex;
+}
+
+.preview-box{
+  position:relative;
+  width:85px;
+  height:85px;
+}
+
+.preview-box img{
+  width:85px;
+  height:85px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+
+.remove-image{
+  position:absolute;
+  right:-7px;
+  top:-7px;
+  width:24px;
+  height:24px;
+  border:none;
+  border-radius:50%;
+  background:#222;
+  color:white;
+  cursor:pointer;
+  font-size:15px;
+}
+
+/* INPUT ROW */
+
+.input-row{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+#messageInput{
+  flex:1;
+  border:none;
+  outline:none;
+  padding:12px 8px;
+  font-size:16px;
+  min-width:0;
+}
+
+.icon-btn{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:10px;
+  background:transparent;
+  cursor:pointer;
+  font-size:22px;
+}
+
+.icon-btn:hover{
+  background:#f0f0f0;
+}
+
+#sendBtn{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:50%;
+  background:#111;
+  color:white;
+  cursor:pointer;
+  font-size:18px;
+}
+
+#sendBtn:disabled{
+  background:#aaa;
+  cursor:not-allowed;
+}
+
+#imageInput{
+  display:none;
+}
+
+.input-help{
+  max-width:850px;
+  margin:8px auto 0;
+  text-align:center;
+  font-size:11px;
+  color:#777;
 }
 
 /* =========================
    MOBILE
 ========================= */
 
-@media (max-width:700px) {
+@media(max-width:700px){
 
-  .menu-btn {
-    display: block;
+  .menu-btn{
+    display:block;
   }
 
-  .sidebar {
-    display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 1500;
+  .sidebar{
+    display:none;
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    z-index:1000;
   }
 
-  .sidebar.active {
-    display: block;
+  .sidebar.active{
+    display:flex;
   }
 
-  .chat {
-    padding: 15px;
+  .chat{
+    padding:15px 10px 160px;
   }
 
-  .welcome {
-    margin-top: 70px;
+  .bubble{
+    max-width:90%;
   }
 
-  .welcome h1 {
-    font-size: 27px;
+  .welcome{
+    margin-top:70px;
   }
 
-  .bubble {
-    max-width: 90%;
+  .welcome h1{
+    font-size:28px;
   }
 
-  .input-area {
-    padding: 10px;
+  .input-area{
+    left:0;
+    padding:10px;
   }
 
-  .action-btn {
-    width: 48px;
+  .input-help{
+    display:none;
   }
 
-  .generated-image {
-    width: 100%;
-  }
-
-  .auth-box {
-    padding: 25px;
+  .message-image{
+    max-width:250px;
   }
 
 }
 
 </style>
-
 </head>
 
 <body>
 
 <!-- =========================
-     LOGIN / SIGNUP
+     AUTH SCREEN
 ========================= -->
 
 <section id="authScreen">
@@ -573,9 +547,7 @@ class="auth-form">
 id="loginEmail"
 type="email"
 placeholder="अपना Email डालें"
-autocomplete="email"
-required
->
+required>
 
 <label>Password</label>
 
@@ -583,9 +555,7 @@ required
 id="loginPassword"
 type="password"
 placeholder="अपना Password डालें"
-autocomplete="current-password"
-required
->
+required>
 
 <button
 id="loginBtn"
@@ -606,9 +576,7 @@ class="auth-form hidden">
 id="signupName"
 type="text"
 placeholder="अपना नाम डालें"
-autocomplete="name"
-required
->
+required>
 
 <label>Email</label>
 
@@ -616,9 +584,7 @@ required
 id="signupEmail"
 type="email"
 placeholder="अपना Email डालें"
-autocomplete="email"
-required
->
+required>
 
 <label>Password</label>
 
@@ -626,10 +592,8 @@ required
 id="signupPassword"
 type="password"
 placeholder="कम से कम 6 अक्षर"
-autocomplete="new-password"
 minlength="6"
-required
->
+required>
 
 <button
 id="signupBtn"
@@ -679,7 +643,7 @@ Login
 
 
 <!-- =========================
-     BAATAI APP
+     APP
 ========================= -->
 
 <div
@@ -695,43 +659,25 @@ class="sidebar">
 </div>
 
 <button
-class="sidebar-btn"
+class="new-chat"
 onclick="newChat()">
-➕ New Chat
-</button>
-
-<button
-class="sidebar-btn"
-onclick="openPrevious()">
-🕘 Previous Chats
-</button>
-
-<button
-class="sidebar-btn"
-onclick="openImageModal()">
-🖼️ Generate Image
+＋ New Chat
 </button>
 
 <div class="previous-title">
-PREVIOUS CHATS
+Previous Chats
 </div>
 
 <div
-id="history"
-class="history">
+id="chatList"
+class="chat-list">
 </div>
 
 <button
-class="sidebar-btn"
-onclick="logout()"
-style="margin-top:15px;">
+class="logout-btn"
+onclick="logout()">
 🚪 Logout
 </button>
-
-<div
-id="userInfo"
-class="user-info">
-</div>
 
 </aside>
 
@@ -764,7 +710,7 @@ class="welcome">
 <h1>Hello 👋</h1>
 
 <p>
-BaatAI से कुछ भी पूछिए...
+BaatAI से कुछ भी पूछिए या फोटो upload करके सवाल पूछिए।
 </p>
 
 </div>
@@ -772,30 +718,64 @@ BaatAI से कुछ भी पूछिए...
 </section>
 
 
+<!-- INPUT -->
+
 <div class="input-area">
 
 <div class="input-box">
 
+<!-- PREVIEW -->
+
+<div
+id="previewArea"
+class="preview-area hidden">
+
+<div class="preview-box">
+
+<img
+id="previewImage"
+src=""
+alt="Preview">
+
+<button
+class="remove-image"
+onclick="removeImage()">
+×
+</button>
+
+</div>
+
+</div>
+
+
+<div class="input-row">
+
+<!-- IMAGE BUTTON -->
+
+<button
+class="icon-btn"
+onclick="openImagePicker()"
+title="Image Upload">
+📎
+</button>
+
+<input
+id="imageInput"
+type="file"
+accept="image/*"
+onchange="handleImage(event)">
+
+
 <input
 id="messageInput"
 type="text"
-placeholder="अपना सवाल लिखें..."
-autocomplete="off"
->
+placeholder="Message BaatAI..."
+autocomplete="off">
 
-<button
-id="imageBtn"
-class="action-btn"
-onclick="openImageModal()"
-title="Generate Image">
-🖼️
-</button>
 
 <button
 id="sendBtn"
-class="action-btn"
-onclick="sendMessage()"
-title="Send">
+onclick="sendMessage()">
 ➤
 </button>
 
@@ -803,48 +783,13 @@ title="Send">
 
 </div>
 
+<div class="input-help">
+BaatAI कभी-कभी गलत जानकारी दे सकता है। महत्वपूर्ण जानकारी verify करें।
+</div>
+
+</div>
+
 </main>
-
-</div>
-
-
-<!-- =========================
-     IMAGE MODAL
-========================= -->
-
-<div
-id="imageModal"
-class="modal hidden">
-
-<div class="modal-box">
-
-<div class="modal-title">
-🖼️ AI Image Generator
-</div>
-
-<textarea
-id="imagePrompt"
-placeholder="उदाहरण: एक प्यारा 2D cartoon बच्चा बारिश में खेल रहा है, सुंदर गाँव का background..."
-></textarea>
-
-<div class="modal-buttons">
-
-<button
-class="cancel-btn"
-onclick="closeImageModal()">
-Cancel
-</button>
-
-<button
-id="generateImageBtn"
-class="generate-btn"
-onclick="generateImage()">
-Generate
-</button>
-
-</div>
-
-</div>
 
 </div>
 
@@ -858,9 +803,6 @@ Generate
 const CHAT_API = "/api/chat";
 const LOGIN_API = "/api/login";
 const SIGNUP_API = "/api/signup";
-const CHAT_CREATE_API = "/api/chats";
-const MESSAGE_API = "/api/messages";
-const IMAGE_API = "/api/image";
 
 
 /* =========================
@@ -873,20 +815,8 @@ document.getElementById("authScreen");
 const appScreen =
 document.getElementById("appScreen");
 
-const authMessage =
-document.getElementById("authMessage");
-
-const loginForm =
-document.getElementById("loginForm");
-
-const signupForm =
-document.getElementById("signupForm");
-
-const loginBtn =
-document.getElementById("loginBtn");
-
-const signupBtn =
-document.getElementById("signupBtn");
+const chat =
+document.getElementById("chat");
 
 const input =
 document.getElementById("messageInput");
@@ -894,11 +824,28 @@ document.getElementById("messageInput");
 const sendBtn =
 document.getElementById("sendBtn");
 
-const chat =
-document.getElementById("chat");
+const imageInput =
+document.getElementById("imageInput");
+
+const previewArea =
+document.getElementById("previewArea");
+
+const previewImage =
+document.getElementById("previewImage");
+
+const chatList =
+document.getElementById("chatList");
+
+
+/* =========================
+   CURRENT USER
+========================= */
 
 let currentUser = null;
+
 let currentChatId = null;
+
+let selectedImage = null;
 
 
 /* =========================
@@ -907,34 +854,37 @@ let currentChatId = null;
 
 function showAuthMessage(
 message,
-success = false
-) {
+success=false
+){
 
-authMessage.textContent =
-message;
+const box =
+document.getElementById(
+"authMessage"
+);
 
-authMessage.style.color =
+box.textContent = message;
+
+box.style.color =
 success
 ? "#16a34a"
 : "#dc2626";
 
 }
 
-function clearAuthMessage() {
-
-authMessage.textContent = "";
-
-}
-
 
 /* =========================
-   SHOW LOGIN
+   LOGIN / SIGNUP
 ========================= */
 
-function showLogin() {
+function showLogin(){
 
-loginForm.classList.remove("hidden");
-signupForm.classList.add("hidden");
+document
+.getElementById("loginForm")
+.classList.remove("hidden");
+
+document
+.getElementById("signupForm")
+.classList.add("hidden");
 
 document
 .getElementById("loginTab")
@@ -952,19 +902,17 @@ document
 .getElementById("signupSwitch")
 .classList.add("hidden");
 
-clearAuthMessage();
-
 }
 
+function showSignup(){
 
-/* =========================
-   SHOW SIGNUP
-========================= */
+document
+.getElementById("signupForm")
+.classList.remove("hidden");
 
-function showSignup() {
-
-signupForm.classList.remove("hidden");
-loginForm.classList.add("hidden");
+document
+.getElementById("loginForm")
+.classList.add("hidden");
 
 document
 .getElementById("signupTab")
@@ -981,8 +929,6 @@ document
 document
 .getElementById("loginSwitch")
 .classList.add("hidden");
-
-clearAuthMessage();
 
 }
 
@@ -991,12 +937,14 @@ clearAuthMessage();
    SAVE USER
 ========================= */
 
-function saveUser(user) {
+function saveUser(user){
 
 localStorage.setItem(
 "baatai_user",
 JSON.stringify(user)
 );
+
+currentUser = user;
 
 }
 
@@ -1005,65 +953,53 @@ JSON.stringify(user)
    SHOW APP
 ========================= */
 
-function showApp(user) {
+function showApp(user){
 
 currentUser = user;
 
 authScreen.classList.add("hidden");
+
 appScreen.classList.remove("hidden");
 
-const userInfo =
-document.getElementById("userInfo");
+loadPreviousChats();
 
-userInfo.textContent =
-"👤 " +
-(user.name || user.email);
-
-loadHistory();
-
-setTimeout(function(){
-
+setTimeout(()=>{
 input.focus();
-
-},100);
+},200);
 
 }
 
 
 /* =========================
-   CHECK LOGIN
+   LOAD LOGIN
 ========================= */
 
 window.addEventListener(
 "load",
-function(){
+()=>{
 
-const savedUser =
+const saved =
 localStorage.getItem(
 "baatai_user"
 );
 
-if(!savedUser){
+if(!saved){
 
 showLogin();
-
 return;
 
 }
 
-try {
+try{
 
 const user =
-JSON.parse(savedUser);
+JSON.parse(saved);
 
-if(
-user &&
-(user.id || user.email)
-){
+if(user && user.id){
 
 showApp(user);
 
-} else {
+}else{
 
 localStorage.removeItem(
 "baatai_user"
@@ -1073,7 +1009,7 @@ showLogin();
 
 }
 
-} catch {
+}catch{
 
 localStorage.removeItem(
 "baatai_user"
@@ -1091,13 +1027,13 @@ showLogin();
    SIGNUP
 ========================= */
 
-signupForm.addEventListener(
+document
+.getElementById("signupForm")
+.addEventListener(
 "submit",
-async function(event){
+async(event)=>{
 
 event.preventDefault();
-
-clearAuthMessage();
 
 const name =
 document
@@ -1123,47 +1059,39 @@ if(
 ){
 
 showAuthMessage(
-"कृपया सभी जानकारी भरें।"
+"सभी जानकारी भरें।"
 );
 
 return;
 
 }
 
-if(password.length < 6){
-
-showAuthMessage(
-"Password कम से कम 6 अक्षर का होना चाहिए।"
+const btn =
+document.getElementById(
+"signupBtn"
 );
 
-return;
+btn.disabled=true;
 
-}
-
-signupBtn.disabled = true;
-
-signupBtn.textContent =
+btn.textContent=
 "Account बन रहा है...";
 
-try {
+try{
 
 const response =
 await fetch(
 SIGNUP_API,
 {
 method:"POST",
-
 headers:{
 "Content-Type":
 "application/json"
 },
-
 body:JSON.stringify({
 name,
 email,
 password
 })
-
 }
 );
 
@@ -1174,7 +1102,7 @@ if(!response.ok){
 
 throw new Error(
 data.error ||
-"Account बनाने में समस्या हुई।"
+"Signup failed"
 );
 
 }
@@ -1183,30 +1111,24 @@ showLogin();
 
 document
 .getElementById("loginEmail")
-.value = email;
+.value=email;
 
 showAuthMessage(
 "Account बन गया! अब Login करें। ✅",
 true
 );
 
-} catch(error){
-
-console.error(
-"SIGNUP ERROR:",
-error
-);
+}catch(error){
 
 showAuthMessage(
-error.message ||
-"Account बनाने में समस्या हुई।"
+error.message
 );
 
 }
 
-signupBtn.disabled = false;
+btn.disabled=false;
 
-signupBtn.textContent =
+btn.textContent=
 "Create Account";
 
 }
@@ -1217,13 +1139,13 @@ signupBtn.textContent =
    LOGIN
 ========================= */
 
-loginForm.addEventListener(
+document
+.getElementById("loginForm")
+.addEventListener(
 "submit",
-async function(event){
+async(event)=>{
 
 event.preventDefault();
-
-clearAuthMessage();
 
 const email =
 document
@@ -1236,42 +1158,31 @@ document
 .getElementById("loginPassword")
 .value;
 
-if(
-!email ||
-!password
-){
-
-showAuthMessage(
-"Email और Password डालें।"
+const btn =
+document.getElementById(
+"loginBtn"
 );
 
-return;
+btn.disabled=true;
 
-}
-
-loginBtn.disabled = true;
-
-loginBtn.textContent =
+btn.textContent=
 "Login हो रहा है...";
 
-try {
+try{
 
 const response =
 await fetch(
 LOGIN_API,
 {
 method:"POST",
-
 headers:{
 "Content-Type":
 "application/json"
 },
-
 body:JSON.stringify({
 email,
 password
 })
-
 }
 );
 
@@ -1282,7 +1193,7 @@ if(!response.ok){
 
 throw new Error(
 data.error ||
-"Login में समस्या हुई।"
+"Login failed"
 );
 
 }
@@ -1290,37 +1201,26 @@ data.error ||
 if(!data.user){
 
 throw new Error(
-"Server ने user information नहीं भेजी।"
+"User information नहीं मिली।"
 );
 
 }
 
-saveUser(
-data.user
-);
+saveUser(data.user);
 
-showApp(
-data.user
-);
+showApp(data.user);
 
-} catch(error){
-
-console.error(
-"LOGIN ERROR:",
-error
-);
+}catch(error){
 
 showAuthMessage(
-error.message ||
-"Login में समस्या हुई।"
+error.message
 );
 
 }
 
-loginBtn.disabled = false;
+btn.disabled=false;
 
-loginBtn.textContent =
-"Login";
+btn.textContent="Login";
 
 }
 );
@@ -1336,11 +1236,17 @@ localStorage.removeItem(
 "baatai_user"
 );
 
-currentUser = null;
-currentChatId = null;
+currentUser=null;
 
-appScreen.classList.add("hidden");
-authScreen.classList.remove("hidden");
+currentChatId=null;
+
+appScreen.classList.add(
+"hidden"
+);
+
+authScreen.classList.remove(
+"hidden"
+);
 
 showLogin();
 
@@ -1355,7 +1261,194 @@ function toggleMenu(){
 
 document
 .getElementById("sidebar")
-.classList.toggle("active");
+.classList.toggle(
+"active"
+);
+
+}
+
+
+/* =========================
+   IMAGE PICKER
+========================= */
+
+function openImagePicker(){
+
+imageInput.click();
+
+}
+
+
+/* =========================
+   IMAGE SELECT
+========================= */
+
+function handleImage(event){
+
+const file =
+event.target.files[0];
+
+if(!file){
+
+return;
+
+}
+
+
+/* CHECK TYPE */
+
+if(
+!file.type.startsWith("image/")
+){
+
+alert(
+"कृपया image file चुनें।"
+);
+
+return;
+
+}
+
+
+/* LIMIT */
+
+if(
+file.size > 10 * 1024 * 1024
+){
+
+alert(
+"Image 10MB से छोटी होनी चाहिए।"
+);
+
+imageInput.value="";
+
+return;
+
+}
+
+
+/* FILE READER */
+
+const reader =
+new FileReader();
+
+reader.onload = function(e){
+
+selectedImage =
+e.target.result;
+
+previewImage.src =
+selectedImage;
+
+previewArea.classList.remove(
+"hidden"
+);
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+
+/* =========================
+   REMOVE IMAGE
+========================= */
+
+function removeImage(){
+
+selectedImage=null;
+
+previewImage.src="";
+
+previewArea.classList.add(
+"hidden"
+);
+
+imageInput.value="";
+
+}
+
+
+/* =========================
+   ENTER
+========================= */
+
+input.addEventListener(
+"keydown",
+event=>{
+
+if(
+event.key==="Enter" &&
+!event.shiftKey
+){
+
+event.preventDefault();
+
+sendMessage();
+
+}
+
+}
+);
+
+
+/* =========================
+   ADD MESSAGE
+========================= */
+
+function addMessage(
+text,
+type,
+image=null
+){
+
+const div =
+document.createElement("div");
+
+div.className =
+"message " + type;
+
+
+/* IMAGE */
+
+if(image){
+
+const img =
+document.createElement("img");
+
+img.src=image;
+
+img.className=
+"message-image";
+
+div.appendChild(img);
+
+}
+
+
+/* TEXT */
+
+if(text){
+
+const bubble =
+document.createElement("div");
+
+bubble.className="bubble";
+
+bubble.textContent=text;
+
+div.appendChild(bubble);
+
+}
+
+
+chat.appendChild(div);
+
+chat.scrollTop =
+chat.scrollHeight;
+
+return div;
 
 }
 
@@ -1372,24 +1465,21 @@ return null;
 
 }
 
-try {
+try{
 
 const response =
 await fetch(
-CHAT_CREATE_API,
+"/api/chats",
 {
 method:"POST",
-
 headers:{
 "Content-Type":
 "application/json"
 },
-
 body:JSON.stringify({
 userId:currentUser.id,
 title:"New Chat"
 })
-
 }
 );
 
@@ -1400,7 +1490,7 @@ if(!response.ok){
 
 throw new Error(
 data.error ||
-"Chat create error"
+"Chat create failed"
 );
 
 }
@@ -1408,11 +1498,11 @@ data.error ||
 currentChatId =
 data.chat.id;
 
-await loadHistory();
+await loadPreviousChats();
 
-return data.chat;
+return currentChatId;
 
-} catch(error){
+}catch(error){
 
 console.error(
 "CREATE CHAT ERROR:",
@@ -1427,45 +1517,10 @@ return null;
 
 
 /* =========================
-   NEW CHAT
+   LOAD PREVIOUS CHATS
 ========================= */
 
-function newChat(){
-
-currentChatId = null;
-
-chat.innerHTML = `
-
-<div
-class="welcome"
-id="welcome">
-
-<h1>Hello 👋</h1>
-
-<p>
-BaatAI से कुछ भी पूछिए...
-</p>
-
-</div>
-
-`;
-
-input.value = "";
-
-document
-.getElementById("sidebar")
-.classList.remove("active");
-
-input.focus();
-
-}
-
-
-/* =========================
-   LOAD HISTORY
-========================= */
-
-async function loadHistory(){
+async function loadPreviousChats(){
 
 if(!currentUser){
 
@@ -1473,7 +1528,7 @@ return;
 
 }
 
-try {
+try{
 
 const response =
 await fetch(
@@ -1486,92 +1541,51 @@ await response.json();
 
 if(!response.ok){
 
-throw new Error(
-data.error ||
-"History error"
-);
-
-}
-
-const history =
-document.getElementById(
-"history"
-);
-
-history.innerHTML = "";
-
-if(
-!data.chats ||
-data.chats.length === 0
-){
-
-history.innerHTML = `
-
-<div style="
-color:#9ca3af;
-font-size:13px;
-padding:8px;
-">
-
-अभी कोई Previous Chat नहीं है।
-
-</div>
-
-`;
-
 return;
 
 }
 
+chatList.innerHTML="";
+
 data.chats.forEach(
-function(chatItem){
+(chatData)=>{
 
-const button =
-document.createElement(
-"button"
-);
+const item =
+document.createElement("div");
 
-button.className =
-"history-item";
-
-button.textContent =
-"💬 " +
-(
-chatItem.title ||
-"New Chat"
-);
+item.className=
+"chat-item";
 
 if(
-Number(chatItem.id) ===
-Number(currentChatId)
+String(chatData.id) ===
+String(currentChatId)
 ){
 
-button.classList.add(
+item.classList.add(
 "active"
 );
 
 }
 
-button.onclick =
-function(){
+item.textContent =
+chatData.title ||
+"New Chat";
 
+item.onclick=()=>{
 openChat(
-chatItem.id
+chatData.id
 );
-
 };
 
-history.appendChild(
-button
-);
+chatList.appendChild(item);
 
 }
 );
 
-} catch(error){
+}catch(error){
 
 console.error(
-"HISTORY ERROR:",
+"LOAD CHATS ERROR:",
 error
 );
 
@@ -1581,40 +1595,12 @@ error
 
 
 /* =========================
-   OPEN PREVIOUS
+   OPEN PREVIOUS CHAT
 ========================= */
 
-async function openPrevious(){
+async function openChat(chatId){
 
-await loadHistory();
-
-const history =
-document.getElementById(
-"history"
-);
-
-history.scrollIntoView({
-behavior:"smooth"
-});
-
-}
-
-
-/* =========================
-   OPEN CHAT
-========================= */
-
-async function openChat(
-chatId
-){
-
-if(!currentUser){
-
-return;
-
-}
-
-try {
+try{
 
 const response =
 await fetch(
@@ -1631,7 +1617,7 @@ if(!response.ok){
 
 throw new Error(
 data.error ||
-"Chat open error"
+"Chat load failed"
 );
 
 }
@@ -1639,58 +1625,23 @@ data.error ||
 currentChatId =
 chatId;
 
-chat.innerHTML = "";
-
-if(
-!data.messages ||
-data.messages.length === 0
-){
-
-chat.innerHTML = `
-
-<div
-class="welcome"
-id="welcome">
-
-<h1>Hello 👋</h1>
-
-<p>
-BaatAI से कुछ भी पूछिए...
-</p>
-
-</div>
-
-`;
-
-} else {
+chat.innerHTML="";
 
 data.messages.forEach(
-function(message){
-
-if(
-message.image_data
-){
-
-addImageMessage(
-message.image_data,
-message.content || ""
-);
-
-} else {
+(msg)=>{
 
 addMessage(
-message.content || "",
-message.role
+msg.content,
+msg.role === "user"
+? "user"
+: "ai",
+msg.image_data
 );
 
 }
-
-}
 );
 
-}
-
-await loadHistory();
+await loadPreviousChats();
 
 document
 .getElementById("sidebar")
@@ -1698,20 +1649,11 @@ document
 "active"
 );
 
-chat.scrollTop =
-chat.scrollHeight;
-
-input.focus();
-
-} catch(error){
+}catch(error){
 
 console.error(
 "OPEN CHAT ERROR:",
 error
-);
-
-alert(
-"Chat खोलने में समस्या हुई।"
 );
 
 }
@@ -1726,41 +1668,28 @@ alert(
 async function saveMessage(
 role,
 content,
-imageData = null
+imageData=null
 ){
 
-if(!currentUser){
+if(
+!currentChatId ||
+!currentUser
+){
 
 return;
 
 }
 
-if(!currentChatId){
+try{
 
-const newChat =
-await createChat();
-
-if(!newChat){
-
-return;
-
-}
-
-}
-
-try {
-
-const response =
 await fetch(
-MESSAGE_API,
+"/api/messages",
 {
 method:"POST",
-
 headers:{
 "Content-Type":
 "application/json"
 },
-
 body:JSON.stringify({
 
 userId:
@@ -1778,24 +1707,10 @@ imageData:
 imageData || null
 
 })
-
 }
 );
 
-const data =
-await response.json();
-
-if(!response.ok){
-
-console.error(
-data.error
-);
-
-}
-
-await loadHistory();
-
-} catch(error){
+}catch(error){
 
 console.error(
 "SAVE MESSAGE ERROR:",
@@ -1816,244 +1731,11 @@ async function sendMessage(){
 const message =
 input.value.trim();
 
-if(!message){
-
-return;
-
-}
-
-const welcome =
-document.getElementById(
-"welcome"
-);
-
-if(welcome){
-
-welcome.remove();
-
-}
-
-/* CREATE CHAT */
-
-if(!currentChatId){
-
-const newChat =
-await createChat();
-
-if(!newChat){
-
-addMessage(
-"Chat create नहीं हो सकी।",
-"ai"
-);
-
-return;
-
-}
-
-}
-
-
-/* USER */
-
-addMessage(
-message,
-"user"
-);
-
-await saveMessage(
-"user",
-message
-);
-
-input.value = "";
-
-sendBtn.disabled = true;
-
-const typing =
-addMessage(
-"🤖 सोच रहा हूँ...",
-"ai"
-);
-
-try {
-
-const response =
-await fetch(
-CHAT_API,
-{
-method:"POST",
-
-headers:{
-"Content-Type":
-"application/json"
-},
-
-body:JSON.stringify({
-message
-})
-
-}
-);
-
-const data =
-await response.json();
-
-typing.remove();
-
-if(!response.ok){
-
-throw new Error(
-data.error ||
-"Server error"
-);
-
-}
-
-const reply =
-data.reply ||
-"मुझे कोई जवाब नहीं मिला।";
-
-addMessage(
-reply,
-"ai"
-);
-
-await saveMessage(
-"assistant",
-reply
-);
-
-} catch(error){
-
-console.error(
-"CHAT ERROR:",
-error
-);
-
-typing.remove();
-
-addMessage(
-"AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।",
-"ai"
-);
-
-}
-
-sendBtn.disabled = false;
-
-input.focus();
-
-}
-
-
-/* =========================
-   ADD TEXT MESSAGE
-========================= */
-
-function addMessage(
-text,
-type
+if(
+!message &&
+!selectedImage
 ){
 
-const messageDiv =
-document.createElement(
-"div"
-);
-
-messageDiv.className =
-"message " +
-type;
-
-const bubble =
-document.createElement(
-"div"
-);
-
-bubble.className =
-"bubble";
-
-bubble.textContent =
-text;
-
-messageDiv.appendChild(
-bubble
-);
-
-chat.appendChild(
-messageDiv
-);
-
-chat.scrollTop =
-chat.scrollHeight;
-
-return messageDiv;
-
-}
-
-
-/* =========================
-   IMAGE MODAL
-========================= */
-
-function openImageModal(){
-
-document
-.getElementById("imageModal")
-.classList.remove(
-"hidden"
-);
-
-document
-.getElementById("imagePrompt")
-.focus();
-
-}
-
-
-function closeImageModal(){
-
-document
-.getElementById("imageModal")
-.classList.add(
-"hidden"
-);
-
-document
-.getElementById("imagePrompt")
-.value = "";
-
-}
-
-
-/* =========================
-   GENERATE IMAGE
-========================= */
-
-async function generateImage(){
-
-const prompt =
-document
-.getElementById("imagePrompt")
-.value
-.trim();
-
-if(!prompt){
-
-alert(
-"पहले image prompt लिखें।"
-);
-
-return;
-
-}
-
-if(!currentUser){
-
-alert(
-"पहले Login करें।"
-);
-
 return;
 
 }
@@ -2063,10 +1745,10 @@ return;
 
 if(!currentChatId){
 
-const newChat =
+const id =
 await createChat();
 
-if(!newChat){
+if(!id){
 
 alert(
 "Chat create नहीं हो सकी।"
@@ -2079,120 +1761,146 @@ return;
 }
 
 
-const button =
+/* REMOVE WELCOME */
+
+const welcome =
 document.getElementById(
-"generateImageBtn"
+"welcome"
 );
 
-button.disabled = true;
+if(welcome){
 
-button.textContent =
-"Generating...";
+welcome.remove();
 
-closeImageModal();
+}
 
 
-const loading =
+/* SAVE IMAGE BEFORE REMOVE */
+
+const imageToSend =
+selectedImage;
+
+
+/* USER MESSAGE */
+
 addMessage(
-"🖼️ Image बनाई जा रही है...",
+message ||
+"इस image को देखो।",
+"user",
+imageToSend
+);
+
+await saveMessage(
+"user",
+message ||
+"इस image को देखो।",
+imageToSend
+);
+
+
+/* CLEAR INPUT */
+
+input.value="";
+
+removeImage();
+
+sendBtn.disabled=true;
+
+
+/* TYPING */
+
+const typing =
+addMessage(
+"🤖 सोच रहा हूँ...",
 "ai"
 );
 
 
-try {
-
-/* SAVE PROMPT */
-
-await saveMessage(
-"user",
-"🖼️ Image Prompt: " +
-prompt
-);
-
-
-/* IMAGE API */
+try{
 
 const response =
 await fetch(
-IMAGE_API,
+CHAT_API,
 {
 method:"POST",
-
 headers:{
 "Content-Type":
 "application/json"
 },
-
 body:JSON.stringify({
-prompt
-})
 
+message:
+message ||
+"इस image को ध्यान से देखकर बताओ कि इसमें क्या है।",
+
+image:
+imageToSend || null
+
+})
 }
 );
+
 
 const data =
 await response.json();
 
-loading.remove();
+
+typing.remove();
+
 
 if(!response.ok){
 
 throw new Error(
 data.error ||
-"Image generation error"
-);
-
-}
-
-if(!data.image){
-
-throw new Error(
-"Image नहीं मिली।"
+"Server error"
 );
 
 }
 
 
-/* SHOW IMAGE */
+const reply =
+data.reply ||
+"मुझे कोई जवाब नहीं मिला।";
 
-addImageMessage(
-data.image,
-prompt
+
+addMessage(
+reply,
+"ai"
 );
 
-
-/* SAVE IMAGE */
 
 await saveMessage(
-"assistant",
-"AI generated image",
-data.image
+"ai",
+reply,
+null
 );
 
-} catch(error){
+
+await loadPreviousChats();
+
+
+}catch(error){
 
 console.error(
-"IMAGE ERROR:",
+"CHAT ERROR:",
 error
 );
 
-loading.remove();
+typing.remove();
+
+const errorText =
+"AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।";
+
 
 addMessage(
-"🖼️ Image बनाने में समस्या हुई: " +
-(
-error.message ||
-"Unknown error"
-),
+errorText,
 "ai"
 );
 
 }
 
-button.disabled = false;
 
-button.textContent =
-"Generate";
+sendBtn.disabled=false;
 
 input.focus();
 
@@ -2200,134 +1908,46 @@ input.focus();
 
 
 /* =========================
-   ADD IMAGE MESSAGE
+   NEW CHAT
 ========================= */
 
-function addImageMessage(
-imageData,
-caption
-){
+async function newChat(){
 
-const wrapper =
-document.createElement(
-"div"
-);
+currentChatId=null;
 
-wrapper.className =
-"image-message";
+selectedImage=null;
 
-const bubble =
-document.createElement(
-"div"
-);
+removeImage();
 
-bubble.className =
-"image-bubble";
+chat.innerHTML=`
 
-const captionDiv =
-document.createElement(
-"div"
-);
+<div
+id="welcome"
+class="welcome">
 
-captionDiv.className =
-"image-caption";
+<h1>Hello 👋</h1>
 
-captionDiv.textContent =
-"🖼️ " +
-(
-caption ||
-"AI Generated Image"
-);
+<p>
+BaatAI से कुछ भी पूछिए या फोटो upload करके सवाल पूछिए।
+</p>
 
+</div>
 
-const image =
-document.createElement(
-"img"
-);
+`;
 
-image.className =
-"generated-image";
-
-image.src =
-imageData;
-
-image.alt =
-"AI Generated Image";
-
-bubble.appendChild(
-captionDiv
-);
-
-bubble.appendChild(
-image
-);
-
-wrapper.appendChild(
-bubble
-);
-
-chat.appendChild(
-wrapper
-);
-
-chat.scrollTop =
-chat.scrollHeight;
-
-return wrapper;
-
-}
-
-
-/* =========================
-   ENTER SEND
-========================= */
-
-input.addEventListener(
-"keydown",
-function(event){
-
-if(
-event.key === "Enter"
-){
-
-event.preventDefault();
-
-sendMessage();
-
-}
-
-}
-);
-
-
-/* =========================
-   IMAGE ENTER
-========================= */
+input.value="";
 
 document
-.getElementById(
-"imagePrompt"
-)
-.addEventListener(
-"keydown",
-function(event){
-
-if(
-event.key === "Enter" &&
-!event.shiftKey
-){
-
-event.preventDefault();
-
-generateImage();
-
-}
-
-}
+.getElementById("sidebar")
+.classList.remove(
+"active"
 );
+
+input.focus();
+
+}
 
 </script>
 
 </body>
-
 </html>
