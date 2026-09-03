@@ -1,1407 +1,1599 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>BaatAI - AI Assistant</title>
+<title>BaatAI - AI Assistant</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<style>
 
-    body {
-      background: #f5f7fb;
-      height: 100vh;
-    }
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
 
-    button,
-    input {
-      font-family: Arial, sans-serif;
-    }
+body{
+  background:#f5f7fb;
+  height:100vh;
+}
 
-    .hidden {
-      display: none !important;
-    }
+button,input{
+  font-family:Arial,sans-serif;
+}
 
-    /* =========================
-       AUTH SCREEN
-    ========================= */
+.hidden{
+  display:none!important;
+}
 
-    #authScreen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: #f5f7fb;
-    }
+/* =========================
+AUTH
+========================= */
 
-    .auth-box {
-      width: 100%;
-      max-width: 400px;
-      background: white;
-      padding: 30px;
-      border-radius: 18px;
-      box-shadow: 0 10px 35px rgba(0,0,0,0.08);
-    }
+#authScreen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:#f5f7fb;
+}
 
-    .auth-logo {
-      text-align: center;
-      font-size: 30px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
+.auth-box{
+  width:100%;
+  max-width:400px;
+  background:white;
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 10px 35px rgba(0,0,0,.08);
+}
 
-    .auth-subtitle {
-      text-align: center;
-      color: #6b7280;
-      margin-bottom: 25px;
-    }
+.auth-logo{
+  text-align:center;
+  font-size:30px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
 
-    .tabs {
-      display: flex;
-      margin-bottom: 22px;
-      border-bottom: 1px solid #e5e7eb;
-    }
+.auth-subtitle{
+  text-align:center;
+  color:#6b7280;
+  margin-bottom:25px;
+}
 
-    .tab {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font-size: 16px;
-    }
+.tabs{
+  display:flex;
+  margin-bottom:22px;
+  border-bottom:1px solid #e5e7eb;
+}
 
-    .tab.active {
-      color: #2563eb;
-      border-bottom: 2px solid #2563eb;
-      font-weight: bold;
-    }
+.tab{
+  flex:1;
+  padding:12px;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  font-size:16px;
+}
 
-    .auth-form label {
-      display: block;
-      margin: 12px 0 6px;
-      font-size: 14px;
-      font-weight: bold;
-    }
+.tab.active{
+  color:#2563eb;
+  border-bottom:2px solid #2563eb;
+  font-weight:bold;
+}
 
-    .auth-form input {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      outline: none;
-      font-size: 15px;
-    }
+.auth-form label{
+  display:block;
+  margin:12px 0 6px;
+  font-size:14px;
+  font-weight:bold;
+}
 
-    .auth-form input:focus {
-      border-color: #2563eb;
-    }
+.auth-form input{
+  width:100%;
+  padding:13px;
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  outline:none;
+  font-size:15px;
+}
 
-    .auth-submit {
-      width: 100%;
-      margin-top: 22px;
-      padding: 14px;
-      border: none;
-      border-radius: 10px;
-      background: #2563eb;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.auth-submit{
+  width:100%;
+  margin-top:22px;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    .auth-submit:disabled {
-      background: #9ca3af;
-      cursor: not-allowed;
-    }
+.auth-message{
+  text-align:center;
+  margin-top:15px;
+  min-height:20px;
+  font-size:14px;
+}
 
-    .auth-message {
-      text-align: center;
-      margin-top: 15px;
-      min-height: 20px;
-      font-size: 14px;
-    }
+.switch-text{
+  text-align:center;
+  margin-top:15px;
+  color:#555;
+  font-size:14px;
+}
 
-    .switch-text {
-      text-align: center;
-      margin-top: 15px;
-      color: #555;
-      font-size: 14px;
-    }
+.switch-btn{
+  border:none;
+  background:none;
+  color:#2563eb;
+  cursor:pointer;
+  font-weight:bold;
+}
 
-    .switch-btn {
-      border: none;
-      background: none;
-      color: #2563eb;
-      cursor: pointer;
-      font-weight: bold;
-    }
+/* =========================
+APP
+========================= */
 
-    /* =========================
-       BAATAI APP
-    ========================= */
+.app{
+  height:100vh;
+  display:flex;
+}
 
-    .app {
-      height: 100vh;
-      display: flex;
-    }
+.sidebar{
+  width:270px;
+  background:#111827;
+  color:white;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
 
-    .sidebar {
-      width: 250px;
-      background: #111827;
-      color: white;
-      padding: 20px;
-    }
+.logo{
+  font-size:27px;
+  font-weight:bold;
+  margin-bottom:20px;
+}
 
-    .logo {
-      font-size: 27px;
-      font-weight: bold;
-      margin-bottom: 30px;
-    }
+.new-chat,
+.logout-btn{
+  width:100%;
+  padding:13px;
+  border:1px solid #374151;
+  background:#1f2937;
+  color:white;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:15px;
+}
 
-    .new-chat,
-    .logout-btn {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #374151;
-      background: #1f2937;
-      color: white;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 15px;
-    }
+.new-chat:hover,
+.logout-btn:hover{
+  background:#374151;
+}
 
-    .new-chat:hover,
-    .logout-btn:hover {
-      background: #374151;
-    }
+.chat-history-title{
+  margin-top:25px;
+  margin-bottom:10px;
+  color:#9ca3af;
+  font-size:13px;
+  font-weight:bold;
+}
 
-    .logout-btn {
-      margin-top: 12px;
-    }
+.chat-list{
+  flex:1;
+  overflow-y:auto;
+  padding-right:3px;
+}
 
-    .user-info {
-      margin-top: 20px;
-      padding: 12px;
-      border-top: 1px solid #374151;
-      color: #d1d5db;
-      font-size: 13px;
-      word-break: break-word;
-    }
+.chat-item{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:7px;
+}
 
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
+.chat-open{
+  flex:1;
+  min-width:0;
+  padding:11px;
+  border:none;
+  border-radius:8px;
+  background:transparent;
+  color:#e5e7eb;
+  text-align:left;
+  cursor:pointer;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 
-    .header {
-      height: 65px;
-      background: white;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      font-size: 21px;
-      font-weight: bold;
-    }
+.chat-open:hover,
+.chat-open.active{
+  background:#374151;
+}
 
-    .menu-btn {
-      display: none;
-      border: none;
-      background: transparent;
-      font-size: 28px;
-      cursor: pointer;
-      margin-right: 12px;
-      color: #111827;
-    }
+.delete-chat{
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:7px;
+  background:transparent;
+  color:#9ca3af;
+  cursor:pointer;
+}
 
-    .chat {
-      flex: 1;
-      overflow-y: auto;
-      padding: 25px;
-    }
+.delete-chat:hover{
+  background:#7f1d1d;
+  color:white;
+}
 
-    .welcome {
-      text-align: center;
-      margin-top: 100px;
-    }
+.no-chats{
+  color:#6b7280;
+  font-size:13px;
+  padding:10px 3px;
+}
 
-    .welcome h1 {
-      font-size: 34px;
-      color: #111827;
-      margin-bottom: 10px;
-    }
+.logout-btn{
+  margin-top:12px;
+}
 
-    .welcome p {
-      color: #6b7280;
-      font-size: 16px;
-    }
+.user-info{
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px solid #374151;
+  color:#d1d5db;
+  font-size:13px;
+  word-break:break-word;
+}
 
-    .message {
-      max-width: 850px;
-      margin: 15px auto;
-      display: flex;
-    }
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
 
-    .user {
-      justify-content: flex-end;
-    }
+.header{
+  height:65px;
+  background:white;
+  border-bottom:1px solid #e5e7eb;
+  display:flex;
+  align-items:center;
+  padding:0 20px;
+  font-size:21px;
+  font-weight:bold;
+}
 
-    .bubble {
-      max-width: 75%;
-      padding: 13px 17px;
-      border-radius: 15px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
+.menu-btn{
+  display:none;
+  border:none;
+  background:transparent;
+  font-size:28px;
+  cursor:pointer;
+  margin-right:12px;
+}
 
-    .user .bubble {
-      background: #2563eb;
-      color: white;
-      border-bottom-right-radius: 4px;
-    }
+.chat{
+  flex:1;
+  overflow-y:auto;
+  padding:25px;
+}
 
-    .ai .bubble {
-      background: white;
-      color: #111827;
-      border: 1px solid #e5e7eb;
-      border-bottom-left-radius: 4px;
-    }
+.welcome{
+  text-align:center;
+  margin-top:100px;
+}
 
-    .input-area {
-      background: white;
-      border-top: 1px solid #e5e7eb;
-      padding: 15px;
-    }
+.welcome h1{
+  font-size:34px;
+  color:#111827;
+  margin-bottom:10px;
+}
 
-    .input-box {
-      max-width: 850px;
-      margin: auto;
-      display: flex;
-      gap: 10px;
-    }
+.welcome p{
+  color:#6b7280;
+}
 
-    #messageInput {
-      flex: 1;
-      padding: 14px 16px;
-      border: 1px solid #d1d5db;
-      border-radius: 12px;
-      outline: none;
-      font-size: 16px;
-    }
+.message{
+  max-width:850px;
+  margin:15px auto;
+  display:flex;
+}
 
-    #messageInput:focus {
-      border-color: #2563eb;
-    }
+.user{
+  justify-content:flex-end;
+}
 
-    #sendBtn {
-      width: 55px;
-      border: none;
-      border-radius: 12px;
-      background: #2563eb;
-      color: white;
-      font-size: 20px;
-      cursor: pointer;
-    }
+.bubble{
+  max-width:75%;
+  padding:13px 17px;
+  border-radius:15px;
+  line-height:1.5;
+  white-space:pre-wrap;
+  word-wrap:break-word;
+}
 
-    #sendBtn:disabled {
-      background: #9ca3af;
-      cursor: not-allowed;
-    }
+.user .bubble{
+  background:#2563eb;
+  color:white;
+  border-bottom-right-radius:4px;
+}
 
-    /* =========================
-       MOBILE
-    ========================= */
+.ai .bubble{
+  background:white;
+  color:#111827;
+  border:1px solid #e5e7eb;
+  border-bottom-left-radius:4px;
+}
 
-    @media (max-width: 700px) {
+.input-area{
+  background:white;
+  border-top:1px solid #e5e7eb;
+  padding:15px;
+}
 
-      .menu-btn {
-        display: block;
-      }
+.input-box{
+  max-width:850px;
+  margin:auto;
+  display:flex;
+  gap:10px;
+}
 
-      .sidebar {
-        display: none;
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        z-index: 1000;
-      }
+#messageInput{
+  flex:1;
+  padding:14px 16px;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+  outline:none;
+  font-size:16px;
+}
 
-      .sidebar.active {
-        display: block;
-      }
+#sendBtn{
+  width:55px;
+  border:none;
+  border-radius:12px;
+  background:#2563eb;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+}
 
-      .chat {
-        padding: 15px;
-      }
+#sendBtn:disabled{
+  background:#9ca3af;
+}
 
-      .welcome {
-        margin-top: 70px;
-      }
+/* =========================
+MOBILE
+========================= */
 
-      .welcome h1 {
-        font-size: 27px;
-      }
+@media(max-width:700px){
 
-      .bubble {
-        max-width: 90%;
-      }
+  .menu-btn{
+    display:block;
+  }
 
-      .input-area {
-        padding: 10px;
-      }
+  .sidebar{
+    display:none;
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    z-index:1000;
+  }
 
-      .auth-box {
-        padding: 25px;
-      }
-    }
-  </style>
+  .sidebar.active{
+    display:flex;
+  }
+
+  .chat{
+    padding:15px;
+  }
+
+  .bubble{
+    max-width:90%;
+  }
+
+  .welcome{
+    margin-top:70px;
+  }
+
+}
+
+</style>
 </head>
 
 <body>
 
-  <!-- =========================
-       LOGIN / SIGN UP
-  ========================= -->
+<!-- =========================
+AUTH SCREEN
+========================= -->
+
+<section id="authScreen">
+
+<div class="auth-box">
+
+<div class="auth-logo">
+🤖 BaatAI
+</div>
+
+<div class="auth-subtitle">
+BaatAI इस्तेमाल करने के लिए Login करें
+</div>
+
+<div class="tabs">
+
+<button
+class="tab active"
+id="loginTab"
+onclick="showLogin()">
+Login
+</button>
 
-  <section id="authScreen">
-
-    <div class="auth-box">
-
-      <div class="auth-logo">
-        🤖 BaatAI
-      </div>
-
-      <div class="auth-subtitle">
-        BaatAI इस्तेमाल करने के लिए Login करें
-      </div>
-
-      <div class="tabs">
-
-        <button
-          class="tab active"
-          id="loginTab"
-          onclick="showLogin()">
-          Login
-        </button>
+<button
+class="tab"
+id="signupTab"
+onclick="showSignup()">
+Sign Up
+</button>
+
+</div>
+
+<form
+id="loginForm"
+class="auth-form">
 
-        <button
-          class="tab"
-          id="signupTab"
-          onclick="showSignup()">
-          Sign Up
-        </button>
+<label>Email</label>
 
-      </div>
-
-
-      <!-- LOGIN -->
+<input
+id="loginEmail"
+type="email"
+placeholder="अपना Email डालें"
+required>
 
-      <form
-        id="loginForm"
-        class="auth-form">
+<label>Password</label>
 
-        <label>Email</label>
+<input
+id="loginPassword"
+type="password"
+placeholder="अपना Password डालें"
+required>
 
-        <input
-          id="loginEmail"
-          type="email"
-          placeholder="अपना Email डालें"
-          autocomplete="email"
-          required
-        >
+<button
+id="loginBtn"
+class="auth-submit"
+type="submit">
+Login
+</button>
 
-        <label>Password</label>
+</form>
 
-        <input
-          id="loginPassword"
-          type="password"
-          placeholder="अपना Password डालें"
-          autocomplete="current-password"
-          required
-        >
+<form
+id="signupForm"
+class="auth-form hidden">
 
-        <button
-          id="loginBtn"
-          class="auth-submit"
-          type="submit">
-          Login
-        </button>
+<label>Name</label>
 
-      </form>
+<input
+id="signupName"
+type="text"
+placeholder="अपना नाम डालें"
+required>
+
+<label>Email</label>
 
+<input
+id="signupEmail"
+type="email"
+placeholder="अपना Email डालें"
+required>
 
-      <!-- SIGN UP -->
+<label>Password</label>
 
-      <form
-        id="signupForm"
-        class="auth-form hidden">
+<input
+id="signupPassword"
+type="password"
+placeholder="कम से कम 6 अक्षर"
+minlength="6"
+required>
 
-        <label>Name</label>
+<button
+id="signupBtn"
+class="auth-submit"
+type="submit">
+Create Account
+</button>
 
-        <input
-          id="signupName"
-          type="text"
-          placeholder="अपना नाम डालें"
-          autocomplete="name"
-          required
-        >
+</form>
 
-        <label>Email</label>
+<div
+id="authMessage"
+class="auth-message">
+</div>
 
-        <input
-          id="signupEmail"
-          type="email"
-          placeholder="अपना Email डालें"
-          autocomplete="email"
-          required
-        >
+<div
+id="loginSwitch"
+class="switch-text">
 
-        <label>Password</label>
+नया account बनाना है?
 
-        <input
-          id="signupPassword"
-          type="password"
-          placeholder="कम से कम 6 अक्षर"
-          autocomplete="new-password"
-          minlength="6"
-          required
-        >
+<button
+class="switch-btn"
+onclick="showSignup()">
+Sign Up
+</button>
 
-        <button
-          id="signupBtn"
-          class="auth-submit"
-          type="submit">
-          Create Account
-        </button>
+</div>
 
-      </form>
+<div
+id="signupSwitch"
+class="switch-text hidden">
 
+पहले से account है?
 
-      <div
-        id="authMessage"
-        class="auth-message">
-      </div>
+<button
+class="switch-btn"
+onclick="showLogin()">
+Login
+</button>
 
-      <div
-        id="loginSwitch"
-        class="switch-text">
+</div>
 
-        नया account बनाना है?
+</div>
+</section>
 
-        <button
-          class="switch-btn"
-          onclick="showSignup()">
-          Sign Up
-        </button>
 
-      </div>
+<!-- =========================
+APP
+========================= -->
 
-      <div
-        id="signupSwitch"
-        class="switch-text hidden">
+<div
+id="appScreen"
+class="app hidden">
 
-        पहले से account है?
+<aside
+id="sidebar"
+class="sidebar">
 
-        <button
-          class="switch-btn"
-          onclick="showLogin()">
-          Login
-        </button>
+<div class="logo">
+🤖 BaatAI
+</div>
 
-      </div>
+<button
+class="new-chat"
+onclick="newChat()">
+＋ New Chat
+</button>
 
-    </div>
+<div class="chat-history-title">
+🕘 Previous Chats
+</div>
 
-  </section>
+<div
+id="chatList"
+class="chat-list">
+</div>
 
+<button
+class="logout-btn"
+onclick="logout()">
+🚪 Logout
+</button>
 
-  <!-- =========================
-       BAATAI APP
-  ========================= -->
+<div
+id="userInfo"
+class="user-info">
+</div>
 
-  <div
-    id="appScreen"
-    class="app hidden">
+</aside>
 
-    <aside
-      id="sidebar"
-      class="sidebar">
 
-      <div class="logo">
-        🤖 BaatAI
-      </div>
+<main class="main">
 
-      <button
-        class="new-chat"
-        onclick="newChat()">
-        ＋ New Chat
-      </button>
+<header class="header">
 
-      <button
-        class="logout-btn"
-        onclick="logout()">
-        🚪 Logout
-      </button>
+<button
+class="menu-btn"
+onclick="toggleMenu()">
+☰
+</button>
 
-      <div
-        id="userInfo"
-        class="user-info">
-      </div>
+<span>
+🤖 BaatAI
+</span>
 
-    </aside>
+</header>
 
 
-    <main class="main">
+<section
+id="chat"
+class="chat">
 
-      <header class="header">
+<div
+id="welcome"
+class="welcome">
 
-        <button
-          class="menu-btn"
-          onclick="toggleMenu()">
-          ☰
-        </button>
+<h1>
+Hello 👋
+</h1>
 
-        <span>
-          🤖 BaatAI
-        </span>
+<p>
+BaatAI से कुछ भी पूछिए...
+</p>
 
-      </header>
+</div>
 
+</section>
 
-      <!-- CHAT -->
 
-      <section
-        id="chat"
-        class="chat">
+<div class="input-area">
 
-        <div
-          id="welcome"
-          class="welcome">
+<div class="input-box">
 
-          <h1>Hello 👋</h1>
+<input
+id="messageInput"
+type="text"
+placeholder="अपना सवाल लिखें..."
+autocomplete="off">
 
-          <p>
-            BaatAI से कुछ भी पूछिए...
-          </p>
+<button
+id="sendBtn"
+onclick="sendMessage()">
+➤
+</button>
 
-        </div>
+</div>
 
-      </section>
+</div>
 
+</main>
 
-      <!-- INPUT -->
+</div>
 
-      <div class="input-area">
 
-        <div class="input-box">
+<script>
 
-          <input
-            id="messageInput"
-            type="text"
-            placeholder="अपना सवाल लिखें..."
-            autocomplete="off"
-          >
+/* =========================
+API
+========================= */
 
-          <button
-            id="sendBtn"
-            onclick="sendMessage()">
-            ➤
-          </button>
+const CHAT_API="/api/chat";
+const LOGIN_API="/api/login";
+const SIGNUP_API="/api/signup";
 
-        </div>
 
-      </div>
+/* =========================
+ELEMENTS
+========================= */
 
-    </main>
+const authScreen=
+document.getElementById("authScreen");
 
-  </div>
+const appScreen=
+document.getElementById("appScreen");
 
+const authMessage=
+document.getElementById("authMessage");
 
-  <script>
+const loginForm=
+document.getElementById("loginForm");
 
-    /* =========================
-       API
-    ========================= */
+const signupForm=
+document.getElementById("signupForm");
 
-    const CHAT_API = "/api/chat";
-    const LOGIN_API = "/api/login";
-    const SIGNUP_API = "/api/signup";
+const loginBtn=
+document.getElementById("loginBtn");
 
+const signupBtn=
+document.getElementById("signupBtn");
 
-    /* =========================
-       ELEMENTS
-    ========================= */
+const input=
+document.getElementById("messageInput");
 
-    const authScreen =
-      document.getElementById("authScreen");
+const sendBtn=
+document.getElementById("sendBtn");
 
-    const appScreen =
-      document.getElementById("appScreen");
+const chat=
+document.getElementById("chat");
 
-    const authMessage =
-      document.getElementById("authMessage");
+const chatList=
+document.getElementById("chatList");
 
-    const loginForm =
-      document.getElementById("loginForm");
 
-    const signupForm =
-      document.getElementById("signupForm");
+/* =========================
+CURRENT USER
+========================= */
 
-    const loginBtn =
-      document.getElementById("loginBtn");
+let currentUser=null;
+let currentChatId=null;
 
-    const signupBtn =
-      document.getElementById("signupBtn");
 
-    const input =
-      document.getElementById("messageInput");
+/* =========================
+AUTH MESSAGE
+========================= */
 
-    const sendBtn =
-      document.getElementById("sendBtn");
+function showAuthMessage(
+  message,
+  success=false
+){
 
-    const chat =
-      document.getElementById("chat");
+  authMessage.textContent=message;
 
+  authMessage.style.color=
+    success
+      ? "#16a34a"
+      : "#dc2626";
+}
 
-    /* =========================
-       MESSAGE
-    ========================= */
 
-    function showAuthMessage(
-      message,
-      success = false
-    ) {
+function clearAuthMessage(){
+  authMessage.textContent="";
+}
 
-      authMessage.textContent =
-        message;
 
-      authMessage.style.color =
-        success
-          ? "#16a34a"
-          : "#dc2626";
-    }
+/* =========================
+LOGIN / SIGNUP TABS
+========================= */
 
+function showLogin(){
 
-    function clearAuthMessage() {
+  loginForm.classList.remove("hidden");
+  signupForm.classList.add("hidden");
 
-      authMessage.textContent = "";
+  document
+    .getElementById("loginTab")
+    .classList.add("active");
 
-    }
+  document
+    .getElementById("signupTab")
+    .classList.remove("active");
 
+  document
+    .getElementById("loginSwitch")
+    .classList.remove("hidden");
 
-    /* =========================
-       SHOW LOGIN
-    ========================= */
+  document
+    .getElementById("signupSwitch")
+    .classList.add("hidden");
 
-    function showLogin() {
+  clearAuthMessage();
+}
 
-      loginForm.classList.remove(
-        "hidden"
-      );
 
-      signupForm.classList.add(
-        "hidden"
-      );
+function showSignup(){
 
-      document
-        .getElementById("loginTab")
-        .classList.add("active");
+  signupForm.classList.remove("hidden");
+  loginForm.classList.add("hidden");
 
-      document
-        .getElementById("signupTab")
-        .classList.remove("active");
+  document
+    .getElementById("signupTab")
+    .classList.add("active");
 
-      document
-        .getElementById("loginSwitch")
-        .classList.remove("hidden");
+  document
+    .getElementById("loginTab")
+    .classList.remove("active");
 
-      document
-        .getElementById("signupSwitch")
-        .classList.add("hidden");
+  document
+    .getElementById("signupSwitch")
+    .classList.remove("hidden");
 
-      clearAuthMessage();
-    }
+  document
+    .getElementById("loginSwitch")
+    .classList.add("hidden");
 
+  clearAuthMessage();
+}
 
-    /* =========================
-       SHOW SIGNUP
-    ========================= */
 
-    function showSignup() {
+/* =========================
+SAVE USER
+========================= */
 
-      signupForm.classList.remove(
-        "hidden"
-      );
+function saveUser(user){
 
-      loginForm.classList.add(
-        "hidden"
-      );
+  localStorage.setItem(
+    "baatai_user",
+    JSON.stringify(user)
+  );
+}
 
-      document
-        .getElementById("signupTab")
-        .classList.add("active");
 
-      document
-        .getElementById("loginTab")
-        .classList.remove("active");
+/* =========================
+SHOW APP
+========================= */
 
-      document
-        .getElementById("signupSwitch")
-        .classList.remove("hidden");
+function showApp(user){
 
-      document
-        .getElementById("loginSwitch")
-        .classList.add("hidden");
+  currentUser=user;
 
-      clearAuthMessage();
-    }
+  authScreen.classList.add("hidden");
+  appScreen.classList.remove("hidden");
 
+  const userInfo=
+    document.getElementById("userInfo");
 
-    /* =========================
-       SAVE USER
-    ========================= */
+  userInfo.textContent=
+    "👤 "+
+    (user.name || user.email);
 
-    function saveUser(user) {
+  loadChats();
 
-      localStorage.setItem(
-        "baatai_user",
-        JSON.stringify(user)
-      );
+  setTimeout(()=>{
+    input.focus();
+  },100);
+}
 
-    }
 
+/* =========================
+LOAD LOGIN
+========================= */
 
-    /* =========================
-       SHOW APP
-    ========================= */
+window.addEventListener(
+"load",
+function(){
 
-    function showApp(user) {
-
-      authScreen.classList.add(
-        "hidden"
-      );
-
-      appScreen.classList.remove(
-        "hidden"
-      );
-
-      const userInfo =
-        document.getElementById(
-          "userInfo"
-        );
-
-      if (user && user.name) {
-
-        userInfo.textContent =
-          "👤 " + user.name;
-
-      } else if (user && user.email) {
-
-        userInfo.textContent =
-          "👤 " + user.email;
-
-      }
-
-      setTimeout(() => {
-        input.focus();
-      }, 100);
-    }
-
-
-    /* =========================
-       CHECK SAVED LOGIN
-    ========================= */
-
-    window.addEventListener(
-      "load",
-      function() {
-
-        const savedUser =
-          localStorage.getItem(
-            "baatai_user"
-          );
-
-        if (!savedUser) {
-          showLogin();
-          return;
-        }
-
-        try {
-
-          const user =
-            JSON.parse(savedUser);
-
-          if (
-            user &&
-            (user.id || user.email)
-          ) {
-
-            showApp(user);
-
-          } else {
-
-            localStorage.removeItem(
-              "baatai_user"
-            );
-
-            showLogin();
-
-          }
-
-        } catch {
-
-          localStorage.removeItem(
-            "baatai_user"
-          );
-
-          showLogin();
-        }
-
-      }
+  const savedUser=
+    localStorage.getItem(
+      "baatai_user"
     );
 
+  if(!savedUser){
 
-    /* =========================
-       SIGN UP
-    ========================= */
+    showLogin();
+    return;
 
-    signupForm.addEventListener(
-      "submit",
-      async function(event) {
+  }
 
-        event.preventDefault();
+  try{
 
-        clearAuthMessage();
+    const user=
+      JSON.parse(savedUser);
 
-        const name =
-          document
-            .getElementById("signupName")
-            .value
-            .trim();
+    if(
+      user &&
+      user.id
+    ){
 
-        const email =
-          document
-            .getElementById("signupEmail")
-            .value
-            .trim();
+      showApp(user);
 
-        const password =
-          document
-            .getElementById("signupPassword")
-            .value;
-
-
-        if (!name || !email || !password) {
-
-          showAuthMessage(
-            "कृपया सभी जानकारी भरें।"
-          );
-
-          return;
-        }
-
-
-        if (password.length < 6) {
-
-          showAuthMessage(
-            "Password कम से कम 6 अक्षर का होना चाहिए।"
-          );
-
-          return;
-        }
-
-
-        signupBtn.disabled = true;
-
-        signupBtn.textContent =
-          "Account बन रहा है...";
-
-
-        try {
-
-          const response =
-            await fetch(
-              SIGNUP_API,
-              {
-                method: "POST",
-
-                headers: {
-                  "Content-Type":
-                    "application/json"
-                },
-
-                body: JSON.stringify({
-                  name,
-                  email,
-                  password
-                })
-              }
-            );
-
-
-          const data =
-            await response.json();
-
-
-          if (!response.ok) {
-
-            throw new Error(
-              data.error ||
-              "Account बनाने में समस्या हुई।"
-            );
-
-          }
-
-
-          showAuthMessage(
-            "Account बन गया! अब Login करें। ✅",
-            true
-          );
-
-
-          document
-            .getElementById("loginEmail")
-            .value = email;
-
-
-          document
-            .getElementById("loginPassword")
-            .value = "";
-
-
-          showLogin();
-
-
-          showAuthMessage(
-            "Account बन गया! अब Login करें। ✅",
-            true
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            "SIGNUP ERROR:",
-            error
-          );
-
-          showAuthMessage(
-            error.message ||
-            "Account बनाने में समस्या हुई।"
-          );
-
-        }
-
-
-        signupBtn.disabled = false;
-
-        signupBtn.textContent =
-          "Create Account";
-
-      }
-    );
-
-
-    /* =========================
-       LOGIN
-    ========================= */
-
-    loginForm.addEventListener(
-      "submit",
-      async function(event) {
-
-        event.preventDefault();
-
-        clearAuthMessage();
-
-
-        const email =
-          document
-            .getElementById("loginEmail")
-            .value
-            .trim();
-
-        const password =
-          document
-            .getElementById("loginPassword")
-            .value;
-
-
-        if (!email || !password) {
-
-          showAuthMessage(
-            "Email और Password डालें।"
-          );
-
-          return;
-        }
-
-
-        loginBtn.disabled = true;
-
-        loginBtn.textContent =
-          "Login हो रहा है...";
-
-
-        try {
-
-          const response =
-            await fetch(
-              LOGIN_API,
-              {
-                method: "POST",
-
-                headers: {
-                  "Content-Type":
-                    "application/json"
-                },
-
-                body: JSON.stringify({
-                  email,
-                  password
-                })
-              }
-            );
-
-
-          const data =
-            await response.json();
-
-
-          if (!response.ok) {
-
-            throw new Error(
-              data.error ||
-              "Login में समस्या हुई।"
-            );
-
-          }
-
-
-          if (!data.user) {
-
-            throw new Error(
-              "Server ने user information नहीं भेजी।"
-            );
-
-          }
-
-
-          saveUser(
-            data.user
-          );
-
-
-          showApp(
-            data.user
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            "LOGIN ERROR:",
-            error
-          );
-
-          showAuthMessage(
-            error.message ||
-            "Login में समस्या हुई।"
-          );
-
-        }
-
-
-        loginBtn.disabled = false;
-
-        loginBtn.textContent =
-          "Login";
-
-      }
-    );
-
-
-    /* =========================
-       LOGOUT
-    ========================= */
-
-    function logout() {
+    }else{
 
       localStorage.removeItem(
         "baatai_user"
       );
 
-      appScreen.classList.add(
-        "hidden"
-      );
-
-      authScreen.classList.remove(
-        "hidden"
-      );
-
-      document
-        .getElementById("loginEmail")
-        .value = "";
-
-      document
-        .getElementById("loginPassword")
-        .value = "";
-
       showLogin();
 
     }
 
+  }catch{
 
-    /* =========================
-       MENU
-    ========================= */
-
-    function toggleMenu() {
-
-      const sidebar =
-        document.getElementById(
-          "sidebar"
-        );
-
-      sidebar.classList.toggle(
-        "active"
-      );
-
-    }
-
-
-    /* =========================
-       ENTER KEY
-    ========================= */
-
-    input.addEventListener(
-      "keydown",
-      function(event) {
-
-        if (event.key === "Enter") {
-
-          event.preventDefault();
-
-          sendMessage();
-
-        }
-
-      }
+    localStorage.removeItem(
+      "baatai_user"
     );
 
+    showLogin();
 
-    /* =========================
-       SEND MESSAGE
-    ========================= */
+  }
 
-    async function sendMessage() {
-
-      const message =
-        input.value.trim();
+});
 
 
-      if (!message) {
-        return;
-      }
+/* =========================
+SIGNUP
+========================= */
 
+signupForm.addEventListener(
+"submit",
+async function(event){
 
-      const welcome =
-        document.getElementById(
-          "welcome"
-        );
+  event.preventDefault();
 
+  clearAuthMessage();
 
-      if (welcome) {
-        welcome.remove();
-      }
+  const name=
+    document
+      .getElementById("signupName")
+      .value
+      .trim();
 
+  const email=
+    document
+      .getElementById("signupEmail")
+      .value
+      .trim();
 
-      addMessage(
-        message,
-        "user"
+  const password=
+    document
+      .getElementById("signupPassword")
+      .value;
+
+  signupBtn.disabled=true;
+  signupBtn.textContent=
+    "Account बन रहा है...";
+
+  try{
+
+    const response=
+      await fetch(
+        SIGNUP_API,
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:JSON.stringify({
+            name,
+            email,
+            password
+          })
+        }
       );
 
+    const data=
+      await response.json();
 
-      input.value = "";
+    if(!response.ok){
 
-      sendBtn.disabled = true;
+      throw new Error(
+        data.error ||
+        "Account बनाने में समस्या हुई।"
+      );
 
+    }
 
-      const typing =
-        addMessage(
-          "🤖 सोच रहा हूँ...",
-          "ai"
-        );
+    showLogin();
 
+    document
+      .getElementById("loginEmail")
+      .value=email;
 
-      try {
+    showAuthMessage(
+      "Account बन गया! अब Login करें। ✅",
+      true
+    );
 
-        const response =
-          await fetch(
-            CHAT_API,
-            {
-              method: "POST",
+  }catch(error){
 
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
+    showAuthMessage(
+      error.message
+    );
 
-              body: JSON.stringify({
-                message
-              })
-            }
-          );
+  }
 
+  signupBtn.disabled=false;
+  signupBtn.textContent=
+    "Create Account";
 
-        const data =
-          await response.json();
-
-
-        typing.remove();
+});
 
 
-        if (!response.ok) {
+/* =========================
+LOGIN
+========================= */
 
-          throw new Error(
-            data.error ||
-            "Server error"
+loginForm.addEventListener(
+"submit",
+async function(event){
+
+  event.preventDefault();
+
+  clearAuthMessage();
+
+  const email=
+    document
+      .getElementById("loginEmail")
+      .value
+      .trim();
+
+  const password=
+    document
+      .getElementById("loginPassword")
+      .value;
+
+  loginBtn.disabled=true;
+
+  loginBtn.textContent=
+    "Login हो रहा है...";
+
+  try{
+
+    const response=
+      await fetch(
+        LOGIN_API,
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:JSON.stringify({
+            email,
+            password
+          })
+        }
+      );
+
+    const data=
+      await response.json();
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error ||
+        "Login में समस्या हुई।"
+      );
+
+    }
+
+    saveUser(data.user);
+
+    showApp(data.user);
+
+  }catch(error){
+
+    showAuthMessage(
+      error.message
+    );
+
+  }
+
+  loginBtn.disabled=false;
+  loginBtn.textContent="Login";
+
+});
+
+
+/* =========================
+LOAD PREVIOUS CHATS
+========================= */
+
+async function loadChats(){
+
+  if(!currentUser){
+    return;
+  }
+
+  try{
+
+    const response=
+      await fetch(
+        "/api/chats/"+
+        currentUser.id
+      );
+
+    const data=
+      await response.json();
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error ||
+        "Chats load नहीं हुईं"
+      );
+
+    }
+
+    renderChatList(
+      data.chats || []
+    );
+
+  }catch(error){
+
+    console.error(
+      "LOAD CHATS ERROR:",
+      error
+    );
+
+    chatList.innerHTML=
+      `<div class="no-chats">
+        Chats load नहीं हो सकीं
+      </div>`;
+  }
+}
+
+
+/* =========================
+RENDER CHAT LIST
+========================= */
+
+function renderChatList(chats){
+
+  chatList.innerHTML="";
+
+  if(!chats.length){
+
+    chatList.innerHTML=
+      `<div class="no-chats">
+        अभी कोई Previous Chat नहीं है।
+      </div>`;
+
+    return;
+  }
+
+  chats.forEach(item=>{
+
+    const row=
+      document.createElement("div");
+
+    row.className="chat-item";
+
+    const openBtn=
+      document.createElement("button");
+
+    openBtn.className="chat-open";
+
+    if(
+      Number(item.id) ===
+      Number(currentChatId)
+    ){
+
+      openBtn.classList.add("active");
+
+    }
+
+    openBtn.textContent=
+      "💬 "+
+      (item.title || "New Chat");
+
+    openBtn.onclick=()=>{
+      loadChat(item.id);
+    };
+
+
+    const deleteBtn=
+      document.createElement("button");
+
+    deleteBtn.className="delete-chat";
+
+    deleteBtn.textContent="🗑️";
+
+    deleteBtn.title="Delete Chat";
+
+    deleteBtn.onclick=(event)=>{
+      event.stopPropagation();
+      deleteChat(item.id);
+    };
+
+
+    row.appendChild(openBtn);
+    row.appendChild(deleteBtn);
+
+    chatList.appendChild(row);
+
+  });
+
+}
+
+
+/* =========================
+LOAD CHAT
+========================= */
+
+async function loadChat(chatId){
+
+  if(!currentUser){
+    return;
+  }
+
+  try{
+
+    const response=
+      await fetch(
+        `/api/chats/${chatId}/messages?userId=${currentUser.id}`
+      );
+
+    const data=
+      await response.json();
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error ||
+        "Chat load नहीं हुई"
+      );
+
+    }
+
+    currentChatId=
+      Number(chatId);
+
+    chat.innerHTML="";
+
+    if(
+      !data.messages ||
+      !data.messages.length
+    ){
+
+      showWelcome();
+
+    }else{
+
+      data.messages.forEach(
+        item=>{
+
+          const type=
+            item.role === "user"
+              ? "user"
+              : "ai";
+
+          addMessage(
+            item.content,
+            type
           );
 
         }
-
-
-        addMessage(
-          data.reply ||
-          "मुझे कोई जवाब नहीं मिला।",
-          "ai"
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "CHAT ERROR:",
-          error
-        );
-
-        typing.remove();
-
-
-        addMessage(
-          "AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।",
-          "ai"
-        );
-
-      }
-
-
-      sendBtn.disabled = false;
-
-      input.focus();
-
-    }
-
-
-    /* =========================
-       ADD MESSAGE
-    ========================= */
-
-    function addMessage(
-      text,
-      type
-    ) {
-
-      const messageDiv =
-        document.createElement(
-          "div"
-        );
-
-
-      messageDiv.className =
-        "message " + type;
-
-
-      const bubble =
-        document.createElement(
-          "div"
-        );
-
-
-      bubble.className =
-        "bubble";
-
-
-      bubble.textContent =
-        text;
-
-
-      messageDiv.appendChild(
-        bubble
       );
 
+    }
 
-      chat.appendChild(
-        messageDiv
+    await loadChats();
+
+    closeMobileMenu();
+
+    input.focus();
+
+  }catch(error){
+
+    console.error(
+      "LOAD CHAT ERROR:",
+      error
+    );
+
+    alert(
+      "Chat खोलने में समस्या हुई।"
+    );
+  }
+}
+
+
+/* =========================
+DELETE CHAT
+========================= */
+
+async function deleteChat(chatId){
+
+  if(!currentUser){
+    return;
+  }
+
+  const confirmDelete=
+    confirm(
+      "क्या आप यह chat delete करना चाहते हैं?"
+    );
+
+  if(!confirmDelete){
+    return;
+  }
+
+  try{
+
+    const response=
+      await fetch(
+        `/api/chats/${chatId}?userId=${currentUser.id}`,
+        {
+          method:"DELETE"
+        }
       );
 
+    const data=
+      await response.json();
 
-      chat.scrollTop =
-        chat.scrollHeight;
+    if(!response.ok){
 
-
-      return messageDiv;
-
-    }
-
-
-    /* =========================
-       NEW CHAT
-    ========================= */
-
-    function newChat() {
-
-      chat.innerHTML = `
-
-        <div
-          class="welcome"
-          id="welcome">
-
-          <h1>Hello 👋</h1>
-
-          <p>
-            BaatAI से कुछ भी पूछिए...
-          </p>
-
-        </div>
-
-      `;
-
-
-      input.value = "";
-
-      input.focus();
-
-
-      document
-        .getElementById("sidebar")
-        .classList.remove("active");
+      throw new Error(
+        data.error ||
+        "Delete failed"
+      );
 
     }
 
-  </script>
+    if(
+      Number(currentChatId) ===
+      Number(chatId)
+    ){
+
+      currentChatId=null;
+
+      showWelcome();
+
+    }
+
+    await loadChats();
+
+  }catch(error){
+
+    console.error(
+      "DELETE ERROR:",
+      error
+    );
+
+    alert(
+      "Chat delete नहीं हो सकी।"
+    );
+  }
+}
+
+
+/* =========================
+NEW CHAT
+========================= */
+
+function newChat(){
+
+  currentChatId=null;
+
+  showWelcome();
+
+  closeMobileMenu();
+
+  input.value="";
+  input.focus();
+
+  loadChats();
+}
+
+
+/* =========================
+WELCOME
+========================= */
+
+function showWelcome(){
+
+  chat.innerHTML=`
+
+    <div
+      id="welcome"
+      class="welcome">
+
+      <h1>Hello 👋</h1>
+
+      <p>
+        BaatAI से कुछ भी पूछिए...
+      </p>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+SEND MESSAGE
+========================= */
+
+async function sendMessage(){
+
+  const message=
+    input.value.trim();
+
+  if(!message){
+    return;
+  }
+
+  const welcome=
+    document.getElementById(
+      "welcome"
+    );
+
+  if(welcome){
+    welcome.remove();
+  }
+
+  addMessage(
+    message,
+    "user"
+  );
+
+  input.value="";
+  sendBtn.disabled=true;
+
+  const typing=
+    addMessage(
+      "🤖 सोच रहा हूँ...",
+      "ai"
+    );
+
+  try{
+
+    const response=
+      await fetch(
+        CHAT_API,
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:JSON.stringify({
+
+            message,
+
+            userId:
+              currentUser.id,
+
+            chatId:
+              currentChatId
+
+          })
+        }
+      );
+
+    const data=
+      await response.json();
+
+    typing.remove();
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error ||
+        "Server error"
+      );
+
+    }
+
+    currentChatId=
+      Number(data.chatId);
+
+    addMessage(
+      data.reply ||
+      "मुझे कोई जवाब नहीं मिला।",
+      "ai"
+    );
+
+    await loadChats();
+
+  }catch(error){
+
+    console.error(
+      "CHAT ERROR:",
+      error
+    );
+
+    typing.remove();
+
+    addMessage(
+      "AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।",
+      "ai"
+    );
+
+  }
+
+  sendBtn.disabled=false;
+  input.focus();
+
+}
+
+
+/* =========================
+ADD MESSAGE
+========================= */
+
+function addMessage(
+  text,
+  type
+){
+
+  const messageDiv=
+    document.createElement(
+      "div"
+    );
+
+  messageDiv.className=
+    "message "+
+    type;
+
+  const bubble=
+    document.createElement(
+      "div"
+    );
+
+  bubble.className=
+    "bubble";
+
+  bubble.textContent=
+    text;
+
+  messageDiv.appendChild(
+    bubble
+  );
+
+  chat.appendChild(
+    messageDiv
+  );
+
+  chat.scrollTop=
+    chat.scrollHeight;
+
+  return messageDiv;
+}
+
+
+/* =========================
+ENTER
+========================= */
+
+input.addEventListener(
+"keydown",
+function(event){
+
+  if(
+    event.key === "Enter"
+  ){
+
+    event.preventDefault();
+
+    sendMessage();
+
+  }
+
+});
+
+
+/* =========================
+MENU
+========================= */
+
+function toggleMenu(){
+
+  document
+    .getElementById("sidebar")
+    .classList.toggle("active");
+
+}
+
+
+function closeMobileMenu(){
+
+  document
+    .getElementById("sidebar")
+    .classList.remove("active");
+
+}
+
+
+/* =========================
+LOGOUT
+========================= */
+
+function logout(){
+
+  localStorage.removeItem(
+    "baatai_user"
+  );
+
+  currentUser=null;
+  currentChatId=null;
+
+  appScreen.classList.add(
+    "hidden"
+  );
+
+  authScreen.classList.remove(
+    "hidden"
+  );
+
+  chatList.innerHTML="";
+
+  showLogin();
+
+}
+
+</script>
 
 </body>
 </html>
