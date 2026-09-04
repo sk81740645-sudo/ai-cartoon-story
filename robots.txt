@@ -1,4 +1,7 @@
-User-agent: *
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+  res.send(`User-agent: *
 Allow: /
 
-Sitemap: https://baatai-ai.onrender.com/sitemap.xml
+Sitemap: https://baatai-ai.onrender.com/sitemap.xml`);
+});
