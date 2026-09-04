@@ -42,15 +42,17 @@ app.use(express.static(__dirname));
 /* =========================
    ROBOTS
 ========================= */
-
 app.get("/robots.txt", (req, res) => {
-  res.type("text/plain");
-
-  res.send(`User-agent: *
+  res.status(200);
+  res.set("Content-Type", "text/plain");
+  res.send(
+`User-agent: *
 Allow: /
 
-Sitemap: https://baatai-ai.onrender.com/sitemap.xml`);
+Sitemap: https://baatai-ai.onrender.com/sitemap.xml`
+  );
 });
+
 
 /* =========================
    SITEMAP
