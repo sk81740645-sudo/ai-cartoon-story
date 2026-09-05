@@ -1,2657 +1,1379 @@
-<!DOCTYPE html>  <html lang="hi">  
-<head>  <meta charset="UTF-8">  <meta name="viewport"  
-content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>BaatAI - AI Study</title>  <style>  
-  
-/* =========================  
-   RESET  
-========================= */  
-  
-* {  
-  box-sizing: border-box;  
-  margin: 0;  
-  padding: 0;  
-  font-family: Arial, sans-serif;  
-}  
-  
-html,  
-body {  
-  width: 100%;  
-  height: 100%;  
-}  
-  
-body {  
-  background: #f7f7f8;  
-  color: #111827;  
-}  
-  
-button,  
-input {  
-  font-family: Arial, sans-serif;  
-}  
-  
-.hidden {  
-  display: none !important;  
-}  
-  
-  
-/* =========================  
-   AUTH  
-========================= */  
-  
-#authScreen {  
-  
-  min-height: 100vh;  
-  
-  display: flex;  
-  
-  align-items: center;  
-  
-  justify-content: center;  
-  
-  padding: 20px;  
-  
-  background: #f7f7f8;  
-}  
-  
-.auth-box {  
-  
-  width: 100%;  
-  
-  max-width: 400px;  
-  
-  background: white;  
-  
-  padding: 30px;  
-  
-  border-radius: 18px;  
-  
-  box-shadow:  
-    0 10px 35px rgba(0,0,0,0.08);  
-}  
-  
-.auth-logo {  
-  
-  text-align: center;  
-  
-  font-size: 30px;  
-  
-  font-weight: bold;  
-  
-  margin-bottom: 8px;  
-}  
-  
-.auth-subtitle {  
-  
-  text-align: center;  
-  
-  color: #6b7280;  
-  
-  margin-bottom: 25px;  
-}  
-  
-.tabs {  
-  
-  display: flex;  
-  
-  margin-bottom: 22px;  
-  
-  border-bottom: 1px solid #e5e7eb;  
-}  
-  
-.tab {  
-  
-  flex: 1;  
-  
-  padding: 12px;  
-  
-  border: none;  
-  
-  background: transparent;  
-  
-  cursor: pointer;  
-  
-  font-size: 16px;  
-}  
-  
-.tab.active {  
-  
-  color: #2563eb;  
-  
-  border-bottom: 2px solid #2563eb;  
-  
-  font-weight: bold;  
-}  
-  
-.auth-form label {  
-  
-  display: block;  
-  
-  margin: 12px 0 6px;  
-  
-  font-size: 14px;  
-  
-  font-weight: bold;  
-}  
-  
-.auth-form input {  
-  
-  width: 100%;  
-  
-  padding: 13px;  
-  
-  border: 1px solid #d1d5db;  
-  
-  border-radius: 10px;  
-  
-  outline: none;  
-  
-  font-size: 15px;  
-}  
-  
-.auth-form input:focus {  
-  
-  border-color: #2563eb;  
-}  
-  
-.auth-submit {  
-  
-  width: 100%;  
-  
-  margin-top: 22px;  
-  
-  padding: 14px;  
-  
-  border: none;  
-  
-  border-radius: 10px;  
-  
-  background: #111827;  
-  
-  color: white;  
-  
-  font-size: 16px;  
-  
-  font-weight: bold;  
-  
-  cursor: pointer;  
-}  
-  
-.auth-submit:disabled {  
-  
-  background: #9ca3af;  
-  
-  cursor: not-allowed;  
-}  
-  
-.auth-message {  
-  
-  text-align: center;  
-  
-  margin-top: 15px;  
-  
-  min-height: 20px;  
-  
-  font-size: 14px;  
-}  
-  
-.switch-text {  
-  
-  text-align: center;  
-  
-  margin-top: 15px;  
-  
-  color: #555;  
-  
-  font-size: 14px;  
-}  
-  
-.switch-btn {  
-  
-  border: none;  
-  
-  background: none;  
-  
-  color: #2563eb;  
-  
-  cursor: pointer;  
-  
-  font-weight: bold;  
-}  
-  
-  
-/* =========================  
-   APP  
-========================= */  
-  
-.app {  
-  
-  height: 100vh;  
-  
-  display: flex;  
-  
-  overflow: hidden;  
-  
-  background: #f7f7f8;  
-}  
-  
-  
-/* =========================  
-   SIDEBAR  
-========================= */  
-  
-.sidebar {  
-  
-  width: 270px;  
-  
-  height: 100vh;  
-  
-  background: #171717;  
-  
-  color: white;  
-  
-  padding: 20px;  
-  
-  flex-shrink: 0;  
-}  
-  
-.sidebar-logo {  
-  
-  font-size: 25px;  
-  
-  font-weight: bold;  
-  
-  margin-bottom: 25px;  
-}  
-  
-.new-chat {  
-  
-  width: 100%;  
-  
-  padding: 13px;  
-  
-  border: 1px solid #404040;  
-  
-  background: #212121;  
-  
-  color: white;  
-  
-  border-radius: 10px;  
-  
-  cursor: pointer;  
-  
-  font-size: 15px;  
-  
-  text-align: left;  
-}  
-  
-.new-chat:hover {  
-  
-  background: #303030;  
-}  
-  
-.sidebar-item {  
-  
-  width: 100%;  
-  
-  padding: 13px;  
-  
-  margin-top: 8px;  
-  
-  border: none;  
-  
-  background: transparent;  
-  
-  color: #ddd;  
-  
-  border-radius: 10px;  
-  
-  text-align: left;  
-  
-  cursor: pointer;  
-  
-  font-size: 15px;  
-}  
-  
-.sidebar-item:hover {  
-  
-  background: #2a2a2a;  
-}  
-  
-.logout-btn {  
-  
-  width: 100%;  
-  
-  padding: 13px;  
-  
-  border: 1px solid #404040;  
-  
-  background: #212121;  
-  
-  color: white;  
-  
-  border-radius: 10px;  
-  
-  cursor: pointer;  
-  
-  font-size: 15px;  
-  
-  margin-top: 10px;  
-}  
-  
-.user-info {  
-  
-  margin-top: 25px;  
-  
-  padding-top: 15px;  
-  
-  border-top: 1px solid #333;  
-  
-  color: #bbb;  
-  
-  font-size: 13px;  
-  
-  word-break: break-word;  
-}  
-  
-  
-/* =========================  
-   MAIN  
-========================= */  
-  
-.main {  
-  
-  flex: 1;  
-  
-  min-width: 0;  
-  
-  height: 100vh;  
-  
-  display: flex;  
-  
-  flex-direction: column;  
-  
-  background: #f7f7f8;  
-}  
-  
-  
-/* =========================  
-   HEADER  
-========================= */  
-  
-.header {  
-  
-  height: 72px;  
-  
-  flex-shrink: 0;  
-  
-  background: white;  
-  
-  border-bottom: 1px solid #e5e7eb;  
-  
-  display: flex;  
-  
-  align-items: center;  
-  
-  padding: 0 22px;  
-  
-  position: relative;  
-}  
-  
-.menu-btn {  
-  
-  width: 48px;  
-  
-  height: 48px;  
-  
-  border: none;  
-  
-  background: transparent;  
-  
-  font-size: 30px;  
-  
-  cursor: pointer;  
-  
-  margin-right: 8px;  
-  
-  color: #111827;  
-  
-  border-radius: 10px;  
-}  
-  
-.menu-btn:hover {  
-  
-  background: #f0f0f0;  
-}  
-  
-.logo-area {  
-  
-  display: flex;  
-  
-  flex-direction: column;  
-  
-  justify-content: center;  
-}  
-  
-.logo-title {  
-  
-  font-size: 25px;  
-  
-  font-weight: 700;  
-  
-  line-height: 28px;  
-  
-  color: #111827;  
-}  
-  
-.logo-subtitle {  
-  
-  font-size: 13px;  
-  
-  color: #6b7280;  
-  
-  margin-top: 2px;  
-}  
-  
-  
-/* =========================  
-   THEME BUTTON  
-========================= */  
-  
-.theme-btn {  
-  
-  margin-left: auto;  
-  
-  border: 1px solid #d1d5db;  
-  
-  background: white;  
-  
-  color: #111827;  
-  
-  padding: 9px 13px;  
-  
-  border-radius: 9px;  
-  
-  cursor: pointer;  
-  
-  font-size: 14px;  
-}  
-  
-  
-/* =========================  
-   CHAT  
-========================= */  
-  
-.chat {  
-  
-  flex: 1;  
-  
-  overflow-y: auto;  
-  
-  padding: 25px 20px;  
-  
-  background:  
-  
-    radial-gradient(  
-      circle at 10% 20%,  
-      rgba(0,0,0,0.025) 1px,  
-      transparent 2px  
-    ),  
-  
-    radial-gradient(  
-      circle at 80% 70%,  
-      rgba(0,0,0,0.025) 1px,  
-      transparent 2px  
-    ),  
-  
-    #f7f7f8;  
-  
-  background-size:  
-    45px 45px,  
-    70px 70px;  
-}  
-  
-  
-/* =========================  
-   WELCOME  
-========================= */  
-  
-.welcome {  
-  
-  text-align: center;  
-  
-  margin-top: 145px;  
-  
-  padding: 20px;  
-}  
-  
-.welcome h1 {  
-  
-  font-size: 50px;  
-  
-  color: #111827;  
-  
-  margin-bottom: 15px;  
-}  
-  
-.welcome p {  
-  
-  font-size: 22px;  
-  
-  color: #6b7280;  
-}  
-  
-  
-/* =========================  
-   MESSAGE  
-========================= */  
-  
-.message {  
-  
-  max-width: 850px;  
-  
-  margin: 18px auto;  
-  
-  display: flex;  
-  
-  width: 100%;  
-}  
-  
-.message.user {  
-  
-  justify-content: flex-end;  
-}  
-  
-.message.ai {  
-  
-  justify-content: flex-start;  
-}  
-  
-.bubble {  
-  
-  max-width: 78%;  
-  
-  padding: 13px 17px;  
-  
-  border-radius: 17px;  
-  
-  line-height: 1.55;  
-  
-  white-space: pre-wrap;  
-  
-  word-break: break-word;  
-  
-  font-size: 16px;  
-}  
-  
-.user .bubble {  
-  
-  background: #111827;  
-  
-  color: white;  
-  
-  border-bottom-right-radius: 5px;  
-}  
-  
-.ai .bubble {  
-  
-  background: white;  
-  
-  color: #111827;  
-  
-  border: 1px solid #e5e7eb;  
-  
-  border-bottom-left-radius: 5px;  
-  
-  box-shadow:  
-    0 1px 3px rgba(0,0,0,0.03);  
-}  
-  
-  
-/* =========================  
-   IMAGE IN MESSAGE  
-========================= */  
-  
-.message-image {  
-  
-  max-width: 280px;  
-  
-  max-height: 300px;  
-  
-  border-radius: 14px;  
-  
-  margin-bottom: 8px;  
-  
-  display: block;  
-}  
-  
-  
-/* =========================  
-   INPUT AREA  
-========================= */  
-  
-.input-area {  
-  
-  flex-shrink: 0;  
-  
-  background: #f7f7f8;  
-  
-  padding: 12px 18px 18px;  
-  
-  border-top: 1px solid #e5e7eb;  
-}  
-  
-.input-box {  
-  
-  max-width: 850px;  
-  
-  margin: auto;  
-  
-  min-height: 62px;  
-  
-  display: flex;  
-  
-  align-items: center;  
-  
-  gap: 8px;  
-  
-  background: white;  
-  
-  border: 1px solid #d1d5db;  
-  
-  border-radius: 22px;  
-  
-  padding: 6px 10px;  
-  
-  box-shadow:  
-    0 2px 8px rgba(0,0,0,0.05);  
-}  
-  
-  
-/* =========================  
-   ATTACH BUTTON  
-========================= */  
-  
-.attach-btn {  
-  
-  width: 48px;  
-  
-  height: 48px;  
-  
-  flex-shrink: 0;  
-  
-  border: none;  
-  
-  background: transparent;  
-  
-  border-radius: 50%;  
-  
-  cursor: pointer;  
-  
-  font-size: 25px;  
-  
-  display: flex;  
-  
-  align-items: center;  
-  
-  justify-content: center;  
-}  
-  
-.attach-btn:hover {  
-  
-  background: #f0f0f0;  
-}  
-  
-  
-/* =========================  
-   MIC BUTTON  
-========================= */  
-  
-.mic-btn {  
-  
-  width: 48px;  
-  
-  height: 48px;  
-  
-  flex-shrink: 0;  
-  
-  border: none;  
-  
-  background: transparent;  
-  
-  border-radius: 50%;  
-  
-  cursor: pointer;  
-  
-  font-size: 23px;  
-  
-  display: flex;  
-  
-  align-items: center;  
-  
-  justify-content: center;  
-}  
-  
-.mic-btn:hover {  
-  
-  background: #f0f0f0;  
-}  
-  
-.mic-btn.recording {  
-  
-  background: #fee2e2;  
-  
-}  
-  
-  
-/* =========================  
-   INPUT  
-========================= */  
-  
-#messageInput {  
-  
-  flex: 1;  
-  
-  min-width: 0;  
-  
-  border: none;  
-  
-  outline: none;  
-  
-  background: transparent;  
-  
-  color: #111827;  
-  
-  font-size: 18px;  
-  
-  padding: 12px 5px;  
-}  
-  
-#messageInput::placeholder {  
-  
-  color: #777;  
-}  
-  
-  
-/* =========================  
-   IMAGE PREVIEW  
-========================= */  
-  
-.preview-area {  
-  
-  max-width: 850px;  
-  
-  margin: 0 auto 8px;  
-  
-  display: none;  
-}  
-  
-.preview-area.active {  
-  
-  display: block;  
-}  
-  
-.preview-box {  
-  
-  position: relative;  
-  
-  display: inline-block;  
-  
-  background: white;  
-  
-  border: 1px solid #ddd;  
-  
-  padding: 5px;  
-  
-  border-radius: 12px;  
-}  
-  
-.preview-box img {  
-  
-  width: 100px;  
-  
-  height: 100px;  
-  
-  object-fit: cover;  
-  
-  border-radius: 8px;  
-  
-  display: block;  
-}  
-  
-.remove-image {  
-  
-  position: absolute;  
-  
-  right: -8px;  
-  
-  top: -8px;  
-  
-  width: 25px;  
-  
-  height: 25px;  
-  
-  border: none;  
-  
-  border-radius: 50%;  
-  
-  background: #111827;  
-  
-  color: white;  
-  
-  cursor: pointer;  
-  
-  font-size: 14px;  
-}  
-  
-  
-/* =========================  
-   MOBILE SIDEBAR  
-========================= */  
-  
-.overlay {  
-  
-  display: none;  
-  
-  position: fixed;  
-  
-  inset: 0;  
-  
-  background: rgba(0,0,0,0.35);  
-  
-  z-index: 900;  
-}  
-  
-.overlay.active {  
-  
-  display: block;  
-}  
-  
-  
-/* =========================  
-   DARK MODE  
-========================= */  
-  
-body.dark {  
-  
-  background: #212121;  
-  
-  color: #eee;  
-}  
-  
-body.dark .main,  
-body.dark .chat,  
-body.dark .input-area {  
-  
-  background: #212121;  
-}  
-  
-body.dark .header {  
-  
-  background: #171717;  
-  
-  border-color: #333;  
-  
-  color: white;  
-}  
-  
-body.dark .logo-title {  
-  
-  color: white;  
-}  
-  
-body.dark .logo-subtitle {  
-  
-  color: #aaa;  
-}  
-  
-body.dark .menu-btn {  
-  
-  color: white;  
-}  
-  
-body.dark .menu-btn:hover {  
-  
-  background: #2a2a2a;  
-}  
-  
-body.dark .theme-btn {  
-  
-  background: #212121;  
-  
-  color: white;  
-  
-  border-color: #444;  
-}  
-  
-body.dark .welcome h1 {  
-  
-  color: white;  
-}  
-  
-body.dark .welcome p {  
-  
-  color: #aaa;  
-}  
-  
-body.dark .ai .bubble {  
-  
-  background: #2f2f2f;  
-  
-  color: white;  
-  
-  border-color: #444;  
-}  
-  
-body.dark .input-box {  
-  
-  background: #2f2f2f;  
-  
-  border-color: #444;  
-}  
-  
-body.dark #messageInput {  
-  
-  color: white;  
-}  
-  
-body.dark #messageInput::placeholder {  
-  
-  color: #aaa;  
-}  
-  
-body.dark .attach-btn:hover,  
-body.dark .mic-btn:hover {  
-  
-  background: #444;  
-}  
-  
-  
-/* =========================  
-   MOBILE  
-========================= */  
-  
-@media (max-width: 700px) {  
-  
-  .sidebar {  
-  
-    position: fixed;  
-  
-    left: -280px;  
-  
-    top: 0;  
-  
-    z-index: 1000;  
-  
-    transition: left 0.25s ease;  
-  }  
-  
-  .sidebar.active {  
-  
-    left: 0;  
-  }  
-  
-  .header {  
-  
-    height: 68px;  
-  
-    padding: 0 10px;  
-  }  
-  
-  .menu-btn {  
-  
-    display: flex;  
-  
-    align-items: center;  
-  
-    justify-content: center;  
-  }  
-  
-  .logo-title {  
-  
-    font-size: 23px;  
-  }  
-  
-  .logo-subtitle {  
-  
-    font-size: 12px;  
-  }  
-  
-  .theme-btn {  
-  
-    font-size: 12px;  
-  
-    padding: 8px 10px;  
-  }  
-  
-  .chat {  
-  
-    padding: 15px 10px;  
-  }  
-  
-  .welcome {  
-  
-    margin-top: 110px;  
-  }  
-  
-  .welcome h1 {  
-  
-    font-size: 42px;  
-  }  
-  
-  .welcome p {  
-  
-    font-size: 17px;  
-  }  
-  
-  .bubble {  
-  
-    max-width: 88%;  
-  
-    font-size: 16px;  
-  }  
-  
-  .input-area {  
-  
-    padding: 8px 8px 12px;  
-  }  
-  
-  .input-box {  
-  
-    border-radius: 20px;  
-  
-    min-height: 58px;  
-  
-    padding: 5px 7px;  
-  }  
-  
-  .attach-btn,  
-  .mic-btn {  
-  
-    width: 42px;  
-  
-    height: 42px;  
-  
-    font-size: 21px;  
-  }  
-  
-  #messageInput {  
-  
-    font-size: 16px;  
-  }  
-}  
-  /* =========================
-   SEND BUTTON
+<title>BaatAI</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+/* =========================
+   BACKGROUND VIDEO
 ========================= */
 
-#sendBtn {
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-  border: none;
-  border-radius: 50%;
-  background: #111827;
-  color: white;
-  font-size: 21px;
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  transition: 0.2s ease;
+#bgVideo{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:-3;
 }
 
-#sendBtn:hover {
-  transform: scale(1.05);
-  background: #000000;
+.video-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,8,15,0.45);
+    z-index:-2;
 }
 
-#sendBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
+/* =========================
+   MAIN APP
+========================= */
+
+.app{
+    width:100%;
+    height:100vh;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    position:relative;
 }
 
-/* Dark Mode */
+/* =========================
+   HEADER
+========================= */
 
-body.dark #sendBtn {
-  background: white;
-  color: #111827;
+.header{
+    height:112px;
+    min-height:112px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:15px 28px;
+
+    border-bottom:1px solid rgba(0,220,255,0.20);
+
+    background:rgba(0,5,10,0.70);
+
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
 }
 
-body.dark #sendBtn:hover {
-  background: #e5e5e5;
+/* LEFT */
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:22px;
 }
 
-/* Mobile */
+.menu{
+    width:55px;
+    height:55px;
 
-@media (max-width: 700px) {
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:7px;
 
-  #sendBtn {
-    width: 42px;
-    height: 42px;
-    font-size: 19px;
-  }
-
+    cursor:pointer;
 }
-  
-</style>  </head>  <body>  <!-- =========================  
-     AUTH SCREEN  
-========================= -->  <section id="authScreen">    <div class="auth-box">  <div class="auth-logo">  
-  🤖 BaatAI  
-</div>  
 
-<div class="auth-subtitle">  
-  BaatAI इस्तेमाल करने के लिए Login करें  
-</div>  
+.menu span{
+    width:42px;
+    height:4px;
+
+    border-radius:10px;
+
+    background:white;
+
+    display:block;
+}
+
+/* LOGO */
+
+.logo-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.logo{
+    font-size:42px;
+}
+
+.brand{
+    font-size:34px;
+    font-weight:700;
+    line-height:1;
+}
+
+.subtitle{
+    color:#00eaff;
+    font-size:20px;
+    margin-top:5px;
+}
+
+/* RIGHT */
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.theme-btn{
+    height:58px;
+    padding:0 20px;
+
+    border:1px solid rgba(0,238,255,0.65);
+    border-radius:18px;
+
+    background:rgba(0,20,25,0.55);
+    color:white;
+
+    font-size:22px;
+
+    cursor:pointer;
+}
+
+.profile{
+    width:58px;
+    height:58px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:25px;
+
+    border:1px solid #00dff5;
+
+    background:rgba(0,65,75,0.65);
+}
+
+/* =========================
+   CHAT AREA
+========================= */
+
+.chat-area{
+    flex:1;
+    overflow-y:auto;
+
+    padding:20px 30px 145px;
+
+    scroll-behavior:smooth;
+}
+
+.chat-area::-webkit-scrollbar{
+    width:5px;
+}
+
+.chat-area::-webkit-scrollbar-thumb{
+    background:#00dce8;
+    border-radius:10px;
+}
+
+/* =========================
+   WELCOME
+========================= */
+
+.welcome-title{
+    height:65px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:18px;
+
+    color:#00efff;
+
+    font-size:31px;
+    font-weight:600;
+
+    margin-bottom:10px;
+}
+
+.welcome-title::before,
+.welcome-title::after{
+    content:"";
+
+    width:150px;
+    height:1px;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        #00eaff
+    );
+}
+
+.welcome-title::after{
+    background:linear-gradient(
+        90deg,
+        #00eaff,
+        transparent
+    );
+}
+
+/* =========================
+   MESSAGES
+========================= */
+
+.message{
+    display:flex;
+    margin:14px 0;
+}
+
+.message.user{
+    justify-content:flex-end;
+}
+
+.message.ai{
+    justify-content:flex-start;
+}
+
+.bubble{
+    max-width:70%;
+
+    padding:22px 30px;
+
+    border-radius:28px;
+
+    font-size:21px;
+    line-height:1.65;
+
+    white-space:pre-wrap;
+
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+}
+
+/* USER */
+
+.user .bubble{
+    border:1px solid #00eaff;
+
+    background:rgba(0,40,48,0.65);
+
+    border-top-right-radius:8px;
+}
+
+/* AI */
+
+.ai .bubble{
+    border:1px solid rgba(0,235,255,0.55);
+
+    background:rgba(0,20,25,0.62);
+
+    border-top-left-radius:8px;
+}
+
+/* =========================
+   IMAGE MESSAGE
+========================= */
+
+.chat-image{
+    max-width:300px;
+    width:100%;
+
+    display:block;
+
+    margin-top:12px;
+
+    border-radius:18px;
+
+    border:1px solid #00eaff;
+}
+
+/* =========================
+   BOTTOM INPUT
+========================= */
+
+.input-area{
+    position:fixed;
+
+    left:0;
+    right:0;
+    bottom:0;
+
+    height:125px;
+
+    display:flex;
+    align-items:center;
+
+    padding:15px 22px;
+
+    background:rgba(0,7,12,0.82);
+
+    border-top:1px solid rgba(0,230,255,0.25);
+
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+
+    z-index:20;
+}
+
+/* INPUT BOX */
+
+.input-box{
+    width:100%;
+    height:82px;
+
+    display:flex;
+    align-items:center;
+
+    border:1px solid rgba(0,235,255,0.60);
+
+    border-radius:42px;
+
+    background:rgba(0,20,25,0.72);
+
+    padding:8px 12px 8px 18px;
+}
+
+/* CAMERA */
+
+.icon-btn{
+    width:64px;
+    height:64px;
+
+    flex-shrink:0;
+
+    border-radius:50%;
+
+    border:1px solid #00eaff;
+
+    background:rgba(0,50,60,0.55);
+
+    color:#00eaff;
+
+    font-size:29px;
+
+    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.icon-btn:active{
+    transform:scale(.94);
+}
+
+/* TEXT INPUT */
+
+#messageInput{
+    flex:1;
+
+    height:60px;
+
+    border:none;
+    outline:none;
+
+    background:transparent;
+
+    color:white;
+
+    font-size:22px;
+
+    padding:0 18px;
+
+    min-width:0;
+}
+
+#messageInput::placeholder{
+    color:#9da9ad;
+}
+
+/* MIC */
+
+.mic-btn{
+    width:60px;
+    height:60px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:transparent;
+
+    color:#00eaff;
+
+    font-size:29px;
+
+    cursor:pointer;
+}
+
+.mic-btn.listening{
+    background:#00eaff;
+    color:#001014;
+}
+
+/* SEND */
+
+.send-btn{
+    width:70px;
+    height:70px;
+
+    flex-shrink:0;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:white;
+
+    color:#000;
+
+    font-size:37px;
+
+    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:
+        0 0 15px rgba(255,255,255,0.25);
+}
+
+.send-btn:active{
+    transform:scale(.92);
+}
+
+.send-btn:disabled{
+    opacity:.5;
+}
+
+/* =========================
+   TYPING
+========================= */
+
+.typing{
+    display:inline-flex;
+    gap:5px;
+    padding:5px;
+}
+
+.typing span{
+    width:8px;
+    height:8px;
+
+    border-radius:50%;
+
+    background:#00eaff;
+
+    animation:blink 1.2s infinite;
+}
+
+.typing span:nth-child(2){
+    animation-delay:.2s;
+}
+
+.typing span:nth-child(3){
+    animation-delay:.4s;
+}
+
+@keyframes blink{
+    0%,100%{
+        opacity:.2;
+        transform:translateY(0);
+    }
+
+    50%{
+        opacity:1;
+        transform:translateY(-4px);
+    }
+}
+
+/* =========================
+   LIGHT MODE
+========================= */
+
+body.light .video-overlay{
+    background:rgba(255,255,255,0.68);
+}
+
+body.light .header{
+    background:rgba(255,255,255,0.80);
+    color:#111;
+}
+
+body.light .menu span{
+    background:#111;
+}
+
+body.light .brand{
+    color:#111;
+}
+
+body.light .theme-btn{
+    color:#111;
+    background:rgba(255,255,255,0.75);
+}
+
+body.light .profile{
+    color:#111;
+}
+
+body.light .input-area{
+    background:rgba(255,255,255,0.82);
+}
+
+body.light .input-box{
+    background:rgba(255,255,255,0.72);
+}
+
+body.light #messageInput{
+    color:#111;
+}
+
+body.light .ai .bubble{
+    color:#111;
+    background:rgba(255,255,255,0.72);
+}
+
+body.light .user .bubble{
+    color:#111;
+    background:rgba(255,255,255,0.70);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    .header{
+        height:110px;
+        min-height:110px;
+        padding:12px 18px;
+    }
+
+    .header-left{
+        gap:12px;
+    }
+
+    .menu{
+        width:42px;
+    }
+
+    .menu span{
+        width:35px;
+        height:4px;
+    }
+
+    .logo{
+        font-size:32px;
+    }
+
+    .brand{
+        font-size:29px;
+    }
+
+    .subtitle{
+        font-size:17px;
+    }
+
+    .theme-btn{
+        height:54px;
+        padding:0 14px;
+        font-size:18px;
+    }
+
+    .profile{
+        width:54px;
+        height:54px;
+    }
+
+    .chat-area{
+        padding:12px 16px 135px;
+    }
+
+    .welcome-title{
+        font-size:28px;
+        height:62px;
+    }
+
+    .welcome-title::before,
+    .welcome-title::after{
+        width:75px;
+    }
+
+    .bubble{
+        max-width:76%;
+        padding:17px 22px;
+        font-size:20px;
+        line-height:1.55;
+    }
+
+    .input-area{
+        height:115px;
+        padding:10px 15px;
+    }
+
+    .input-box{
+        height:72px;
+        padding:5px 8px 5px 10px;
+    }
+
+    .icon-btn{
+        width:54px;
+        height:54px;
+        font-size:25px;
+    }
+
+    .mic-btn{
+        width:52px;
+        height:52px;
+        font-size:25px;
+    }
+
+    #messageInput{
+        font-size:18px;
+        padding:0 8px;
+    }
+
+    .send-btn{
+        width:62px;
+        height:62px;
+        font-size:32px;
+    }
+}
+
+@media(max-width:430px){
+
+    .theme-btn{
+        padding:0 10px;
+        font-size:16px;
+    }
+
+    .profile{
+        width:48px;
+        height:48px;
+    }
+
+    .brand{
+        font-size:25px;
+    }
+
+    .logo{
+        font-size:28px;
+    }
+
+    .subtitle{
+        font-size:14px;
+    }
+
+    .header{
+        padding:10px 12px;
+    }
+
+    .header-right{
+        gap:7px;
+    }
+
+    .welcome-title{
+        font-size:25px;
+    }
+
+    .bubble{
+        max-width:84%;
+        font-size:18px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     BACKGROUND VIDEO
+========================= -->
+
+<video
+    id="bgVideo"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto">
+
+    <source src="background.mp4" type="video/mp4">
+
+</video>
+
+<div class="video-overlay"></div>
+
+<!-- =========================
+     APP
+========================= -->
+
+<div class="app">
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div class="header-left">
+
+            <div class="menu" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="logo-box">
+
+                <div class="logo">🤖</div>
+
+                <div>
+                    <div class="brand">BaatAI</div>
+                    <div class="subtitle">AI Study</div>
+                </div>
+
+            </div>
+
+        </div>
 
 
-<div class="tabs">  
+        <div class="header-right">
 
-  <button  
-    class="tab active"  
-    id="loginTab"  
-    onclick="showLogin()">  
+            <button
+                class="theme-btn"
+                id="themeBtn"
+                onclick="toggleTheme()">
 
-    Login  
+                ☀️ Light
 
-  </button>  
+            </button>
 
-  <button  
-    class="tab"  
-    id="signupTab"  
-    onclick="showSignup()">  
+            <div
+                class="profile"
+                id="profile">
 
-    Sign Up  
+                S
 
-  </button>  
+            </div>
 
-</div>  
+        </div>
 
-
-<!-- LOGIN -->  
-
-<form  
-  id="loginForm"  
-  class="auth-form">  
-
-  <label>Email</label>  
-
-  <input  
-    id="loginEmail"  
-    type="email"  
-    placeholder="अपना Email डालें"  
-    autocomplete="email"  
-    required  
-  >  
-
-  <label>Password</label>  
-
-  <input  
-    id="loginPassword"  
-    type="password"  
-    placeholder="अपना Password डालें"  
-    autocomplete="current-password"  
-    required  
-  >  
-
-  <button  
-    id="loginBtn"  
-    class="auth-submit"  
-    type="submit">  
-
-    Login  
-
-  </button>  
-
-</form>  
+    </header>
 
 
-<!-- SIGNUP -->  
+    <!-- CHAT -->
 
-<form  
-  id="signupForm"  
-  class="auth-form hidden">  
+    <main
+        class="chat-area"
+        id="chatArea">
 
-  <label>Name</label>  
+        <!-- WELCOME -->
 
-  <input  
-    id="signupName"  
-    type="text"  
-    placeholder="अपना नाम डालें"  
-    autocomplete="name"  
-    required  
-  >  
-
-  <label>Email</label>  
-
-  <input  
-    id="signupEmail"  
-    type="email"  
-    placeholder="अपना Email डालें"  
-    autocomplete="email"  
-    required  
-  >  
-
-  <label>Password</label>  
-
-  <input  
-    id="signupPassword"  
-    type="password"  
-    placeholder="कम से कम 6 अक्षर"  
-    minlength="6"  
-    autocomplete="new-password"  
-    required  
-  >  
-
-  <button  
-    id="signupBtn"  
-    class="auth-submit"  
-    type="submit">  
-
-    Create Account  
-
-  </button>  
-
-</form>  
+        <div class="welcome-title">
+            Welcome
+        </div>
 
 
-<div  
-  id="authMessage"  
-  class="auth-message">  
-</div>  
+        <!-- INITIAL AI MESSAGE -->
+
+        <div class="message ai">
+
+            <div class="bubble">
+
+Hello! 👋 I am your AI Study Buddy.
+
+How can I help you today?
+
+Whether you want to understand a tricky school/college concept, learn about the Indian Constitution, or practice your English speaking skills, I've got your back!
+
+Bataiye, kya padhna hai?
+
+            </div>
+
+        </div>
+
+    </main>
 
 
-<div  
-  id="loginSwitch"  
-  class="switch-text">  
+    <!-- INPUT -->
 
-  नया account बनाना है?  
+    <div class="input-area">
 
-  <button  
-    class="switch-btn"  
-    onclick="showSignup()">  
+        <div class="input-box">
 
-    Sign Up  
+            <!-- CAMERA -->
 
-  </button>  
+            <button
+                class="icon-btn"
+                onclick="openImagePicker()"
+                title="Upload image">
 
-</div>  
+                📷
+
+            </button>
+
+            <input
+                type="file"
+                id="imageInput"
+                accept="image/*"
+                hidden
+                onchange="handleImage(event)"
+            >
 
 
-<div  
-  id="signupSwitch"  
-  class="switch-text hidden">  
+            <!-- TEXT -->
 
-  पहले से account है?  
+            <input
+                id="messageInput"
+                type="text"
+                placeholder="Type your message..."
+                autocomplete="off"
+            >
 
-  <button  
-    class="switch-btn"  
-    onclick="showLogin()">  
 
-    Login  
+            <!-- MIC -->
 
-  </button>  
+            <button
+                class="mic-btn"
+                id="micBtn"
+                onclick="startVoice()"
+                title="Voice input">
+
+                🎙️
+
+            </button>
+
+
+            <!-- SEND -->
+
+            <button
+                class="send-btn"
+                id="sendBtn"
+                onclick="sendMessage()">
+
+                ➤
+
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
-  </div>  </section>  <!-- =========================  
-     APP  
-========================= -->  <div  
-  id="appScreen"  
-  class="app hidden">    <!-- SIDEBAR -->    <aside  
-    id="sidebar"  
-    class="sidebar">  <div class="sidebar-logo">  
-  🤖 BaatAI  
-</div>  
 
+<script>
 
-<button  
-  class="new-chat"  
-  onclick="newChat()">  
+/* =========================
+   VARIABLES
+========================= */
 
-  ＋ New Chat  
+const chatArea =
+    document.getElementById("chatArea");
 
-</button>  
+const input =
+    document.getElementById("messageInput");
 
+const sendBtn =
+    document.getElementById("sendBtn");
 
-<button  
-  class="sidebar-item"  
-  onclick="newChat()">  
+const imageInput =
+    document.getElementById("imageInput");
 
-  💬 New conversation  
+const micBtn =
+    document.getElementById("micBtn");
 
-</button>  
+let selectedImage = null;
 
 
-<button  
-  class="sidebar-item"  
-  onclick="closeMenu()">  
+/* =========================
+   OPEN IMAGE PICKER
+========================= */
 
-  🏠 Home  
+function openImagePicker(){
 
-</button>  
+    imageInput.click();
 
+}
 
-<button  
-  class="logout-btn"  
-  onclick="logout()">  
 
-  🚪 Logout  
+/* =========================
+   HANDLE IMAGE
+========================= */
 
-</button>  
+function handleImage(event){
 
+    const file =
+        event.target.files[0];
 
-<div  
-  id="userInfo"  
-  class="user-info">  
-</div>
+    if(!file){
+        return;
+    }
 
-  </aside>    <div  
-    id="overlay"  
-    class="overlay"  
-    onclick="closeMenu()">  
-  </div>    <!-- MAIN -->    <main class="main">  <!-- HEADER -->  
+    const reader =
+        new FileReader();
 
-<header class="header">  
+    reader.onload = function(e){
 
+        selectedImage =
+            e.target.result;
 
-  <button  
-    class="menu-btn"  
-    onclick="toggleMenu()">  
+        input.placeholder =
+            "Ask something about this image...";
 
-    ☰  
+    };
 
-  </button>  
+    reader.readAsDataURL(file);
 
+}
 
-  <div class="logo-area">  
 
-    <div class="logo-title">  
-      🤖 BaatAI  
-    </div>  
+/* =========================
+   ADD MESSAGE
+========================= */
 
-    <div class="logo-subtitle">  
-      AI Study  
-    </div>  
+function addMessage(
+    text,
+    type,
+    image = null
+){
 
-  </div>  
+    const message =
+        document.createElement("div");
 
+    message.className =
+        "message " + type;
 
-  <button  
-    id="themeBtn"  
-    class="theme-btn"  
-    onclick="toggleTheme()">  
+    const bubble =
+        document.createElement("div");
 
-    🌙 Dark  
+    bubble.className =
+        "bubble";
 
-  </button>  
+    if(text){
+        bubble.textContent = text;
+    }
 
-</header>  
+    if(image){
 
+        const img =
+            document.createElement("img");
 
-<!-- CHAT -->  
+        img.src = image;
 
-<section  
-  id="chat"  
-  class="chat">  
+        img.className =
+            "chat-image";
 
+        bubble.appendChild(img);
 
-  <div  
-    id="welcome"  
-    class="welcome">  
+    }
 
-    <h1>  
-      Hello 👋  
-    </h1>  
+    message.appendChild(bubble);
 
-    <p>  
-      BaatAI से कुछ भी पूछिए या फोटो upload करके सवाल पूछिए!  
-    </p>  
+    chatArea.appendChild(message);
 
-  </div>  
+    scrollBottom();
 
+}
 
-</section>  
 
+/* =========================
+   TYPING
+========================= */
 
-<!-- INPUT AREA -->  
+function showTyping(){
 
-<div class="input-area">  
+    const message =
+        document.createElement("div");
 
+    message.className =
+        "message ai";
 
-  <!-- IMAGE PREVIEW -->  
+    message.id =
+        "typingMessage";
 
-  <div  
-    id="previewArea"  
-    class="preview-area">  
+    message.innerHTML = `
+        <div class="bubble">
+            <div class="typing">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    `;
 
-    <div class="preview-box">  
+    chatArea.appendChild(message);
 
-      <img  
-        id="previewImage"  
-        src=""  
-        alt="Selected image">  
+    scrollBottom();
 
-      <button  
-        class="remove-image"  
-        onclick="removeImage()">  
+}
 
-        ×  
 
-      </button>  
+/* =========================
+   REMOVE TYPING
+========================= */
 
-    </div>  
+function removeTyping(){
 
-  </div>  
+    const typing =
+        document.getElementById(
+            "typingMessage"
+        );
 
+    if(typing){
+        typing.remove();
+    }
 
-  <div class="input-box">  
+}
 
 
-    <!-- ATTACH -->  
+/* =========================
+   SEND MESSAGE
+========================= */
 
-    <button  
-      class="attach-btn"  
-      onclick="openFilePicker()"  
-      title="Image upload">  
+async function sendMessage(){
 
-      📎  
+    const message =
+        input.value.trim();
 
-    </button>  
+    if(!message && !selectedImage){
+        return;
+    }
 
-
-    <input  
-      id="fileInput"  
-      type="file"  
-      accept="image/*"  
-      class="hidden"  
-    >  
-
-
-    <!-- MIC -->  
-
-    <button  
-      id="micBtn"  
-      class="mic-btn"  
-      onclick="startVoice()"  
-      title="Voice">  
-
-      🎤  
-
-    </button>  
-
-
-    <!-- MESSAGE -->  
-
-    <input  
-      id="messageInput"  
-      type="text"  
-      placeholder="Message BaatAI..."  
-      autocomplete="off"  
-    >  
-<button
-  id="sendBtn"
-  onclick="sendMessage()"
-  title="Send">
-
-  ➤
-
-</button>
-  </div>  
-
-</div>
-
-  </main>  </div>  <script>  
-  
-/* =========================  
-   API  
-========================= */  
-  
-const CHAT_API = "/api/chat";  
-  
-const LOGIN_API = "/api/login";  
-  
-const SIGNUP_API = "/api/signup";  
-  
-  
-/* =========================  
-   ELEMENTS  
-========================= */  
-  
-const authScreen =  
-  document.getElementById("authScreen");  
-  
-const appScreen =  
-  document.getElementById("appScreen");  
-  
-const authMessage =  
-  document.getElementById("authMessage");  
-  
-const loginForm =  
-  document.getElementById("loginForm");  
-  
-const signupForm =  
-  document.getElementById("signupForm");  
-  
-const loginBtn =  
-  document.getElementById("loginBtn");  
-  
-const signupBtn =  
-  document.getElementById("signupBtn");  
-  
-const input =  
-  document.getElementById("messageInput");  
-  
-const chat =  
-  document.getElementById("chat");  
-  
-const fileInput =  
-  document.getElementById("fileInput");  
-  
-const previewArea =  
-  document.getElementById("previewArea");  
-  
-const previewImage =  
-  document.getElementById("previewImage");  
-  
-const micBtn =  
-  document.getElementById("micBtn");  
-  
-  
-/* =========================  
-   SELECTED IMAGE  
-========================= */  
-  
-let selectedImage = null;  
-  
-  
-/* =========================  
-   AUTH MESSAGE  
-========================= */  
-  
-function showAuthMessage(  
-  message,  
-  success = false  
-) {  
-  
-  authMessage.textContent =  
-    message;  
-  
-  authMessage.style.color =  
-    success  
-      ? "#16a34a"  
-      : "#dc2626";  
-}  
-  
-  
-function clearAuthMessage() {  
-  
-  authMessage.textContent = "";  
-  
-}  
-  
-  
-/* =========================  
-   LOGIN / SIGNUP  
-========================= */  
-  
-function showLogin() {  
-  
-  loginForm.classList.remove("hidden");  
-  
-  signupForm.classList.add("hidden");  
-  
-  document  
-    .getElementById("loginTab")  
-    .classList.add("active");  
-  
-  document  
-    .getElementById("signupTab")  
-    .classList.remove("active");  
-  
-  document  
-    .getElementById("loginSwitch")  
-    .classList.remove("hidden");  
-  
-  document  
-    .getElementById("signupSwitch")  
-    .classList.add("hidden");  
-  
-  clearAuthMessage();  
-}  
-  
-  
-function showSignup() {  
-  
-  signupForm.classList.remove("hidden");  
-  
-  loginForm.classList.add("hidden");  
-  
-  document  
-    .getElementById("signupTab")  
-    .classList.add("active");  
-  
-  document  
-    .getElementById("loginTab")  
-    .classList.remove("active");  
-  
-  document  
-    .getElementById("signupSwitch")  
-    .classList.remove("hidden");  
-  
-  document  
-    .getElementById("loginSwitch")  
-    .classList.add("hidden");  
-  
-  clearAuthMessage();  
-}  
-  
-  
-/* =========================  
-   SAVE USER  
-========================= */  
-  
-function saveUser(user) {  
-  
-  localStorage.setItem(  
-    "baatai_user",  
-    JSON.stringify(user)  
-  );  
-  
-}  
-  
-  
-/* =========================  
-   SHOW APP  
-========================= */  
-  
-function showApp(user) {  
-  
-  authScreen.classList.add("hidden");  
-  
-  appScreen.classList.remove("hidden");  
-  
-  
-  const userInfo =  
-    document.getElementById("userInfo");  
-  
-  
-  if (user && user.name) {  
-  
-    userInfo.textContent =  
-      "👤 " + user.name;  
-  
-  } else if (user && user.email) {  
-  
-    userInfo.textContent =  
-      "👤 " + user.email;  
-  
-  }  
-  
-  
-  setTimeout(() => {  
-  
-    input.focus();  
-  
-  }, 100);  
-  
-}  
-  
-  
-/* =========================  
-   CHECK LOGIN  
-========================= */  
-  
-window.addEventListener(  
-  "load",  
-  function() {  
-  
-    const savedUser =  
-      localStorage.getItem(  
-        "baatai_user"  
-      );  
-  
-  
-    if (!savedUser) {  
-  
-      showLogin();  
-  
-      return;  
-  
-    }  
-  
-  
-    try {  
-  
-      const user =  
-        JSON.parse(savedUser);  
-  
-  
-      if (  
-        user &&  
-        (user.id || user.email)  
-      ) {  
-  
-        showApp(user);  
-  
-      } else {  
-  
-        localStorage.removeItem(  
-          "baatai_user"  
-        );  
-  
-        showLogin();  
-  
-      }  
-  
-    } catch {  
-  
-      localStorage.removeItem(  
-        "baatai_user"  
-      );  
-  
-      showLogin();  
-  
-    }  
-  
-  }  
-);  
-  
-  
-/* =========================  
-   SIGNUP  
-========================= */  
-  
-signupForm.addEventListener(  
-  "submit",  
-  async function(event) {  
-  
-    event.preventDefault();  
-  
-    clearAuthMessage();  
-  
-  
-    const name =  
-      document  
-        .getElementById("signupName")  
-        .value  
-        .trim();  
-  
-  
-    const email =  
-      document  
-        .getElementById("signupEmail")  
-        .value  
-        .trim();  
-  
-  
-    const password =  
-      document  
-        .getElementById("signupPassword")  
-        .value;  
-  
-  
-    if (  
-      !name ||  
-      !email ||  
-      !password  
-    ) {  
-  
-      showAuthMessage(  
-        "कृपया सभी जानकारी भरें।"  
-      );  
-  
-      return;  
-    }  
-  
-  
-    if (password.length < 6) {  
-  
-      showAuthMessage(  
-        "Password कम से कम 6 अक्षर का होना चाहिए।"  
-      );  
-  
-      return;  
-    }  
-  
-  
-    signupBtn.disabled = true;  
-  
-    signupBtn.textContent =  
-      "Account बन रहा है...";  
-  
-  
-    try {  
-  
-      const response =  
-        await fetch(  
-          SIGNUP_API,  
-          {  
-            method: "POST",  
-  
-            headers: {  
-              "Content-Type":  
-                "application/json"  
-            },  
-  
-            body:  
-              JSON.stringify({  
-                name,  
-                email,  
-                password  
-              })  
-          }  
-        );  
-  
-  
-      const data =  
-        await response.json();  
-  
-  
-      if (!response.ok) {  
-  
-        throw new Error(  
-          data.error ||  
-          "Account बनाने में समस्या हुई।"  
-        );  
-  
-      }  
-  
-  
-      showLogin();  
-  
-      showAuthMessage(  
-        "Account बन गया! अब Login करें। ✅",  
-        true  
-      );  
-  
-  
-      document  
-        .getElementById("loginEmail")  
-        .value = email;  
-  
-  
-    } catch (error) {  
-  
-      console.error(  
-        "SIGNUP ERROR:",  
-        error  
-      );  
-  
-      showAuthMessage(  
-        error.message ||  
-        "Account बनाने में समस्या हुई।"  
-      );  
-  
-    }  
-  
-  
-    signupBtn.disabled = false;  
-  
-    signupBtn.textContent =  
-      "Create Account";  
-  
-  }  
-);  
-  
-  
-/* =========================  
-   LOGIN  
-========================= */  
-  
-loginForm.addEventListener(  
-  "submit",  
-  async function(event) {  
-  
-    event.preventDefault();  
-  
-    clearAuthMessage();  
-  
-  
-    const email =  
-      document  
-        .getElementById("loginEmail")  
-        .value  
-        .trim();  
-  
-  
-    const password =  
-      document  
-        .getElementById("loginPassword")  
-        .value;  
-  
-  
-    if (!email || !password) {  
-  
-      showAuthMessage(  
-        "Email और Password डालें।"  
-      );  
-  
-      return;  
-    }  
-  
-  
-    loginBtn.disabled = true;  
-  
-    loginBtn.textContent =  
-      "Login हो रहा है...";  
-  
-  
-    try {  
-  
-      const response =  
-        await fetch(  
-          LOGIN_API,  
-          {  
-            method: "POST",  
-  
-            headers: {  
-              "Content-Type":  
-                "application/json"  
-            },  
-  
-            body:  
-              JSON.stringify({  
-                email,  
-                password  
-              })  
-          }  
-        );  
-  
-  
-      const data =  
-        await response.json();  
-  
-  
-      if (!response.ok) {  
-  
-        throw new Error(  
-          data.error ||  
-          "Login में समस्या हुई।"  
-        );  
-  
-      }  
-  
-  
-      if (!data.user) {  
-  
-        throw new Error(  
-          "Server ने user information नहीं भेजी।"  
-        );  
-  
-      }  
-  
-  
-      saveUser(data.user);  
-  
-      showApp(data.user);  
-  
-  
-    } catch (error) {  
-  
-      console.error(  
-        "LOGIN ERROR:",  
-        error  
-      );  
-  
-      showAuthMessage(  
-        error.message ||  
-        "Login में समस्या हुई।"  
-      );  
-  
-    }  
-  
-  
-    loginBtn.disabled = false;  
-  
-    loginBtn.textContent =  
-      "Login";  
-  
-  }  
-);  
-  
-  
-/* =========================  
-   LOGOUT  
-========================= */  
-  
-function logout() {  
-  
-  localStorage.removeItem(  
-    "baatai_user"  
-  );  
-  
-  
-  appScreen.classList.add(  
-    "hidden"  
-  );  
-  
-  
-  authScreen.classList.remove(  
-    "hidden"  
-  );  
-  
-  
-  document  
-    .getElementById("loginEmail")  
-    .value = "";  
-  
-  
-  document  
-    .getElementById("loginPassword")  
-    .value = "";  
-  
-  
-  closeMenu();  
-  
-  showLogin();  
-  
-}  
-  
-  
-/* =========================  
-   MENU  
-========================= */  
-  
-function toggleMenu() {  
-  
-  const sidebar =  
-    document.getElementById(  
-      "sidebar"  
-    );  
-  
-  const overlay =  
-    document.getElementById(  
-      "overlay"  
-    );  
-  
-  
-  sidebar.classList.toggle(  
-    "active"  
-  );  
-  
-  
-  overlay.classList.toggle(  
-    "active"  
-  );  
-  
-}  
-  
-  
-function closeMenu() {  
-  
-  document  
-    .getElementById("sidebar")  
-    .classList.remove("active");  
-  
-  
-  document  
-    .getElementById("overlay")  
-    .classList.remove("active");  
-  
-}  
-  
-  
-/* =========================  
-   THEME  
-========================= */  
-  
-function toggleTheme() {  
-  
-  document.body.classList.toggle(  
-    "dark"  
-  );  
-  
-  
-  const dark =  
-    document.body.classList.contains(  
-      "dark"  
-    );  
-  
-  
-  const themeBtn =  
-    document.getElementById(  
-      "themeBtn"  
-    );  
-  
-  
-  if (dark) {  
-  
-    themeBtn.textContent =  
-      "☀️ Light";  
-  
-    localStorage.setItem(  
-      "baatai_theme",  
-      "dark"  
-    );  
-  
-  } else {  
-  
-    themeBtn.textContent =  
-      "🌙 Dark";  
-  
-    localStorage.setItem(  
-      "baatai_theme",  
-      "light"  
-    );  
-  
-  }  
-  
-}  
-  
-  
-/* =========================  
-   LOAD THEME  
-========================= */  
-  
-const savedTheme =  
-  localStorage.getItem(  
-    "baatai_theme"  
-  );  
-  
-  
-if (savedTheme === "dark") {  
-  
-  document.body.classList.add(  
-    "dark"  
-  );  
-  
-  document.getElementById(  
-    "themeBtn"  
-  ).textContent =  
-    "☀️ Light";  
-  
-}  
-  
-  
-/* =========================  
-   FILE PICKER  
-========================= */  
-  
-function openFilePicker() {  
-  
-  fileInput.click();  
-  
-}  
-  
-  
-/* =========================  
-   IMAGE SELECT  
-========================= */  
-  
-fileInput.addEventListener(  
-  "change",  
-  function() {  
-  
-    const file =  
-      this.files[0];  
-  
-  
-    if (!file) {  
-      return;  
-    }  
-  
-  
-    if (!file.type.startsWith("image/")) {  
-  
-      alert(  
-        "कृपया केवल image select करें।"  
-      );  
-  
-      return;  
-    }  
-  
-  
-    selectedImage = file;  
-  
-  
-    const reader =  
-      new FileReader();  
-  
-  
-    reader.onload =  
-      function(event) {  
-  
-        previewImage.src =  
-          event.target.result;  
-  
-        previewArea.classList.add(  
-          "active"  
-        );  
-  
-      };  
-  
-  
-    reader.readAsDataURL(file);  
-  
-  }  
-);  
-  
-  
-/* =========================  
-   REMOVE IMAGE  
-========================= */  
-  
-function removeImage() {  
-  
-  selectedImage = null;  
-  
-  fileInput.value = "";  
-  
-  previewImage.src = "";  
-  
-  previewArea.classList.remove(  
-    "active"  
-  );  
-  
-}  
-  
-  
-/* =========================  
-   VOICE  
-========================= */  
-  
-function startVoice() {  
-  
-  const SpeechRecognition =  
-    window.SpeechRecognition ||  
-    window.webkitSpeechRecognition;  
-  
-  
-  if (!SpeechRecognition) {  
-  
-    alert(  
-      "आपके browser में Voice input support नहीं है।"  
-    );  
-  
-    return;  
-  }  
-  
-  
-  const recognition =  
-    new SpeechRecognition();  
-  
-  
-  recognition.lang =  
-    "hi-IN";  
-  
-  
-  recognition.interimResults =  
-    false;  
-  
-  
-  recognition.continuous =  
-    false;  
-  
-  
-  micBtn.classList.add(  
-    "recording"  
-  );  
-  
-  
-  recognition.start();  
-  
-  
-  recognition.onresult =  
-    function(event) {  
-  
-      const text =  
-        event.results[0][0].transcript;  
-  
-  
-      input.value =  
-        text;  
-  
-    };  
-  
-  
-  recognition.onerror =  
-    function(error) {  
-  
-      console.error(  
-        "VOICE ERROR:",  
-        error  
-      );  
-  
-    };  
-  
-  
-  recognition.onend =  
-    function() {  
-  
-      micBtn.classList.remove(  
-        "recording"  
-      );  
-  
-    };  
-  
-}  
-  
-  
-/* =========================  
-   ENTER SEND  
-========================= */  
-  
-input.addEventListener(  
-  "keydown",  
-  function(event) {  
-  
-    if (  
-      event.key === "Enter" &&  
-      !event.shiftKey  
-    ) {  
-  
-      event.preventDefault();  
-  
-      sendMessage();  
-  
-    }  
-  
-  }  
-);  
-  
-  
-/* =========================  
-   SEND MESSAGE  
-========================= */  
-  
-async function sendMessage() {  
-  
-  const message =  
-    input.value.trim();  
-  
-  
-  if (  
-    !message &&  
-    !selectedImage  
-  ) {  
-  
-    return;  
-  
-  }  
-  
-  
-  const welcome =  
-    document.getElementById(  
-      "welcome"  
-    );  
-  
-  
-  if (welcome) {  
-  
-    welcome.remove();  
-  
-  }  
-  
-  
-  let imageData = null;  
-  
-  
-  if (selectedImage) {  
-  
-    imageData =  
-      await fileToBase64(  
-        selectedImage  
-      );  
-  
-  }  
-  
-  
-  addMessage(  
-    message ||  
-    "📷 Image",  
-    "user",  
-    imageData  
-  );  
-  
-  
-  input.value = "";  
-  
-  
-  const typing =  
-    addMessage(  
-      "🤖 सोच रहा हूँ...",  
-      "ai"  
-    );  
-  
-  
-  try {  
-  
-    const response =  
-      await fetch(  
-        CHAT_API,  
-        {  
-          method: "POST",  
-  
-          headers: {  
-            "Content-Type":  
-              "application/json"  
-          },  
-  
-          body:  
-            JSON.stringify({  
-  
-              message:  
-                message ||  
-                "इस image को समझाइए।",  
-  
-              image:  
-                imageData  
-  
-            })  
-        }  
-      );  
-  
-  
-    const data =  
-      await response.json();  
-  
-  
-    typing.remove();  
-  
-  
-    if (!response.ok) {  
-  
-      throw new Error(  
-        data.error ||  
-        "Server error"  
-      );  
-  
-    }  
-  
-  
-    addMessage(  
-      data.reply ||  
-      "मुझे कोई जवाब नहीं मिला।",  
-      "ai"  
-    );  
-  
-  
-  } catch (error) {  
-  
-    console.error(  
-      "CHAT ERROR:",  
-      error  
-    );  
-  
-  
-    typing.remove();  
-  
-  
-    addMessage(  
-      "AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।",  
-      "ai"  
-    );  
-  
-  }  
-  
-  
-  removeImage();  
-  
-  input.focus();  
-  
-}  
-  
-  
-/* =========================  
-   FILE TO BASE64  
-========================= */  
-  
-function fileToBase64(file) {  
-  
-  return new Promise(  
-    function(resolve, reject) {  
-  
-      const reader =  
-        new FileReader();  
-  
-  
-      reader.onload =  
-        function() {  
-  
-          resolve(  
-            reader.result  
-          );  
-  
-        };  
-  
-  
-      reader.onerror =  
-        reject;  
-  
-  
-      reader.readAsDataURL(file);  
-  
-    }  
-  );  
-  
-}  
-  
-  
-/* =========================  
-   ADD MESSAGE  
-========================= */  
-  
-function addMessage(  
-  text,  
-  type,  
-  image = null  
-) {  
-  
-  const messageDiv =  
-    document.createElement(  
-      "div"  
-    );  
-  
-  
-  messageDiv.className =  
-    "message " + type;  
-  
-  
-  const bubble =  
-    document.createElement(  
-      "div"  
-    );  
-  
-  
-  bubble.className =  
-    "bubble";  
-  
-  
-  if (image) {  
-  
-    const img =  
-      document.createElement(  
-        "img"  
-      );  
-  
-  
-    img.src =  
-      image;  
-  
-  
-    img.className =  
-      "message-image";  
-  
-  
-    bubble.appendChild(  
-      img  
-    );  
-  
-  }  
-  
-  
-  if (text) {  
-  
-    const textNode =  
-      document.createTextNode(  
-        text  
-      );  
-  
-  
-    bubble.appendChild(  
-      textNode  
-    );  
-  
-  }  
-  
-  
-  messageDiv.appendChild(  
-    bubble  
-  );  
-  
-  
-  chat.appendChild(  
-    messageDiv  
-  );  
-  
-  
-  chat.scrollTop =  
-    chat.scrollHeight;  
-  
-  
-  return messageDiv;  
-  
-}  
-  
-  
-/* =========================  
-   NEW CHAT  
-========================= */  
-  
-function newChat() {  
-  
-  chat.innerHTML = `  
-  
-    <div  
-      id="welcome"  
-      class="welcome">  
-  
-      <h1>  
-        Hello 👋  
-      </h1>  
-  
-      <p>  
-        BaatAI से कुछ भी पूछिए या फोटो upload करके सवाल पूछिए!  
-      </p>  
-  
-    </div>  
-  
-  `;  
-  
-  
-  input.value = "";  
-  
-  removeImage();  
-  
-  closeMenu();  
-  
-  input.focus();  
-  
-}  
-  
-</script>  </body>  
+    const image =
+        selectedImage;
+
+    addMessage(
+        message || "Image",
+        "user",
+        image
+    );
+
+    input.value = "";
+
+    selectedImage = null;
+
+    imageInput.value = "";
+
+    input.placeholder =
+        "Type your message...";
+
+    sendBtn.disabled = true;
+
+    showTyping();
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/chat",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        message:
+                            message || "Please analyze this image.",
+
+                        image:
+                            image || null
+
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        removeTyping();
+
+
+        if(!response.ok){
+
+            addMessage(
+                data.error ||
+                "Something went wrong. Please try again.",
+                "ai"
+            );
+
+            return;
+        }
+
+
+        addMessage(
+            data.reply ||
+            "I could not generate a response.",
+            "ai"
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        removeTyping();
+
+        addMessage(
+            "Unable to connect to BaatAI server. Please try again.",
+            "ai"
+        );
+
+    }finally{
+
+        sendBtn.disabled = false;
+
+        input.focus();
+
+    }
+
+}
+
+
+/* =========================
+   ENTER TO SEND
+========================= */
+
+input.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key === "Enter" &&
+            !event.shiftKey
+        ){
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   SCROLL
+========================= */
+
+function scrollBottom(){
+
+    setTimeout(() => {
+
+        chatArea.scrollTop =
+            chatArea.scrollHeight;
+
+    },50);
+
+}
+
+
+/* =========================
+   LIGHT / DARK
+========================= */
+
+function toggleTheme(){
+
+    document.body.classList.toggle(
+        "light"
+    );
+
+    const btn =
+        document.getElementById(
+            "themeBtn"
+        );
+
+    if(
+        document.body.classList.contains(
+            "light"
+        )
+    ){
+
+        btn.textContent =
+            "🌙 Dark";
+
+    }else{
+
+        btn.textContent =
+            "☀️ Light";
+
+    }
+
+}
+
+
+/* =========================
+   MENU
+========================= */
+
+function toggleMenu(){
+
+    alert(
+        "BaatAI Menu"
+    );
+
+}
+
+
+/* =========================
+   VOICE INPUT
+========================= */
+
+function startVoice(){
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if(!SpeechRecognition){
+
+        alert(
+            "Voice input is not supported in this browser."
+        );
+
+        return;
+    }
+
+
+    const recognition =
+        new SpeechRecognition();
+
+
+    recognition.lang =
+        "en-IN";
+
+    recognition.interimResults =
+        false;
+
+    recognition.continuous =
+        false;
+
+
+    micBtn.classList.add(
+        "listening"
+    );
+
+
+    recognition.start();
+
+
+    recognition.onresult =
+        function(event){
+
+            const transcript =
+                event.results[0][0].transcript;
+
+            input.value =
+                transcript;
+
+        };
+
+
+    recognition.onerror =
+        function(error){
+
+            console.log(
+                "Voice error:",
+                error
+            );
+
+        };
+
+
+    recognition.onend =
+        function(){
+
+            micBtn.classList.remove(
+                "listening"
+            );
+
+        };
+
+}
+
+
+/* =========================
+   PROFILE LETTER
+========================= */
+
+function setProfile(){
+
+    try{
+
+        const user =
+            JSON.parse(
+                localStorage.getItem(
+                    "user"
+                )
+            );
+
+        if(user && user.name){
+
+            document.getElementById(
+                "profile"
+            ).textContent =
+                user.name
+                    .charAt(0)
+                    .toUpperCase();
+
+        }
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+}
+
+setProfile();
+
+
+/* =========================
+   VIDEO PLAY
+========================= */
+
+const video =
+    document.getElementById(
+        "bgVideo"
+    );
+
+video.play().catch(() => {
+
+    console.log(
+        "Video autoplay waiting..."
+    );
+
+});
+
+</script>
+
+</body>
 </html>
