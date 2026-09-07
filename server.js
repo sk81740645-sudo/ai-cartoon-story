@@ -34,17 +34,20 @@ const groq = new Groq({
 });
 
 /* =========================
-   STATIC FILES
-========================= */
-
-app.use(express.static(__dirname));
-
-/* =========================
    ROBOTS
+   IMPORTANT:
+   robots route MUST be before
+   express.static()
 ========================= */
+
 app.get("/robots.txt", (req, res) => {
   res.status(200);
-  res.set("Content-Type", "text/plain");
+  res.type("text/plain");
+  res.set(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+
   res.send(
 `User-agent: *
 Allow: /
@@ -52,7 +55,6 @@ Allow: /
 Sitemap: https://baatai-ai.onrender.com/sitemap.xml`
   );
 });
-
 
 /* =========================
    SITEMAP
@@ -70,6 +72,12 @@ app.get("/sitemap.xml", (req, res) => {
 
 </urlset>`);
 });
+
+/* =========================
+   STATIC FILES
+========================= */
+
+app.use(express.static(__dirname));
 
 /* =========================
    SESSION
@@ -94,7 +102,7 @@ function createAdminToken() {
     crypto
       .createHmac(
         "sha256",
-        SESSION_SECRET
+        SESSION_SECRET || "temporary-secret"
       )
       .update(data)
       .digest("hex");
@@ -113,6 +121,10 @@ function createAdminToken() {
 function verifyAdminToken(token) {
 
   try {
+
+    if (!SESSION_SECRET) {
+      return false;
+    }
 
     const decoded =
       Buffer
@@ -404,21 +416,25 @@ app.post(
           10
         );
 
-      await pool.query(
-        `INSERT INTO users
-        (name, email, password)
-        VALUES ($1, $2, $3)`,
-        [
-          name.trim(),
-          cleanEmail,
-          hashedPassword
-        ]
-      );
+      const result =
+        await pool.query(
+          `INSERT INTO users
+          (name, email, password)
+          VALUES ($1, $2, $3)
+          RETURNING id, name, email`,
+          [
+            name.trim(),
+            cleanEmail,
+            hashedPassword
+          ]
+        );
 
       res.json({
         success: true,
         message:
-          "Account successfully created"
+          "Account successfully created",
+        user:
+          result.rows[0]
       });
 
     } catch (error) {
@@ -967,8 +983,12 @@ app.get(
              created_at
            FROM messages
            WHERE chat_id = $1
+           AND user_id = $2
            ORDER BY created_at ASC`,
-          [chatId]
+          [
+            chatId,
+            userId
+          ]
         );
 
       res.json({
@@ -1031,6 +1051,31 @@ app.post(
 
       }
 
+      /* CHECK CHAT BELONGS TO USER */
+
+      const chatCheck =
+        await pool.query(
+          `SELECT id
+           FROM chats
+           WHERE id = $1
+           AND user_id = $2`,
+          [
+            chatId,
+            userId
+          ]
+        );
+
+      if (
+        chatCheck.rows.length === 0
+      ) {
+
+        return res.status(403).json({
+          error:
+            "यह chat आपके account की नहीं है।"
+        });
+
+      }
+
       const result =
         await pool.query(
           `INSERT INTO messages
@@ -1055,8 +1100,12 @@ app.post(
       await pool.query(
         `UPDATE chats
          SET updated_at = CURRENT_TIMESTAMP
-         WHERE id = $1`,
-        [chatId]
+         WHERE id = $1
+         AND user_id = $2`,
+        [
+          chatId,
+          userId
+        ]
       );
 
       res.json({
@@ -1083,8 +1132,138 @@ app.post(
 );
 
 /* =========================
+   DELETE ONE CHAT
+========================= */
+
+app.delete(
+  "/api/chats/:userId/:chatId",
+  async (req, res) => {
+
+    try {
+
+      const {
+        userId,
+        chatId
+      } = req.params;
+
+      const chatCheck =
+        await pool.query(
+          `SELECT id
+           FROM chats
+           WHERE id = $1
+           AND user_id = $2`,
+          [
+            chatId,
+            userId
+          ]
+        );
+
+      if (
+        chatCheck.rows.length === 0
+      ) {
+
+        return res.status(404).json({
+          error:
+            "Chat नहीं मिली।"
+        });
+
+      }
+
+      await pool.query(
+        `DELETE FROM messages
+         WHERE chat_id = $1
+         AND user_id = $2`,
+        [
+          chatId,
+          userId
+        ]
+      );
+
+      await pool.query(
+        `DELETE FROM chats
+         WHERE id = $1
+         AND user_id = $2`,
+        [
+          chatId,
+          userId
+        ]
+      );
+
+      res.json({
+        success: true,
+        message:
+          "Chat delete हो गई।"
+      });
+
+    } catch (error) {
+
+      console.error(
+        "DELETE CHAT ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Chat delete नहीं हो सकी।"
+      });
+
+    }
+
+  }
+);
+
+/* =========================
+   DELETE ALL CHATS
+========================= */
+
+app.delete(
+  "/api/chats/:userId",
+  async (req, res) => {
+
+    try {
+
+      const userId =
+        req.params.userId;
+
+      await pool.query(
+        `DELETE FROM messages
+         WHERE user_id = $1`,
+        [userId]
+      );
+
+      await pool.query(
+        `DELETE FROM chats
+         WHERE user_id = $1`,
+        [userId]
+      );
+
+      res.json({
+        success: true,
+        message:
+          "All chat history deleted"
+      });
+
+    } catch (error) {
+
+      console.error(
+        "DELETE ALL CHATS ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Chat history delete नहीं हो सकी।"
+      });
+
+    }
+
+  }
+);
+
+/* =========================
    GROQ CHAT
    TEXT + IMAGE
+   WITH CONVERSATION MEMORY
 ========================= */
 
 app.post(
@@ -1094,14 +1273,30 @@ app.post(
     try {
 
       const message =
-        req.body?.message;
+        typeof req.body?.message === "string"
+          ? req.body.message.trim()
+          : "";
 
       const image =
-        req.body?.image;
+        req.body?.image || null;
+
+      const userName =
+        typeof req.body?.userName === "string"
+          ? req.body.userName.trim()
+          : "";
+
+      let conversation =
+        Array.isArray(req.body?.conversation)
+          ? req.body.conversation
+          : [];
+
+      /* =========================
+         MESSAGE CHECK
+      ========================= */
 
       if (
-        !message ||
-        !message.trim()
+        !message &&
+        !image
       ) {
 
         return res.status(400).json({
@@ -1112,7 +1307,7 @@ app.post(
       }
 
       /* =========================
-         CHECK GROQ API KEY
+         API KEY CHECK
       ========================= */
 
       if (!process.env.GROQ_API_KEY) {
@@ -1128,8 +1323,93 @@ app.post(
 
       }
 
+      /* =========================
+         LIMIT CONVERSATION
+      ========================= */
+
+      conversation =
+        conversation
+          .filter(item =>
+            item &&
+            (
+              item.role === "user" ||
+              item.role === "assistant"
+            ) &&
+            typeof item.content === "string"
+          )
+          .slice(-20);
+
+      /* =========================
+         SYSTEM PROMPT
+      ========================= */
+
+      const systemPrompt = `
+You are BaatAI, a friendly, intelligent and helpful AI assistant.
+
+IMPORTANT LANGUAGE RULE:
+- Always reply in the same language and writing style used by the user.
+- If the user writes in English, reply in English.
+- If the user writes in Hindi, reply in Hindi.
+- If the user writes in Hinglish, reply in Hinglish.
+- Do not change language unless the user asks you to.
+
+IMPORTANT MEMORY RULE:
+- Remember useful information the user tells you during the current conversation.
+- If the user tells you their name, remember it and use it when appropriate.
+- Example:
+  User: Mera naam Shiva hai.
+  Later: Mera name kya hai?
+  You should answer: Aapka naam Shiva hai.
+- Do not repeatedly ask for information that the user has already provided in the conversation.
+- Use the conversation history supplied to you as context.
+- Never claim to remember something if it is not present in the available conversation.
+
+ANSWER STYLE:
+- Be helpful and direct.
+- Keep answers easy to understand.
+- For coding questions, provide correct code and clear steps.
+- For simple questions, do not give unnecessarily long answers.
+- Be friendly and natural.
+
+${userName
+  ? `The user's known name is: ${userName}`
+  : ""}
+`;
+
+      /* =========================
+         BUILD GROQ MESSAGES
+      ========================= */
+
+      const groqMessages = [
+
+        {
+          role: "system",
+          content: systemPrompt
+        }
+
+      ];
+
+      /* =========================
+         ADD PREVIOUS CONTEXT
+      ========================= */
+
+      for (
+        const item of conversation
+      ) {
+
+        groqMessages.push({
+          role: item.role,
+          content: item.content
+        });
+
+      }
+
+      /* =========================
+         CURRENT USER MESSAGE
+      ========================= */
+
       let model;
-      let userContent;
+      let currentContent;
 
       /* =========================
          TEXT ONLY
@@ -1140,7 +1420,7 @@ app.post(
         model =
           "openai/gpt-oss-20b";
 
-        userContent =
+        currentContent =
           message;
 
       }
@@ -1174,11 +1454,13 @@ app.post(
         model =
           "qwen/qwen3.6-27b";
 
-        userContent = [
+        currentContent = [
 
           {
             type: "text",
-            text: message
+            text:
+              message ||
+              "इस image को ध्यान से देखकर बताइए इसमें क्या है।"
           },
 
           {
@@ -1193,11 +1475,18 @@ app.post(
 
       }
 
+      groqMessages.push({
+        role: "user",
+        content:
+          currentContent
+      });
+
       console.log(
-        "Groq request received",
+        "Groq request:",
+        model,
         image
-          ? "(with image)"
-          : "(text only)"
+          ? "(image)"
+          : "(text)"
       );
 
       /* =========================
@@ -1207,30 +1496,14 @@ app.post(
       const completion =
         await groq.chat.completions.create({
 
-          model,
+          model: model,
 
-          messages: [
-
-            {
-  role: "system",
-  content:
-    "You are BaatAI, a friendly and helpful AI assistant. Always reply in the same language and writing style used by the user. If the user writes in English, reply in English. If the user writes in Hindi, reply in Hindi. If the user writes in Hinglish, reply in Hinglish. Do not switch languages unless the user asks you to. Give direct, accurate and useful answers."
-},
-
-            {
-              role: "user",
-
-              content:
-                userContent
-            }
-
-          ],
+          messages:
+            groqMessages,
 
           temperature: 0.7,
 
-          max_completion_tokens: 2048,
-
-          stream: false
+          max_tokens: 2048
 
         });
 
@@ -1244,44 +1517,119 @@ app.post(
           ?.message
           ?.content;
 
-      console.log(
-        "Groq response received"
-      );
+      if (!reply) {
+
+        console.error(
+          "EMPTY GROQ RESPONSE:",
+          completion
+        );
+
+        return res.status(500).json({
+          error:
+            "AI ने कोई जवाब नहीं दिया।"
+        });
+
+      }
+
+      /* =========================
+         RESPONSE
+      ========================= */
 
       res.json({
 
         success: true,
 
         reply:
-          reply ||
-          "मुझे जवाब नहीं मिला।"
+          reply.trim(),
+
+        model,
+
+        hasImage:
+          Boolean(image)
 
       });
 
     } catch (error) {
 
       console.error(
-        "========== GROQ ERROR =========="
-      );
-
-      console.error(
-        error?.message ||
+        "GROQ CHAT ERROR:",
         error
       );
 
-      console.error(
-        "================================"
-      );
+      let errorMessage =
+        "AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।";
+
+      if (
+        error?.status === 401
+      ) {
+
+        errorMessage =
+          "Groq API key गलत है या valid नहीं है।";
+
+      } else if (
+        error?.status === 429
+      ) {
+
+        errorMessage =
+          "AI की request limit पूरी हो गई है। थोड़ी देर बाद दोबारा कोशिश करें।";
+
+      } else if (
+        error?.message
+      ) {
+
+        console.error(
+          "Groq error message:",
+          error.message
+        );
+
+      }
 
       res.status(500).json({
-
         error:
-          error?.message ||
-          "Groq API में समस्या हुई।"
-
+          errorMessage
       });
 
     }
+
+  }
+);
+
+/* =========================
+   404 API
+========================= */
+
+app.use(
+  "/api",
+  (req, res) => {
+
+    res.status(404).json({
+      error:
+        "API endpoint नहीं मिला।"
+    });
+
+  }
+);
+
+/* =========================
+   ERROR HANDLER
+========================= */
+
+app.use(
+  (error, req, res, next) => {
+
+    console.error(
+      "SERVER ERROR:",
+      error
+    );
+
+    if (res.headersSent) {
+      return next(error);
+    }
+
+    res.status(500).json({
+      error:
+        "Server में समस्या हुई।"
+    });
 
   }
 );
@@ -1292,32 +1640,19 @@ app.post(
 
 async function startServer() {
 
-  try {
+  await createTables();
 
-    await createTables();
+  app.listen(
+    PORT,
+    "0.0.0.0",
+    () => {
 
-    app.listen(
-      PORT,
-      "0.0.0.0",
-      () => {
+      console.log(
+        `BaatAI server running on port ${PORT}`
+      );
 
-        console.log(
-          `BaatAI running on port ${PORT}`
-        );
-
-      }
-    );
-
-  } catch (error) {
-
-    console.error(
-      "SERVER START ERROR:",
-      error
-    );
-
-    process.exit(1);
-
-  }
+    }
+  );
 
 }
 
