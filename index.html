@@ -2360,23 +2360,11 @@ async function sendMessage(){
               "application/json"
           },
 
-          body:
-            JSON.stringify({
-
-              message:
-                text,
-
-              image:
-                imageToSend ||
-                null,
-
-              userName:
-                userName,
-
-              conversation:
-                conversation
-
-            })
+      body: JSON.stringify({
+  message: text,
+  image: imageToSend || null,
+  conversation: conversation
+})
 
         }
       );
