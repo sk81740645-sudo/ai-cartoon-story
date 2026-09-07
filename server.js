@@ -1279,12 +1279,7 @@ app.post(
 
       const image =
         req.body?.image || null;
-
-      const userName =
-        typeof req.body?.userName === "string"
-          ? req.body.userName.trim()
-          : "";
-
+const message = req.body?.message;
       let conversation =
         Array.isArray(req.body?.conversation)
           ? req.body.conversation
@@ -1352,29 +1347,18 @@ IMPORTANT LANGUAGE RULE:
 - If the user writes in Hindi, reply in Hindi.
 - If the user writes in Hinglish, reply in Hinglish.
 - Do not change language unless the user asks you to.
-
-IMPORTANT MEMORY RULE:
-- Remember useful information the user tells you during the current conversation.
-- If the user tells you their name, remember it and use it when appropriate.
-- Example:
-  User: Mera naam Shiva hai.
-  Later: Mera name kya hai?
-  You should answer: Aapka naam Shiva hai.
-- Do not repeatedly ask for information that the user has already provided in the conversation.
+IMPORTANT CONVERSATION RULE:
+- Remember useful information from the current conversation.
 - Use the conversation history supplied to you as context.
-- Never claim to remember something if it is not present in the available conversation.
-
+- Understand follow-up questions naturally.
+- Do not repeatedly ask for information that is already present in the conversation.
+- Never claim to remember something that is not present in the available conversation.
 ANSWER STYLE:
 - Be helpful and direct.
 - Keep answers easy to understand.
 - For coding questions, provide correct code and clear steps.
 - For simple questions, do not give unnecessarily long answers.
 - Be friendly and natural.
-
-${userName
-  ? `The user's known name is: ${userName}`
-  : ""}
-`;
 
       /* =========================
          BUILD GROQ MESSAGES
