@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="BaatAI - AI Assistant for students and everyone">
-<title>BaatAI - AI Assistant</title>
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<title>BaatAI</title>
 
 <style>
 
@@ -14,26 +19,24 @@
   padding:0;
 }
 
-html,body{
+html,
+body{
   width:100%;
   height:100%;
   overflow:hidden;
   font-family:Arial,Helvetica,sans-serif;
-  background:#050505;
-  color:#fff;
+  background:#000;
 }
 
-button,
-textarea,
-input{
-  font-family:inherit;
+.app{
+  position:relative;
+  width:100%;
+  height:100dvh;
+  overflow:hidden;
+  background:#000;
 }
 
-button{
-  cursor:pointer;
-}
-
-/* BACKGROUND */
+/* VIDEO */
 
 #bgVideo{
   position:fixed;
@@ -41,677 +44,812 @@ button{
   width:100%;
   height:100%;
   object-fit:cover;
-  z-index:-3;
-  opacity:.18;
+  z-index:0;
+  pointer-events:none;
+  background:#000;
 }
 
 .videoOverlay{
   position:fixed;
   inset:0;
-  background:
-    linear-gradient(
-      rgba(0,0,0,.82),
-      rgba(0,0,0,.92)
-    );
-  z-index:-2;
-}
-
-/* APP */
-
-.app{
-  width:100%;
-  height:100%;
-  display:flex;
-  position:relative;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-  width:270px;
-  height:100%;
-  background:rgba(8,8,8,.96);
-  border-right:1px solid rgba(0,255,255,.15);
-  padding:15px;
-  display:flex;
-  flex-direction:column;
-  position:fixed;
-  left:-280px;
-  top:0;
-  z-index:100;
-  transition:.25s ease;
-  box-shadow:0 0 30px rgba(0,255,255,.08);
-}
-
-.sidebar.open{
-  left:0;
-}
-
-.sidebarTop{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:15px;
-}
-
-.logoSmall{
-  color:#00ffff;
-  font-size:21px;
-  font-weight:bold;
-}
-
-.closeSidebar{
-  background:none;
-  border:0;
-  color:#fff;
-  font-size:25px;
-}
-
-.newChatBtn{
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid rgba(0,255,255,.35);
-  background:rgba(0,255,255,.08);
-  color:#fff;
-  font-size:15px;
-  margin-bottom:12px;
-}
-
-.newChatBtn:hover{
-  background:rgba(0,255,255,.16);
-}
-
-.historyTitle{
-  color:#888;
-  font-size:12px;
-  margin:10px 4px;
-  text-transform:uppercase;
-}
-
-.history{
-  flex:1;
-  overflow-y:auto;
-}
-
-.historyItem{
-  padding:11px;
-  border-radius:10px;
-  color:#ddd;
-  margin-bottom:5px;
-  cursor:pointer;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.historyItem:hover{
-  background:rgba(255,255,255,.08);
-}
-
-.sidebarBottom{
-  border-top:1px solid rgba(255,255,255,.08);
-  padding-top:10px;
-}
-
-.sideBtn{
-  width:100%;
-  border:0;
-  background:transparent;
-  color:#ddd;
-  text-align:left;
-  padding:11px;
-  border-radius:9px;
-  margin-bottom:3px;
-}
-
-.sideBtn:hover{
-  background:rgba(255,255,255,.07);
-}
-
-/* MAIN */
-
-.main{
-  width:100%;
-  height:100%;
-  display:flex;
-  flex-direction:column;
+  z-index:1;
+  background:rgba(0,8,12,.62);
+  pointer-events:none;
 }
 
 /* HEADER */
 
 .header{
-  height:64px;
-  flex-shrink:0;
+  position:relative;
+  z-index:30;
+  width:100%;
+  height:72px;
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  padding:0 16px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  background:rgba(0,0,0,.45);
-  backdrop-filter:blur(10px);
-}
-
-.headerLeft{
-  display:flex;
-  align-items:center;
-  gap:12px;
+  padding:0 14px;
+  background:rgba(0,8,12,.72);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(0,229,255,.25);
 }
 
 .menuBtn{
-  width:40px;
-  height:40px;
-  border-radius:10px;
-  border:1px solid rgba(0,255,255,.2);
-  background:rgba(255,255,255,.05);
-  color:#fff;
-  font-size:22px;
-}
-
-.brand{
-  color:#00ffff;
-  font-size:22px;
-  font-weight:bold;
-  text-shadow:0 0 12px rgba(0,255,255,.5);
-}
-
-.profileBtn{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  border:1px solid rgba(0,255,255,.35);
-  background:rgba(0,255,255,.08);
-  color:#00ffff;
-  font-weight:bold;
-  font-size:16px;
-}
-
-/* CONTENT */
-
-.content{
-  flex:1;
-  min-height:0;
-  display:flex;
-  flex-direction:column;
-}
-
-.welcome{
-  flex:1;
+  width:42px;
+  height:42px;
+  margin-right:8px;
   display:flex;
   align-items:center;
   justify-content:center;
-  text-align:center;
-  padding:20px;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:#fff;
+  font-size:32px;
+  cursor:pointer;
+  position:relative;
+  z-index:100;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+
+.robot{
+  font-size:30px;
+  line-height:1;
+}
+
+.brandName{
+  color:#fff;
+  font-size:22px;
+  font-weight:700;
+  line-height:24px;
+}
+
+.brandSub{
+  color:#00e5ff;
+  font-size:11px;
+  line-height:14px;
+}
+
+.headerRight{
+  display:flex;
+  align-items:center;
+  margin-left:auto;
+}
+
+.lightBtn{
+  height:42px;
+  padding:0 12px;
+  border:1px solid #00e5ff;
+  border-radius:11px;
+  background:rgba(0,40,48,.7);
+  color:#fff;
+  font-size:14px;
+  cursor:pointer;
+  position:relative;
+  z-index:100;
+}
+
+.profileBtn{
+  width:42px;
+  height:42px;
+  margin-left:8px;
+  border:1px solid #00e5ff;
+  border-radius:50%;
+  background:rgba(0,50,60,.75);
+  color:#fff;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  position:relative;
+  z-index:100;
+}
+
+/* MAIN */
+
+.main{
+  position:relative;
+  z-index:10;
+  width:100%;
+  height:calc(100dvh - 72px);
+  overflow:hidden;
+}
+
+.welcome{
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding-top:3px;
 }
 
 .welcome h1{
-  font-size:clamp(30px,7vw,55px);
-  color:#fff;
-  text-shadow:
-    0 0 15px rgba(0,255,255,.3);
+  color:#00e5ff;
+  font-size:27px;
+  font-weight:600;
+  text-shadow:0 0 12px rgba(0,229,255,.45);
 }
 
-.welcome h1 span{
-  color:#00ffff;
+.welcomeLine{
+  width:52px;
+  height:1px;
+  background:#00e5ff;
+  margin:0 10px 3px;
 }
 
 /* CHAT */
 
 .chat{
-  flex:1;
+  width:100%;
+  height:calc(100% - 60px);
+  padding:4px 18px 120px;
   overflow-y:auto;
-  padding:20px 14px 130px;
-  display:none;
+  scroll-behavior:smooth;
 }
 
-.chat.show{
-  display:block;
+.chat::-webkit-scrollbar{
+  width:4px;
+}
+
+.chat::-webkit-scrollbar-thumb{
+  background:rgba(0,229,255,.35);
+  border-radius:10px;
 }
 
 .message{
-  max-width:850px;
-  margin:0 auto 18px;
+  width:100%;
   display:flex;
+  margin:10px 0;
 }
 
 .message.user{
   justify-content:flex-end;
 }
 
-.messageBubble{
-  max-width:min(80%,700px);
+.message.assistant{
+  justify-content:flex-start;
+}
+
+.bubble{
+  max-width:86%;
   padding:12px 15px;
-  border-radius:15px;
-  line-height:1.55;
-  white-space:pre-wrap;
+  border-radius:17px;
+  color:#f5ffff;
+  font-size:16px;
+  line-height:1.5;
   word-break:break-word;
+  white-space:pre-wrap;
+  background:rgba(0,15,20,.78);
+  border:1px solid rgba(0,229,255,.35);
+  backdrop-filter:blur(5px);
 }
 
-.message.user .messageBubble{
-  background:rgba(0,255,255,.12);
-  border:1px solid rgba(0,255,255,.2);
+.message.user .bubble{
+  background:rgba(0,65,75,.45);
+  border-color:rgba(0,229,255,.7);
+  border-bottom-right-radius:5px;
 }
 
-.message.assistant .messageBubble{
-  background:rgba(255,255,255,.055);
-  border:1px solid rgba(255,255,255,.08);
+.message.assistant .bubble{
+  border-bottom-left-radius:5px;
 }
 
-/* IMAGE */
+/* WELCOME */
 
-.messageImage{
-  max-width:260px;
-  max-height:260px;
-  display:block;
-  border-radius:12px;
-  margin-top:8px;
+.welcomeMessage{
+  width:100%;
+  max-width:600px;
+  margin:15px auto;
+  padding:22px 18px;
+  text-align:left;
+  border:1px solid rgba(0,229,255,.45);
+  border-radius:20px;
+  background:rgba(0,18,23,.72);
+  color:#f1ffff;
+  font-size:16px;
+  line-height:1.65;
+  backdrop-filter:blur(7px);
+}
+
+.welcomeMessage strong{
+  font-size:18px;
 }
 
 /* TYPING */
 
 .typing{
-  display:none;
-  max-width:850px;
-  margin:0 auto 15px;
-  color:#888;
-  font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:5px;
 }
 
-.typing.show{
-  display:block;
+.dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#00e5ff;
+  animation:typing 1s infinite;
 }
 
-/* INPUT AREA */
+.dot:nth-child(2){
+  animation-delay:.2s;
+}
+
+.dot:nth-child(3){
+  animation-delay:.4s;
+}
+
+@keyframes typing{
+
+  0%,60%,100%{
+    transform:translateY(0);
+    opacity:.4;
+  }
+
+  30%{
+    transform:translateY(-5px);
+    opacity:1;
+  }
+
+}
+
+/* INPUT */
 
 .inputArea{
   position:absolute;
-  bottom:15px;
+  z-index:50;
   left:0;
   right:0;
-  display:flex;
-  justify-content:center;
-  padding:0 12px;
-  z-index:20;
+  bottom:0;
+  width:100%;
+  padding:7px 12px max(8px,env(safe-area-inset-bottom));
+  background:linear-gradient(
+    transparent,
+    rgba(0,7,10,.98) 45%
+  );
+  pointer-events:none;
 }
 
 .inputBox{
-  width:min(850px,100%);
+  width:100%;
+  max-width:700px;
   min-height:58px;
+  margin:auto;
   display:flex;
-  align-items:flex-end;
-  gap:7px;
-  padding:8px;
-  border:1px solid rgba(0,255,255,.2);
-  border-radius:18px;
-  background:rgba(15,15,15,.92);
-  box-shadow:0 0 25px rgba(0,255,255,.07);
-  backdrop-filter:blur(12px);
+  align-items:center;
+  gap:5px;
+  padding:5px 6px;
+  border:1px solid #00e5ff;
+  border-radius:30px;
+  background:rgba(0,20,25,.9);
+  box-shadow:0 0 15px rgba(0,229,255,.08);
+  backdrop-filter:blur(10px);
+  pointer-events:auto;
 }
 
-.iconBtn,
-.sendBtn{
-  width:40px;
-  height:40px;
-  flex-shrink:0;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.05);
-  color:#fff;
+.iconBtn{
+  width:44px;
+  height:44px;
+  flex:0 0 44px;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:18px;
+  border:1px solid #00e5ff;
+  border-radius:50%;
+  background:rgba(0,45,55,.75);
+  color:#00e5ff;
+  font-size:19px;
+  cursor:pointer;
+  position:relative;
+  z-index:100;
 }
 
-.iconBtn:hover{
-  background:rgba(255,255,255,.1);
+.iconBtn:active{
+  transform:scale(.93);
+}
+
+#messageInput{
+  flex:1;
+  min-width:0;
+  height:42px;
+  max-height:100px;
+  resize:none;
+  overflow-y:auto;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#fff;
+  padding:10px 5px;
+  font-size:16px;
+  line-height:22px;
+}
+
+#messageInput::placeholder{
+  color:#9aaeb2;
 }
 
 .sendBtn{
-  background:#00ffff;
-  color:#000;
-  border-color:#00ffff;
-  font-size:20px;
+  width:46px;
+  height:46px;
+  flex:0 0 46px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:0;
+  border-radius:50%;
+  background:#fff;
+  color:#001014;
+  font-size:24px;
   font-weight:bold;
+  cursor:pointer;
+  position:relative;
+  z-index:100;
 }
 
-.sendBtn:hover{
-  box-shadow:0 0 15px rgba(0,255,255,.5);
+.sendBtn:active{
+  transform:scale(.92);
 }
 
 #imageInput{
   display:none;
 }
 
-#messageInput{
-  flex:1;
-  min-width:0;
-  max-height:120px;
-  resize:none;
-  outline:none;
-  border:0;
-  background:transparent;
-  color:#fff;
-  font-size:15px;
-  line-height:22px;
-  padding:9px 4px;
-}
-
-#messageInput::placeholder{
-  color:#777;
-}
-
-/* CHATGPT STYLE MIC */
-
-.micBtn{
-  color:#fff;
-  background:rgba(35,35,35,.85);
-  border:1px solid rgba(255,255,255,.18);
-}
-
-.micBtn svg{
-  width:21px;
-  height:21px;
+.uploadedImage{
   display:block;
-  fill:none;
-  stroke:currentColor;
-  stroke-width:2;
-  stroke-linecap:round;
-  stroke-linejoin:round;
+  width:100%;
+  max-width:270px;
+  max-height:320px;
+  object-fit:cover;
+  margin-bottom:8px;
+  border-radius:13px;
+  border:1px solid rgba(0,229,255,.4);
 }
+
+/* MIC */
 
 .micBtn.listening{
-  background:rgba(255,50,50,.18);
+  background:rgba(255,0,0,.18);
   border-color:#ff4444;
   color:#ff4444;
   animation:micPulse 1s infinite;
 }
 
 @keyframes micPulse{
+
   50%{
-    box-shadow:0 0 15px rgba(255,60,60,.55);
+    box-shadow:0 0 14px rgba(255,0,0,.5);
   }
+
 }
 
-/* IMAGE PREVIEW */
+/* SIDEBAR */
 
-.imagePreview{
-  display:none;
-  position:absolute;
-  bottom:82px;
-  width:min(850px,calc(100% - 24px));
-  left:50%;
-  transform:translateX(-50%);
-  background:rgba(15,15,15,.95);
-  border:1px solid rgba(0,255,255,.2);
-  border-radius:14px;
-  padding:8px;
-  z-index:30;
-}
-
-.imagePreview.show{
-  display:flex;
-}
-
-.imagePreview img{
-  width:70px;
-  height:70px;
-  object-fit:cover;
-  border-radius:10px;
-}
-
-.removeImage{
-  position:absolute;
-  top:2px;
-  left:68px;
-  width:23px;
-  height:23px;
-  border-radius:50%;
-  border:1px solid #555;
-  background:#111;
-  color:#fff;
-}
-
-/* AUTH */
-
-.authOverlay{
+.sidebar{
   position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.82);
-  backdrop-filter:blur(8px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:500;
-  padding:15px;
+  top:0;
+  left:-285px;
+  width:275px;
+  height:100dvh;
+  z-index:90;
+  padding:82px 14px 20px;
+  overflow-y:auto;
+  background:rgba(0,12,17,.98);
+  border-right:1px solid #00e5ff;
+  box-shadow:8px 0 30px rgba(0,0,0,.5);
+  transition:left .25s ease;
 }
 
-.authOverlay.show{
-  display:flex;
+.sidebar.open{
+  left:0;
 }
 
-.authBox{
-  width:min(400px,100%);
-  background:#101010;
-  border:1px solid rgba(0,255,255,.25);
-  border-radius:20px;
-  padding:25px;
-  box-shadow:0 0 35px rgba(0,255,255,.12);
-}
-
-.authLogo{
-  text-align:center;
-  color:#00ffff;
-  font-size:28px;
-  font-weight:bold;
-  margin-bottom:5px;
-}
-
-.authTitle{
-  text-align:center;
-  font-size:21px;
-  margin-bottom:20px;
-}
-
-.authInput{
+.newChatBtn,
+.menuItem{
   width:100%;
-  height:46px;
-  margin-bottom:12px;
-  padding:0 13px;
-  border-radius:10px;
-  border:1px solid #333;
-  background:#080808;
-  color:#fff;
-  outline:none;
-}
-
-.authInput:focus{
-  border-color:#00ffff;
-}
-
-.authSubmit{
-  width:100%;
-  height:46px;
-  border:0;
-  border-radius:10px;
-  background:#00ffff;
-  color:#000;
-  font-weight:bold;
-  font-size:15px;
-}
-
-.authSwitch{
-  text-align:center;
-  margin-top:15px;
-  color:#888;
-  font-size:14px;
-}
-
-.authSwitch button{
-  border:0;
-  background:none;
-  color:#00ffff;
-}
-
-.authError{
-  color:#ff5555;
-  font-size:13px;
-  min-height:18px;
+  min-height:45px;
   margin-bottom:8px;
-  text-align:center;
+  padding:10px 13px;
+  border:1px solid rgba(0,229,255,.45);
+  border-radius:10px;
+  background:rgba(0,40,48,.72);
+  color:#fff;
+  text-align:left;
+  font-size:14px;
+  cursor:pointer;
+  position:relative;
+  z-index:100;
+}
+
+.newChatBtn:hover,
+.menuItem:hover{
+  background:rgba(0,229,255,.15);
+}
+
+/* HISTORY */
+
+.historyTitle{
+  margin:18px 4px 9px;
+  color:#00e5ff;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.historyList{
+  width:100%;
+}
+
+.historyItem{
+  width:100%;
+  padding:11px;
+  margin-bottom:7px;
+  border-radius:10px;
+  background:rgba(255,255,255,.06);
+  color:#ddd;
+  cursor:pointer;
+  overflow:hidden;
+  transition:.2s;
+}
+
+.historyItem:hover{
+  background:rgba(0,229,255,.12);
+}
+
+.historyItemTitle{
+  font-size:13px;
+  font-weight:bold;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color:#fff;
+}
+
+.historyItemSnippet{
+  margin-top:4px;
+  font-size:11px;
+  color:#91a6aa;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.historyItemTime{
+  margin-top:5px;
+  font-size:10px;
+  color:#00e5ff;
+}
+
+.historyEmpty{
+  color:#7f9295;
+  font-size:12px;
+  padding:10px 4px;
 }
 
 /* PROFILE */
 
 .profilePopup{
   position:fixed;
-  top:60px;
+  z-index:120;
+  top:78px;
   right:12px;
   width:220px;
-  background:#111;
-  border:1px solid rgba(0,255,255,.2);
+  padding:15px;
+  border:1px solid #00e5ff;
   border-radius:14px;
-  padding:14px;
-  z-index:150;
+  background:rgba(0,15,20,.98);
+  box-shadow:0 8px 30px rgba(0,0,0,.45);
   display:none;
-  box-shadow:0 10px 30px rgba(0,0,0,.5);
 }
 
 .profilePopup.show{
   display:block;
 }
 
-.profileName{
-  font-weight:bold;
-  color:#fff;
-  margin-bottom:4px;
+.profilePopup h3{
+  color:#00e5ff;
+  font-size:16px;
+  margin-bottom:8px;
 }
 
-.profileEmail{
-  color:#777;
-  font-size:12px;
-  word-break:break-all;
+.profilePopup p{
+  color:#ddd;
+  font-size:13px;
+  line-height:1.5;
+  margin-bottom:10px;
 }
 
-.logoutBtn{
+.closePopup{
   width:100%;
-  margin-top:12px;
   padding:9px;
+  border:1px solid #00e5ff;
   border-radius:9px;
-  border:1px solid rgba(255,70,70,.3);
-  background:rgba(255,70,70,.08);
-  color:#ff7777;
+  background:transparent;
+  color:#fff;
+  cursor:pointer;
 }
 
-/* LOGIN BUTTON */
-
-.loginHeaderBtn{
-  padding:9px 14px;
-  border-radius:10px;
-  border:1px solid rgba(0,255,255,.3);
-  background:rgba(0,255,255,.08);
-  color:#00ffff;
-  font-weight:bold;
-}
-
-/* LIGHT MODE */
+/* LIGHT */
 
 body.light{
-  background:#f5f5f5;
-  color:#111;
+  background:#f4fbfc;
+}
+
+body.light .videoOverlay{
+  background:rgba(235,250,252,.82);
 }
 
 body.light .header{
-  background:rgba(255,255,255,.8);
-  border-color:#ddd;
+  background:rgba(255,255,255,.88);
+  border-bottom-color:rgba(0,140,160,.25);
 }
 
-body.light .brand{
-  color:#008b8b;
-  text-shadow:none;
-}
-
-body.light .welcome h1{
+body.light .menuBtn,
+body.light .brandName{
   color:#111;
 }
 
+body.light .brandSub{
+  color:#008fa5;
+}
+
+body.light .lightBtn{
+  background:rgba(255,255,255,.9);
+  color:#111;
+}
+
+body.light .profileBtn{
+  background:rgba(220,248,250,.9);
+  color:#111;
+}
+
+body.light .welcome h1{
+  color:#008da3;
+}
+
+body.light .welcomeMessage{
+  background:rgba(255,255,255,.82);
+  color:#111;
+  border-color:rgba(0,130,150,.35);
+}
+
+body.light .bubble{
+  color:#111;
+  background:rgba(255,255,255,.8);
+}
+
+body.light .inputArea{
+  background:linear-gradient(
+    transparent,
+    rgba(245,252,253,.98) 45%
+  );
+}
+
 body.light .inputBox{
-  background:rgba(255,255,255,.94);
-  border-color:#ccc;
+  background:rgba(255,255,255,.92);
 }
 
 body.light #messageInput{
   color:#111;
 }
 
+body.light #messageInput::placeholder{
+  color:#667;
+}
+
 body.light .sidebar{
-  background:#fff;
+  background:rgba(248,253,254,.99);
   color:#111;
 }
 
-body.light .sideBtn,
+body.light .newChatBtn,
+body.light .menuItem{
+  color:#111;
+  background:rgba(220,245,247,.75);
+}
+
 body.light .historyItem{
   color:#222;
+  background:rgba(0,0,0,.05);
 }
 
-body.light .authBox{
-  background:#fff;
+body.light .historyItemTitle{
   color:#111;
 }
 
-body.light .authInput{
-  background:#f5f5f5;
-  color:#111;
+body.light .historyItemSnippet{
+  color:#667;
 }
 
-/* MOBILE */
+body.light .profilePopup{
+  background:rgba(255,255,255,.98);
+}
 
-@media(max-width:600px){
+body.light .profilePopup p{
+  color:#333;
+}
 
-  .sidebar{
-    width:85%;
-    left:-90%;
-  }
-
-  .brand{
-    font-size:19px;
-  }
+body.light .closePopup{
+  color:#111;
+}
+@media(max-width:700px){
 
   .header{
-    height:58px;
+    height:64px;
+    padding:0 9px;
+  }
+
+  .main{
+    height:calc(100dvh - 64px);
+  }
+
+  .menuBtn{
+    width:39px;
+    height:39px;
+    font-size:29px;
+  }
+
+  .robot{
+    font-size:27px;
+  }
+
+  .brandName{
+    font-size:20px;
+  }
+
+  .brandSub{
+    font-size:10px;
+  }
+
+  .lightBtn{
+    height:38px;
+    padding:0 9px;
+    font-size:12px;
+  }
+
+  .profileBtn{
+    width:38px;
+    height:38px;
+  }
+
+  .welcome{
+    height:57px;
   }
 
   .welcome h1{
-    font-size:34px;
+    font-size:25px;
   }
 
-  .messageBubble{
+  .welcomeLine{
+    width:38px;
+  }
+
+  .chat{
+    height:calc(100% - 57px);
+    padding:4px 10px 105px;
+  }
+
+  .welcomeMessage{
+    padding:17px 14px;
+    margin:10px auto;
+    font-size:15px;
+    line-height:1.55;
+  }
+
+  .welcomeMessage strong{
+    font-size:17px;
+  }
+
+  .bubble{
     max-width:88%;
+    font-size:15px;
+    padding:10px 12px;
   }
 
   .inputArea{
-    bottom:10px;
-    padding:0 8px;
+    padding:5px 8px max(7px,env(safe-area-inset-bottom));
   }
 
   .inputBox{
-    min-height:54px;
-    border-radius:17px;
-    padding:7px;
+    min-height:55px;
+    padding:4px 5px;
+    gap:3px;
   }
 
-  .iconBtn,
+  .iconBtn{
+    width:40px;
+    height:40px;
+    flex-basis:40px;
+    font-size:17px;
+  }
+
+  #messageInput{
+    height:39px;
+    font-size:15px;
+    padding:8px 4px;
+  }
+
   .sendBtn{
-    width:37px;
-    height:37px;
+    width:42px;
+    height:42px;
+    flex-basis:42px;
+    font-size:21px;
+  }
+
+  .sidebar{
+    width:270px;
+    padding-top:72px;
+  }
+
+  .profilePopup{
+    top:58px;
+    right:8px;
+    width:195px;
   }
 
 }
 
+@media(max-width:380px){
+
+  .brandName{
+    font-size:18px;
+  }
+
+  .brandSub{
+    font-size:9px;
+  }
+
+  .lightBtn{
+    padding:0 7px;
+    font-size:11px;
+  }
+
+  .profileBtn{
+    width:36px;
+    height:36px;
+  }
+
+  .iconBtn{
+    width:38px;
+    height:38px;
+    flex-basis:38px;
+  }
+
+  .sendBtn{
+    width:40px;
+    height:40px;
+    flex-basis:40px;
+  }
+
+}
+
+/* CLICK FIX */
+
+.videoOverlay,
+#bgVideo{
+  pointer-events:none !important;
+}
+
+.menuBtn,
+.lightBtn,
+.profileBtn,
+.newChatBtn,
+.menuItem,
+.iconBtn,
+.sendBtn,
+.closePopup,
+.historyItem{
+  pointer-events:auto !important;
+}
+
 </style>
+
 </head>
 
 <body>
+
+<div class="app">
 
 <video
   id="bgVideo"
@@ -720,320 +858,252 @@ body.light .authInput{
   loop
   playsinline
 >
-  <source src="background.mp4" type="video/mp4">
+  <source
+    src="background.mp4"
+    type="video/mp4"
+  >
 </video>
 
 <div class="videoOverlay"></div>
 
-<div class="app">
 
-  <!-- SIDEBAR -->
+<!-- SIDEBAR -->
 
-  <aside class="sidebar" id="sidebar">
-
-    <div class="sidebarTop">
-      <div class="logoSmall">BaatAI</div>
-
-      <button
-        class="closeSidebar"
-        id="closeSidebar"
-      >×</button>
-    </div>
-
-    <button
-      class="newChatBtn"
-      id="newChatBtn"
-    >
-      ＋ New Chat
-    </button>
-
-    <div class="historyTitle">
-      Chat History
-    </div>
-
-    <div
-      class="history"
-      id="history"
-    ></div>
-
-    <div class="sidebarBottom">
-
-      <button
-        class="sideBtn"
-        id="clearHistoryBtn"
-      >
-        🗑 Clear History
-      </button>
-
-      <button
-        class="sideBtn"
-        id="themeBtn"
-      >
-        ☀️ Light Mode
-      </button>
-
-    </div>
-
-  </aside>
-
-  <!-- MAIN -->
-
-  <main class="main">
-
-    <header class="header">
-
-      <div class="headerLeft">
-
-        <button
-          class="menuBtn"
-          id="menuBtn"
-          type="button"
-        >
-          ☰
-        </button>
-
-        <div class="brand">
-          BaatAI
-        </div>
-
-      </div>
-
-      <div id="authHeaderArea"></div>
-
-    </header>
-
-    <div class="content">
-
-      <section
-        class="welcome"
-        id="welcome"
-      >
-        <h1>
-          Welcome to <span>BaatAI</span>
-        </h1>
-      </section>
-
-      <section
-        class="chat"
-        id="chat"
-      ></section>
-
-      <div
-        class="typing"
-        id="typing"
-      >
-        BaatAI is thinking...
-      </div>
-
-    </div>
-
-    <!-- IMAGE PREVIEW -->
-
-    <div
-      class="imagePreview"
-      id="imagePreview"
-    >
-      <img
-        id="previewImage"
-        src=""
-        alt="Selected image"
-      >
-
-      <button
-        class="removeImage"
-        id="removeImage"
-        type="button"
-      >
-        ×
-      </button>
-    </div>
-
-    <!-- INPUT -->
-
-    <div class="inputArea">
-
-      <div class="inputBox">
-
-        <button
-          class="iconBtn"
-          id="cameraBtn"
-          title="Upload Image"
-          type="button"
-        >
-          📷
-        </button>
-
-        <button
-          class="iconBtn micBtn"
-          id="micBtn"
-          title="Voice Input"
-          type="button"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <rect
-              x="9"
-              y="3"
-              width="6"
-              height="11"
-              rx="3"
-            ></rect>
-
-            <path
-              d="M5 11a7 7 0 0 0 14 0"
-            ></path>
-
-            <path
-              d="M12 18v3"
-            ></path>
-
-            <path
-              d="M8 21h8"
-            ></path>
-          </svg>
-        </button>
-
-        <input
-          type="file"
-          id="imageInput"
-          accept="image/*"
-        >
-
-        <textarea
-          id="messageInput"
-          rows="1"
-          placeholder="Message BaatAI..."
-          autocomplete="off"
-        ></textarea>
-
-        <button
-          class="sendBtn"
-          id="sendBtn"
-          title="Send"
-          type="button"
-        >
-          ➤
-        </button>
-
-      </div>
-
-    </div>
-
-  </main>
-
-</div>
-
-<!-- AUTH MODAL -->
-
-<div
-  class="authOverlay"
-  id="authOverlay"
+<aside
+  class="sidebar"
+  id="sidebar"
 >
 
-  <div class="authBox">
+  <button
+    class="newChatBtn"
+    id="newChatBtn"
+  >
+    ＋ New Chat
+  </button>
 
-    <div class="authLogo">
-      BaatAI
+  <button
+    class="menuItem"
+    id="clearHistoryBtn"
+  >
+    🗑️ Clear History
+  </button>
+
+  <button
+    class="menuItem"
+    id="themeMenuBtn"
+  >
+    ☀️ Light / Dark
+  </button>
+
+  <div class="historyTitle">
+    CHATS
+  </div>
+
+  <div
+    id="historyList"
+    class="historyList"
+  ></div>
+
+</aside>
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+  <button
+    class="menuBtn"
+    id="menuBtn"
+  >
+    ☰
+  </button>
+
+  <div class="brand">
+
+    <div class="robot">
+      🤖
     </div>
 
-    <div
-      class="authTitle"
-      id="authTitle"
-    >
-      Login
+    <div>
+
+      <div class="brandName">
+        BaatAI
+      </div>
+
+      <div class="brandSub">
+        AI Study
+      </div>
+
     </div>
 
-    <div
-      class="authError"
-      id="authError"
-    ></div>
+  </div>
 
-    <div id="nameField"></div>
-
-    <input
-      class="authInput"
-      id="authEmail"
-      type="email"
-      placeholder="Email"
-      autocomplete="email"
-    >
-
-    <input
-      class="authInput"
-      id="authPassword"
-      type="password"
-      placeholder="Password"
-      autocomplete="current-password"
-    >
+  <div class="headerRight">
 
     <button
-      class="authSubmit"
-      id="authSubmit"
-      type="button"
+      class="lightBtn"
+      id="lightBtn"
     >
-      Login
+      ☀️ Light
     </button>
 
-    <div class="authSwitch">
+    <button
+      class="profileBtn"
+      id="profileBtn"
+    >
+      S
+    </button>
 
-      <span id="authSwitchText">
-        Don't have an account?
-      </span>
+  </div>
+
+</header>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+  <section class="welcome">
+
+    <div class="welcomeLine"></div>
+
+    <h1>
+      Welcome
+    </h1>
+
+    <div class="welcomeLine"></div>
+
+  </section>
+
+
+  <section
+    class="chat"
+    id="chat"
+  >
+
+    <div class="welcomeMessage">
+
+      <strong>
+        👋 Welcome to BaatAI
+      </strong>
+
+      <br><br>
+
+      Ask me anything. I can help you with
+      study, coding, ideas, stories and much more.
+
+    </div>
+
+  </section>
+
+
+  <!-- INPUT -->
+
+  <div class="inputArea">
+
+    <div class="inputBox">
 
       <button
-        id="authSwitchBtn"
-        type="button"
+        class="iconBtn"
+        id="cameraBtn"
+        title="Upload Image"
       >
-        Sign Up
+        📷
+      </button>
+
+      <button
+        class="iconBtn micBtn"
+        id="micBtn"
+        title="Voice Input"
+      >
+        🎤
+      </button>
+
+      <input
+        type="file"
+        id="imageInput"
+        accept="image/*"
+      >
+
+      <textarea
+        id="messageInput"
+        rows="1"
+        placeholder="Message BaatAI..."
+        autocomplete="off"
+      ></textarea>
+
+      <button
+        class="sendBtn"
+        id="sendBtn"
+        title="Send"
+      >
+        ➤
       </button>
 
     </div>
 
   </div>
 
-</div>
+</main>
 
-<!-- PROFILE POPUP -->
+
+<!-- PROFILE -->
 
 <div
   class="profilePopup"
   id="profilePopup"
 >
 
-  <div
-    class="profileName"
-    id="profileName"
-  ></div>
+  <h3 id="profileTitle">
+    👤 BaatAI User
+  </h3>
 
-  <div
-    class="profileEmail"
-    id="profileEmail"
-  ></div>
+  <p id="profileText">
+    Welcome to BaatAI AI Assistant.
+  </p>
 
   <button
-    class="logoutBtn"
-    id="logoutBtn"
+    class="closePopup"
+    id="closePopup"
   >
-    Logout
+    Close
   </button>
 
 </div>
 
-<script>
-  /* =========================
-   BAATAI APP - PART 2
-========================= */
 
-const sidebar =
-  document.getElementById("sidebar");
+<script>
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
 
 const menuBtn =
   document.getElementById("menuBtn");
 
-const closeSidebar =
-  document.getElementById("closeSidebar");
+const sidebar =
+  document.getElementById("sidebar");
+
+const lightBtn =
+  document.getElementById("lightBtn");
+
+const themeMenuBtn =
+  document.getElementById("themeMenuBtn");
+
+const profileBtn =
+  document.getElementById("profileBtn");
+
+const profilePopup =
+  document.getElementById("profilePopup");
+
+const profileTitle =
+  document.getElementById("profileTitle");
+
+const profileText =
+  document.getElementById("profileText");
+
+const closePopup =
+  document.getElementById("closePopup");
 
 const newChatBtn =
   document.getElementById("newChatBtn");
@@ -1041,20 +1111,11 @@ const newChatBtn =
 const clearHistoryBtn =
   document.getElementById("clearHistoryBtn");
 
-const themeBtn =
-  document.getElementById("themeBtn");
-
-const history =
-  document.getElementById("history");
-
-const welcome =
-  document.getElementById("welcome");
+const historyList =
+  document.getElementById("historyList");
 
 const chat =
   document.getElementById("chat");
-
-const typing =
-  document.getElementById("typing");
 
 const messageInput =
   document.getElementById("messageInput");
@@ -1062,190 +1123,118 @@ const messageInput =
 const sendBtn =
   document.getElementById("sendBtn");
 
+const micBtn =
+  document.getElementById("micBtn");
+
 const cameraBtn =
   document.getElementById("cameraBtn");
 
 const imageInput =
   document.getElementById("imageInput");
 
-const micBtn =
-  document.getElementById("micBtn");
-
-const imagePreview =
-  document.getElementById("imagePreview");
-
-const previewImage =
-  document.getElementById("previewImage");
-
-const removeImage =
-  document.getElementById("removeImage");
-
-const authOverlay =
-  document.getElementById("authOverlay");
-
-const authTitle =
-  document.getElementById("authTitle");
-
-const authSubmit =
-  document.getElementById("authSubmit");
-
-const authSwitchBtn =
-  document.getElementById("authSwitchBtn");
-
-const authSwitchText =
-  document.getElementById("authSwitchText");
-
-const authEmail =
-  document.getElementById("authEmail");
-
-const authPassword =
-  document.getElementById("authPassword");
-
-const authError =
-  document.getElementById("authError");
-
-const nameField =
-  document.getElementById("nameField");
-
-const authHeaderArea =
-  document.getElementById("authHeaderArea");
-
-const profilePopup =
-  document.getElementById("profilePopup");
-
-const profileName =
-  document.getElementById("profileName");
-
-const profileEmail =
-  document.getElementById("profileEmail");
-
-const logoutBtn =
-  document.getElementById("logoutBtn");
+const bgVideo =
+  document.getElementById("bgVideo");
 
 
-/* =========================
-   VARIABLES
-========================= */
+/* =====================================================
+   MENU
+===================================================== */
 
-let currentChatId =
-  null;
+menuBtn.onclick = function(e){
 
-let currentChatTitle =
-  "New Chat";
+  e.stopPropagation();
 
-let selectedImage =
-  null;
+  sidebar.classList.toggle("open");
 
-let authMode =
-  "login";
-
-let currentUser =
-  null;
-
-let isSending =
-  false;
+};
 
 
-/* =========================
-   LOCAL STORAGE
-========================= */
+/* =====================================================
+   CLOSE SIDEBAR
+===================================================== */
 
-function getLocalChats(){
+document.addEventListener(
+  "click",
+  function(e){
 
-  try{
+    if(
+      sidebar.classList.contains("open") &&
+      !sidebar.contains(e.target) &&
+      !menuBtn.contains(e.target)
+    ){
 
-    return JSON.parse(
-      localStorage.getItem(
-        "baatai_chats"
-      ) || "[]"
-    );
+      sidebar.classList.remove("open");
 
-  }catch(error){
+    }
 
-    return [];
+  }
+);
+
+
+/* =====================================================
+   THEME
+===================================================== */
+
+function updateThemeButton(){
+
+  if(
+    document.body.classList.contains("light")
+  ){
+
+    lightBtn.textContent =
+      "🌙 Dark";
+
+  }else{
+
+    lightBtn.textContent =
+      "☀️ Light";
 
   }
 
 }
 
 
-function saveLocalChats(chats){
+function toggleTheme(){
+
+  document.body.classList.toggle("light");
+
+  const theme =
+    document.body.classList.contains("light")
+      ? "light"
+      : "dark";
 
   localStorage.setItem(
-    "baatai_chats",
-    JSON.stringify(chats)
+    "baatai-theme",
+    theme
   );
 
-}
-
-
-/* =========================
-   USER SESSION
-========================= */
-
-function getSavedUser(){
-
-  try{
-
-    const user =
-      JSON.parse(
-        localStorage.getItem(
-          "baatai_user"
-        )
-      );
-
-    return user || null;
-
-  }catch(error){
-
-    return null;
-
-  }
+  updateThemeButton();
 
 }
 
 
-function saveUser(user){
-
-  currentUser =
-    user;
-
-  localStorage.setItem(
-    "baatai_user",
-    JSON.stringify(user)
+const savedTheme =
+  localStorage.getItem(
+    "baatai-theme"
   );
 
-}
+if(savedTheme === "light"){
 
-
-function removeUser(){
-
-  currentUser =
-    null;
-
-  localStorage.removeItem(
-    "baatai_user"
-  );
+  document.body.classList.add("light");
 
 }
 
+updateThemeButton();
 
-/* =========================
-   SIDEBAR
-========================= */
 
-menuBtn.onclick =
+lightBtn.onclick =
+  toggleTheme;
+
+
+themeMenuBtn.onclick =
   function(){
 
-    sidebar.classList.add(
-      "open"
-    );
-
-  };
-
-
-closeSidebar.onclick =
-  function(){
+    toggleTheme();
 
     sidebar.classList.remove(
       "open"
@@ -1254,79 +1243,494 @@ closeSidebar.onclick =
   };
 
 
-/* =========================
-   THEME
-========================= */
+/* =====================================================
+   PROFILE
+===================================================== */
 
-themeBtn.onclick =
-  function(){
+profileBtn.onclick =
+  function(e){
 
-    document.body.classList.toggle(
-      "light"
+    e.stopPropagation();
+
+    profilePopup.classList.toggle(
+      "show"
     );
-
-    const light =
-      document.body.classList.contains(
-        "light"
-      );
-
-    localStorage.setItem(
-      "baatai_theme",
-      light
-        ? "light"
-        : "dark"
-    );
-
-    themeBtn.textContent =
-      light
-        ? "🌙 Dark Mode"
-        : "☀️ Light Mode";
 
   };
 
 
-function loadTheme(){
+closePopup.onclick =
+  function(){
 
-  const theme =
-    localStorage.getItem(
-      "baatai_theme"
+    profilePopup.classList.remove(
+      "show"
     );
 
-  if(theme === "light"){
+  };
 
-    document.body.classList.add(
-      "light"
-    );
 
-    themeBtn.textContent =
-      "🌙 Dark Mode";
+document.addEventListener(
+  "click",
+  function(e){
+
+    if(
+      profilePopup.classList.contains("show") &&
+      !profilePopup.contains(e.target) &&
+      !profileBtn.contains(e.target)
+    ){
+
+      profilePopup.classList.remove(
+        "show"
+      );
+
+    }
 
   }
+);
+
+
+/* =====================================================
+   CHAT STORAGE
+===================================================== */
+
+let chats =
+  JSON.parse(
+    localStorage.getItem(
+      "baatai-chats"
+    ) || "[]"
+  );
+
+
+let currentChat = null;
+
+
+/* =====================================================
+   SAVE CHATS
+===================================================== */
+
+function saveChats(){
+
+  localStorage.setItem(
+    "baatai-chats",
+    JSON.stringify(chats)
+  );
 
 }
 
 
-/* =========================
-   NEW CHAT
-========================= */
+/* =====================================================
+   CHAT TITLE
+===================================================== */
 
-function startNewChat(){
+function makeTitle(text){
 
-  currentChatId =
-    Date.now().toString();
+  if(!text){
 
-  currentChatTitle =
-    "New Chat";
+    return "New Chat";
+
+  }
+
+  const clean =
+    text
+      .replace(/\s+/g," ")
+      .trim();
+
+  if(clean.length <= 30){
+
+    return clean;
+
+  }
+
+  return (
+    clean.substring(0,30)
+    + "..."
+  );
+
+}
+
+
+/* =====================================================
+   RELATIVE TIME
+===================================================== */
+
+function relativeTime(timestamp){
+
+  const now =
+    Date.now();
+
+  const diff =
+    Math.max(
+      0,
+      now - timestamp
+    );
+
+  const minute =
+    60 * 1000;
+
+  const hour =
+    60 * minute;
+
+  const day =
+    24 * hour;
+
+
+  if(diff < minute){
+
+    return "Just now";
+
+  }
+
+
+  if(diff < hour){
+
+    const minutes =
+      Math.floor(
+        diff / minute
+      );
+
+    return (
+      minutes +
+      (
+        minutes === 1
+          ? " minute ago"
+          : " minutes ago"
+      )
+    );
+
+  }
+
+
+  if(diff < day){
+
+    const hours =
+      Math.floor(
+        diff / hour
+      );
+
+    return (
+      hours +
+      (
+        hours === 1
+          ? " hour ago"
+          : " hours ago"
+      )
+    );
+
+  }
+
+
+  if(diff < 2 * day){
+
+    return "Yesterday";
+
+  }
+
+
+  const days =
+    Math.floor(
+      diff / day
+    );
+
+  return (
+    days +
+    " days ago"
+  );
+
+}
+
+
+/* =====================================================
+   CREATE CHAT OBJECT
+===================================================== */
+
+function createLocalChat(){
+
+  const newChat = {
+
+    id:
+      "chat_" +
+      Date.now() +
+      "_" +
+      Math.random()
+        .toString(36)
+        .substring(2,8),
+
+    title:
+      "New Chat",
+
+    createdAt:
+      Date.now(),
+
+    updatedAt:
+      Date.now(),
+
+    messages:[]
+
+  };
+
+  chats.push(
+    newChat
+  );
+
+  currentChat =
+    newChat;
+
+  saveChats();
+
+  renderHistory();
+
+  return newChat;
+
+}
+
+
+/* =====================================================
+   RENDER HISTORY
+===================================================== */
+
+function renderHistory(){
+
+  historyList.innerHTML =
+    "";
+
+  if(chats.length === 0){
+
+    historyList.innerHTML = `
+      <div class="historyEmpty">
+        No previous chats
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  const sorted =
+    chats
+      .slice()
+      .sort(
+        function(a,b){
+
+          return (
+            b.updatedAt -
+            a.updatedAt
+          );
+
+        }
+      );
+
+
+  sorted.forEach(
+    function(item){
+
+      if(
+        !item.messages ||
+        item.messages.length === 0
+      ){
+
+        return;
+
+      }
+
+
+      const lastUser =
+        item.messages
+          .filter(
+            function(m){
+
+              return m.role === "user";
+
+            }
+          )
+          .slice(-1)[0];
+
+
+      const lastMessage =
+        item.messages
+          .slice(-1)[0];
+
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+      div.className =
+        "historyItem";
+
+
+      const title =
+        document.createElement(
+          "div"
+        );
+
+      title.className =
+        "historyItemTitle";
+
+      title.textContent =
+        item.title;
+
+
+      const snippet =
+        document.createElement(
+          "div"
+        );
+
+      snippet.className =
+        "historyItemSnippet";
+
+      snippet.textContent =
+        lastMessage?.content ||
+        lastUser?.content ||
+        "";
+
+
+      const time =
+        document.createElement(
+          "div"
+        );
+
+      time.className =
+        "historyItemTime";
+
+      time.textContent =
+        relativeTime(
+          item.updatedAt
+        );
+
+
+      div.appendChild(title);
+      div.appendChild(snippet);
+      div.appendChild(time);
+
+
+      div.onclick =
+        function(){
+
+          openChat(
+            item.id
+          );
+
+        };
+
+
+      historyList.appendChild(
+        div
+      );
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   OPEN CHAT
+===================================================== */
+
+function openChat(chatId){
+
+  const found =
+    chats.find(
+      function(item){
+
+        return item.id === chatId;
+
+      }
+    );
+
+
+  if(!found){
+
+    return;
+
+  }
+
+
+  currentChat =
+    found;
+
 
   chat.innerHTML =
     "";
 
-  chat.classList.remove(
-    "show"
+
+  if(
+    !found.messages ||
+    found.messages.length === 0
+  ){
+
+    showWelcome();
+
+  }else{
+
+    found.messages.forEach(
+      function(item){
+
+        addMessage(
+          item.content,
+          item.role,
+          item.image || null,
+          false
+        );
+
+      }
+    );
+
+  }
+
+
+  sidebar.classList.remove(
+    "open"
   );
 
-  welcome.style.display =
-    "flex";
+
+  messageInput.focus();
+
+}
+
+
+/* =====================================================
+   WELCOME
+===================================================== */
+
+function showWelcome(){
+
+  chat.innerHTML = `
+
+    <div class="welcomeMessage">
+
+      <strong>
+        👋 Welcome to BaatAI
+      </strong>
+
+      <br><br>
+
+      Ask me anything. I can help you with
+      study, coding, ideas, stories and much more.
+
+    </div>
+
+  `;
+
+}
+/* =====================================================
+   NEW CHAT
+===================================================== */
+
+function startNewChat(){
+
+  currentChat =
+    createLocalChat();
+
+  showWelcome();
+
+  messageInput.value =
+    "";
+
+  messageInput.placeholder =
+    "Message BaatAI...";
 
   selectedImage =
     null;
@@ -1334,21 +1738,18 @@ function startNewChat(){
   imageInput.value =
     "";
 
-  imagePreview.classList.remove(
-    "show"
-  );
-
-  messageInput.value =
-    "";
-
-  messageInput.focus();
-
   sidebar.classList.remove(
     "open"
   );
 
+  messageInput.focus();
+
 }
 
+
+/* =====================================================
+   NEW CHAT BUTTON
+===================================================== */
 
 newChatBtn.onclick =
   function(){
@@ -1358,61 +1759,77 @@ newChatBtn.onclick =
   };
 
 
-/* =========================
+/* =====================================================
    CLEAR HISTORY
-========================= */
+===================================================== */
 
 clearHistoryBtn.onclick =
   function(){
 
-    const ok =
-      confirm(
-        "Kya aap puri chat history delete karna chahte hain?"
+    if(chats.length === 0){
+
+      sidebar.classList.remove(
+        "open"
       );
 
-    if(!ok) return;
+      return;
 
-    localStorage.removeItem(
-      "baatai_chats"
-    );
+    }
 
-    currentChatId =
+
+    const ok =
+      confirm(
+        "क्या आप सभी chat history delete करना चाहते हैं?"
+      );
+
+
+    if(!ok){
+
+      return;
+
+    }
+
+
+    chats = [];
+
+    currentChat =
       null;
 
-    currentChatTitle =
-      "New Chat";
-
-    chat.innerHTML =
-      "";
-
-    chat.classList.remove(
-      "show"
-    );
-
-    welcome.style.display =
-      "flex";
+    saveChats();
 
     renderHistory();
+
+    showWelcome();
+
+    messageInput.value =
+      "";
+
+    selectedImage =
+      null;
+
+    imageInput.value =
+      "";
+
+    messageInput.placeholder =
+      "Message BaatAI...";
+
+    sidebar.classList.remove(
+      "open"
+    );
 
   };
 
 
-/* =========================
+/* =====================================================
    ADD MESSAGE
-========================= */
+===================================================== */
 
 function addMessage(
-  role,
   text,
-  imageData = null
+  sender,
+  image,
+  scroll = true
 ){
-
-  welcome.style.display =
-    "none";
-
-  chat.classList.add(
-    "show"
-  );
 
   const message =
     document.createElement(
@@ -1420,7 +1837,9 @@ function addMessage(
     );
 
   message.className =
-    "message " + role;
+    "message " +
+    sender;
+
 
   const bubble =
     document.createElement(
@@ -1428,22 +1847,10 @@ function addMessage(
     );
 
   bubble.className =
-    "messageBubble";
+    "bubble";
 
-  if(text){
 
-    const textNode =
-      document.createTextNode(
-        text
-      );
-
-    bubble.appendChild(
-      textNode
-    );
-
-  }
-
-  if(imageData){
+  if(image){
 
     const img =
       document.createElement(
@@ -1451,16 +1858,34 @@ function addMessage(
       );
 
     img.src =
-      imageData;
+      image;
 
     img.className =
-      "messageImage";
+      "uploadedImage";
 
     bubble.appendChild(
       img
     );
 
   }
+
+
+  if(text){
+
+    const textDiv =
+      document.createElement(
+        "div"
+      );
+
+    textDiv.textContent =
+      text;
+
+    bubble.appendChild(
+      textDiv
+    );
+
+  }
+
 
   message.appendChild(
     bubble
@@ -1470,267 +1895,161 @@ function addMessage(
     message
   );
 
-  chat.scrollTop =
-    chat.scrollHeight;
 
-}
+  if(scroll){
 
+    chat.scrollTo({
 
-/* =========================
-   TYPING
-========================= */
+      top:
+        chat.scrollHeight,
 
-function showTyping(){
-
-  typing.classList.add(
-    "show"
-  );
-
-}
-
-
-function hideTyping(){
-
-  typing.classList.remove(
-    "show"
-  );
-
-}
-
-
-/* =========================
-   HISTORY
-========================= */
-
-function renderHistory(){
-
-  const chats =
-    getLocalChats();
-
-  history.innerHTML =
-    "";
-
-  chats
-    .slice()
-    .reverse()
-    .forEach(
-      function(item){
-
-        const div =
-          document.createElement(
-            "div"
-          );
-
-        div.className =
-          "historyItem";
-
-        div.textContent =
-          item.title ||
-          "New Chat";
-
-        div.onclick =
-          function(){
-
-            openLocalChat(
-              item.id
-            );
-
-          };
-
-        history.appendChild(
-          div
-        );
-
-      }
-    );
-
-}
-
-
-/* =========================
-   SAVE CURRENT CHAT
-========================= */
-
-function saveCurrentChat(){
-
-  if(!currentChatId)
-    return;
-
-  const chats =
-    getLocalChats();
-
-  const existing =
-    chats.find(
-      function(item){
-
-        return item.id ===
-          currentChatId;
-
-      }
-    );
-
-  if(existing){
-
-    existing.title =
-      currentChatTitle;
-
-    existing.messages =
-      Array.from(
-        chat.querySelectorAll(
-          ".message"
-        )
-      ).map(
-        function(message){
-
-          const role =
-            message.classList.contains(
-              "user"
-            )
-              ? "user"
-              : "assistant";
-
-          return {
-            role:role,
-            text:
-              message
-                .querySelector(
-                  ".messageBubble"
-                )
-                ?.innerText || ""
-          };
-
-        }
-      );
-
-    existing.updatedAt =
-      Date.now();
-
-  }else{
-
-    chats.push({
-
-      id:
-        currentChatId,
-
-      title:
-        currentChatTitle,
-
-      messages:
-        Array.from(
-          chat.querySelectorAll(
-            ".message"
-          )
-        ).map(
-          function(message){
-
-            const role =
-              message.classList.contains(
-                "user"
-              )
-                ? "user"
-                : "assistant";
-
-            return {
-              role:role,
-              text:
-                message
-                  .querySelector(
-                    ".messageBubble"
-                  )
-                  ?.innerText || ""
-            };
-
-          }
-        ),
-
-      updatedAt:
-        Date.now()
+      behavior:
+        "smooth"
 
     });
 
   }
 
-  saveLocalChats(
-    chats
-  );
+}
+
+
+/* =====================================================
+   SAVE CURRENT MESSAGE
+===================================================== */
+
+function saveCurrentMessage(
+  role,
+  content,
+  image
+){
+
+  if(!currentChat){
+
+    currentChat =
+      createLocalChat();
+
+  }
+
+
+  currentChat.messages.push({
+
+    role:
+      role,
+
+    content:
+      content || "",
+
+    image:
+      image || null,
+
+    time:
+      Date.now()
+
+  });
+
+
+  currentChat.updatedAt =
+    Date.now();
+
+
+  if(
+    role === "user" &&
+    currentChat.title === "New Chat" &&
+    content
+  ){
+
+    currentChat.title =
+      makeTitle(content);
+
+  }
+
+
+  saveChats();
 
   renderHistory();
 
 }
 
 
-/* =========================
-   OPEN LOCAL CHAT
-========================= */
+/* =====================================================
+   TYPING
+===================================================== */
 
-function openLocalChat(
-  id
-){
+function showTyping(){
 
-  const chats =
-    getLocalChats();
-
-  const selected =
-    chats.find(
-      function(item){
-
-        return item.id === id;
-
-      }
+  const message =
+    document.createElement(
+      "div"
     );
 
-  if(!selected)
-    return;
+  message.className =
+    "message assistant";
 
-  currentChatId =
-    selected.id;
+  message.id =
+    "typingMessage";
 
-  currentChatTitle =
-    selected.title ||
-    "New Chat";
 
-  chat.innerHTML =
-    "";
-
-  welcome.style.display =
-    "none";
-
-  chat.classList.add(
-    "show"
-  );
-
-  if(
-    Array.isArray(
-      selected.messages
-    )
-  ){
-
-    selected.messages.forEach(
-      function(message){
-
-        addMessage(
-          message.role,
-          message.text
-        );
-
-      }
+  const bubble =
+    document.createElement(
+      "div"
     );
 
-  }
+  bubble.className =
+    "bubble typing";
 
-  sidebar.classList.remove(
-    "open"
+
+  bubble.innerHTML = `
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  `;
+
+
+  message.appendChild(
+    bubble
   );
 
-  chat.scrollTop =
-    chat.scrollHeight;
+  chat.appendChild(
+    message
+  );
+
+
+  chat.scrollTo({
+
+    top:
+      chat.scrollHeight,
+
+    behavior:
+      "smooth"
+
+  });
 
 }
 
 
-/* =========================
+function hideTyping(){
+
+  const typing =
+    document.getElementById(
+      "typingMessage"
+    );
+
+  if(typing){
+
+    typing.remove();
+
+  }
+
+}
+
+
+/* =====================================================
    IMAGE UPLOAD
-========================= */
+===================================================== */
+
+let selectedImage =
+  null;
+
 
 cameraBtn.onclick =
   function(){
@@ -1746,8 +2065,12 @@ imageInput.onchange =
     const file =
       imageInput.files[0];
 
-    if(!file)
+    if(!file){
+
       return;
+
+    }
+
 
     if(
       !file.type.startsWith(
@@ -1763,23 +2086,24 @@ imageInput.onchange =
 
     }
 
+
     const reader =
       new FileReader();
 
+
     reader.onload =
-      function(event){
+      function(){
 
         selectedImage =
-          event.target.result;
+          reader.result;
 
-        previewImage.src =
-          selectedImage;
+        messageInput.placeholder =
+          "Image selected. Ask BaatAI...";
 
-        imagePreview.classList.add(
-          "show"
-        );
+        messageInput.focus();
 
       };
+
 
     reader.readAsDataURL(
       file
@@ -1788,752 +2112,101 @@ imageInput.onchange =
   };
 
 
-/* =========================
-   REMOVE IMAGE
-========================= */
-
-removeImage.onclick =
-  function(){
-
-    selectedImage =
-      null;
-
-    imageInput.value =
-      "";
-
-    previewImage.src =
-      "";
-
-    imagePreview.classList.remove(
-      "show"
-    );
-
-  };
-
-
-/* =========================
-   AUTO TEXTAREA HEIGHT
-========================= */
-
-messageInput.addEventListener(
-  "input",
-  function(){
-
-    this.style.height =
-      "auto";
-
-    this.style.height =
-      Math.min(
-        this.scrollHeight,
-        120
-      ) + "px";
-
-  }
-);
-
-
-/* =========================
-   AUTH HEADER
-========================= */
-
-function updateAuthHeader(){
-
-  authHeaderArea.innerHTML =
-    "";
-
-  if(currentUser){
-
-    const button =
-      document.createElement(
-        "button"
-      );
-
-    button.className =
-      "profileBtn";
-
-    button.type =
-      "button";
-
-    button.textContent =
-      (
-        currentUser.name ||
-        "U"
-      )
-      .charAt(0)
-      .toUpperCase();
-
-    button.onclick =
-      function(){
-
-        profilePopup.classList.toggle(
-          "show"
-        );
-
-      };
-
-    authHeaderArea.appendChild(
-      button
-    );
-
-    profileName.textContent =
-      currentUser.name ||
-      "User";
-
-    profileEmail.textContent =
-      currentUser.email ||
-      "";
-
-  }else{
-
-    const button =
-      document.createElement(
-        "button"
-      );
-
-    button.className =
-      "loginHeaderBtn";
-
-    button.type =
-      "button";
-
-    button.textContent =
-      "Login";
-
-    button.onclick =
-      function(){
-
-        openAuth(
-          "login"
-        );
-
-      };
-
-    authHeaderArea.appendChild(
-      button
-    );
-
-  }
-
-}
-
-
-/* =========================
-   AUTH MODAL
-========================= */
-
-function openAuth(
-  mode
-){
-
-  authMode =
-    mode;
-
-  authError.textContent =
-    "";
-
-  authEmail.value =
-    "";
-
-  authPassword.value =
-    "";
-
-  if(mode === "signup"){
-
-    authTitle.textContent =
-      "Create Account";
-
-    authSubmit.textContent =
-      "Sign Up";
-
-    authSwitchText.textContent =
-      "Already have an account?";
-
-    authSwitchBtn.textContent =
-      "Login";
-
-    nameField.innerHTML = `
-      <input
-        class="authInput"
-        id="authName"
-        type="text"
-        placeholder="Your Name"
-        autocomplete="name"
-      >
-    `;
-
-  }else{
-
-    authTitle.textContent =
-      "Login";
-
-    authSubmit.textContent =
-      "Login";
-
-    authSwitchText.textContent =
-      "Don't have an account?";
-
-    authSwitchBtn.textContent =
-      "Sign Up";
-
-    nameField.innerHTML =
-      "";
-
-  }
-
-  authOverlay.classList.add(
-    "show"
-  );
-
-}
-
-
-function closeAuth(){
-
-  authOverlay.classList.remove(
-    "show"
-  );
-
-  authError.textContent =
-    "";
-
-}
-
-
-/* =========================
-   LOGIN / SIGN UP SWITCH
-========================= */
-
-authSwitchBtn.onclick =
-  function(){
-
-    if(
-      authMode ===
-      "login"
-    ){
-
-      openAuth(
-        "signup"
-      );
-
-    }else{
-
-      openAuth(
-        "login"
-      );
-
-    }
-
-  };
-
-
-/* =========================
-   PROFILE / LOGOUT
-========================= */
-
-logoutBtn.onclick =
-  function(){
-
-    removeUser();
-
-    profilePopup.classList.remove(
-      "show"
-    );
-
-    updateAuthHeader();
-
-    startNewChat();
-
-  };
-
-
-document.addEventListener(
-  "click",
-  function(event){
-
-    if(
-      !profilePopup.contains(
-        event.target
-      ) &&
-      !event.target.closest(
-        ".profileBtn"
-      )
-    ){
-
-      profilePopup.classList.remove(
-        "show"
-      );
-
-    }
-
-  }
-);
-
-
-/* =========================
-   INITIAL USER
-========================= */
-
-currentUser =
-  getSavedUser();
-
-updateAuthHeader();
-
-loadTheme();
-
-renderHistory();
-  /* =========================
-   AUTH SUBMIT
-========================= */
-
-authSubmit.onclick =
-  async function(){
-
-    const email =
-      authEmail.value.trim();
-
-    const password =
-      authPassword.value.trim();
-
-    authError.textContent =
-      "";
-
-    if(!email){
-
-      authError.textContent =
-        "Email डालिए।";
-
-      return;
-
-    }
-
-    if(!password){
-
-      authError.textContent =
-        "Password डालिए।";
-
-      return;
-
-    }
-
-    if(password.length < 6){
-
-      authError.textContent =
-        "Password कम से कम 6 characters का होना चाहिए।";
-
-      return;
-
-    }
-
-
-    /* =====================
-       SIGN UP
-    ===================== */
-
-    if(authMode === "signup"){
-
-      const nameInput =
-        document.getElementById(
-          "authName"
-        );
-
-      const name =
-        nameInput
-          ? nameInput.value.trim()
-          : "";
-
-      if(!name){
-
-        authError.textContent =
-          "अपना नाम डालिए।";
-
-        return;
-
-      }
-
-      try{
-
-        authSubmit.disabled =
-          true;
-
-        authSubmit.textContent =
-          "Creating...";
-
-
-        const response =
-          await fetch(
-            "/api/signup",
-            {
-              method:"POST",
-
-              headers:{
-                "Content-Type":
-                  "application/json"
-              },
-
-              body:JSON.stringify({
-
-                name:name,
-
-                email:email,
-
-                password:password
-
-              })
-
-            }
-          );
-
-
-        const data =
-          await response.json();
-
-
-        if(!response.ok){
-
-          throw new Error(
-            data.message ||
-            data.error ||
-            "Sign Up failed."
-          );
-
-        }
-
-
-        /*
-          कुछ server signup के बाद
-          सीधे user return करते हैं,
-          कुछ नहीं।
-        */
-
-        if(data.user){
-
-          saveUser(
-            data.user
-          );
-
-          closeAuth();
-
-          updateAuthHeader();
-
-          return;
-
-        }
-
-
-        /*
-          अगर signup successful है
-          लेकिन login नहीं हुआ,
-          तो Login screen खोलें।
-        */
-
-        authError.style.color =
-          "#00ff99";
-
-        authError.textContent =
-          "Account बन गया! अब Login करें।";
-
-        setTimeout(
-          function(){
-
-            authError.style.color =
-              "#ff5555";
-
-            openAuth(
-              "login"
-            );
-
-          },
-          1000
-        );
-
-
-      }catch(error){
-
-        console.error(
-          "SIGNUP ERROR:",
-          error
-        );
-
-        authError.textContent =
-          error.message ||
-          "Sign Up में समस्या हुई।";
-
-      }finally{
-
-        authSubmit.disabled =
-          false;
-
-        authSubmit.textContent =
-          "Sign Up";
-
-      }
-
-      return;
-
-    }
-
-
-    /* =====================
-       LOGIN
-    ===================== */
-
-    try{
-
-      authSubmit.disabled =
-        true;
-
-      authSubmit.textContent =
-        "Logging in...";
-
-
-      const response =
-        await fetch(
-          "/api/login",
-          {
-            method:"POST",
-
-            headers:{
-              "Content-Type":
-                "application/json"
-            },
-
-            body:JSON.stringify({
-
-              email:email,
-
-              password:password
-
-            })
-
-          }
-        );
-
-
-      const data =
-        await response.json();
-
-
-      if(!response.ok){
-
-        throw new Error(
-          data.message ||
-          data.error ||
-          "Login failed."
-        );
-
-      }
-
-
-      /*
-        Server से user object
-        प्राप्त करें।
-      */
-
-      const user =
-        data.user ||
-        data;
-
-
-      if(
-        !user ||
-        !user.email
-      ){
-
-        throw new Error(
-          "Login response में user information नहीं मिली।"
-        );
-
-      }
-
-
-      saveUser(
-        user
-      );
-
-
-      closeAuth();
-
-      updateAuthHeader();
-
-      profilePopup.classList.remove(
-        "show"
-      );
-
-
-      /*
-        Login के बाद नया chat
-        शुरू करें।
-      */
-
-      startNewChat();
-
-
-    }catch(error){
-
-      console.error(
-        "LOGIN ERROR:",
-        error
-      );
-
-      authError.textContent =
-        error.message ||
-        "Login में समस्या हुई।";
-
-    }finally{
-
-      authSubmit.disabled =
-        false;
-
-      authSubmit.textContent =
-        authMode === "signup"
-          ? "Sign Up"
-          : "Login";
-
-    }
-
-  };
-
-
-/* =========================
-   AUTH MODAL CLOSE
-========================= */
-
-authOverlay.addEventListener(
-  "click",
-  function(event){
-
-    if(
-      event.target ===
-      authOverlay
-    ){
-
-      closeAuth();
-
-    }
-
-  }
-);
-
-
-/* =========================
-   ENTER KEY IN AUTH
-========================= */
-
-authEmail.addEventListener(
-  "keydown",
-  function(event){
-
-    if(event.key === "Enter"){
-
-      authSubmit.click();
-
-    }
-
-  }
-);
-
-
-authPassword.addEventListener(
-  "keydown",
-  function(event){
-
-    if(event.key === "Enter"){
-
-      authSubmit.click();
-
-    }
-
-  }
-);
-
-
-/* =========================
+/* =====================================================
    SEND MESSAGE
-========================= */
+===================================================== */
 
 async function sendMessage(){
 
-  if(isSending)
-    return;
-
-
   const text =
     messageInput.value.trim();
-
-
-  /*
-    Text और image दोनों खाली हैं
-    तो message send नहीं होगा।
-  */
-
-  if(
-    !text &&
-    !selectedImage
-  ){
-
-    return;
-
-  }
-
-
-  isSending =
-    true;
-
-  sendBtn.disabled =
-    true;
-
-
-  /*
-    पहली message से chat title
-    बनाना
-  */
-
-  if(
-    currentChatTitle ===
-    "New Chat"
-  ){
-
-    if(text){
-
-      currentChatTitle =
-        text.length > 35
-          ? text.substring(0,35) + "..."
-          : text;
-
-    }else{
-
-      currentChatTitle =
-        "Image Chat";
-
-    }
-
-  }
-
-
-  /*
-    User message दिखाएँ
-  */
-
-  addMessage(
-    "user",
-    text,
-    selectedImage
-  );
-
 
   const imageToSend =
     selectedImage;
 
 
-  /*
-    Input साफ करें
-  */
+  if(
+    !text &&
+    !imageToSend
+  ){
+
+    return;
+
+  }
+
+
+  /* CREATE CHAT IF NEEDED */
+
+  if(!currentChat){
+
+    currentChat =
+      createLocalChat();
+
+  }
+
+
+  /* SHOW USER MESSAGE */
+
+  addMessage(
+    text || "Image",
+    "user",
+    imageToSend
+  );
+
+
+  /* SAVE USER MESSAGE */
+
+  saveCurrentMessage(
+    "user",
+    text || "Image",
+    imageToSend
+  );
+
+
+  /* BUILD CONVERSATION BEFORE CURRENT MESSAGE */
+
+  const conversation =
+    currentChat.messages
+      .slice(
+        0,
+        -1
+      )
+      .filter(
+        function(item){
+
+          return (
+            item.role === "user" ||
+            item.role === "assistant"
+          );
+
+        }
+      )
+      .map(
+        function(item){
+
+          return {
+
+            role:
+              item.role,
+
+            content:
+              item.content
+
+          };
+
+        }
+      )
+      .slice(-20);
+
 
   messageInput.value =
     "";
 
   messageInput.style.height =
-    "auto";
+    "39px";
+
+  messageInput.placeholder =
+    "Message BaatAI...";
 
 
   selectedImage =
@@ -2542,96 +2215,38 @@ async function sendMessage(){
   imageInput.value =
     "";
 
-  previewImage.src =
-    "";
-
-  imagePreview.classList.remove(
-    "show"
-  );
-
 
   showTyping();
 
 
   try{
 
-    /*
-      Current conversation तैयार करें
-    */
-
-    const conversation =
-      Array.from(
-        chat.querySelectorAll(
-          ".message"
-        )
-      )
-      .map(
-        function(message){
-
-          const role =
-            message.classList.contains(
-              "user"
-            )
-              ? "user"
-              : "assistant";
-
-          const bubble =
-            message.querySelector(
-              ".messageBubble"
-            );
-
-          return {
-
-            role:role,
-
-            content:
-              bubble
-                ? bubble.innerText
-                : ""
-
-          };
-
-        }
-      )
-      .filter(
-        function(item){
-
-          return item.content
-            .trim()
-            .length > 0;
-
-        }
-      )
-      .slice(-20);
-
-
-    /*
-      BaatAI backend
-    */
-
     const response =
       await fetch(
         "/api/chat",
         {
-          method:"POST",
+
+          method:
+            "POST",
 
           headers:{
             "Content-Type":
               "application/json"
           },
 
-          body:JSON.stringify({
+          body:
+            JSON.stringify({
 
-            message:
-              text,
+              message:
+                text,
 
-            image:
-              imageToSend,
+              image:
+                imageToSend || null,
 
-            conversation:
-              conversation
+              conversation:
+                conversation
 
-          })
+            })
 
         }
       );
@@ -2644,21 +2259,8 @@ async function sendMessage(){
     if(!response.ok){
 
       throw new Error(
-        data.message ||
-        data.error ||
-        "AI response failed."
-      );
-
-    }
-
-
-    if(
-      !data.success
-    ){
-
-      throw new Error(
-        data.message ||
-        "AI response नहीं मिला।"
+        data?.error ||
+        "Server error"
       );
 
     }
@@ -2667,54 +2269,83 @@ async function sendMessage(){
     hideTyping();
 
 
-    /*
-      AI का जवाब
-    */
+    if(
+      data &&
+      data.success &&
+      data.reply
+    ){
 
-    addMessage(
-      "assistant",
-      data.reply ||
-      "मुझे कोई जवाब नहीं मिला।"
-    );
+      addMessage(
+        data.reply,
+        "assistant",
+        null
+      );
 
 
-    /*
-      Local history save
-    */
+      /* SAVE AI RESPONSE */
 
-    saveCurrentChat();
+      saveCurrentMessage(
+        "assistant",
+        data.reply,
+        null
+      );
+
+
+    }else{
+
+      const errorText =
+        "Sorry, mujhe response nahi mila. Please dobara try karein.";
+
+      addMessage(
+        errorText,
+        "assistant",
+        null
+      );
+
+      saveCurrentMessage(
+        "assistant",
+        errorText,
+        null
+      );
+
+    }
 
 
   }catch(error){
 
     console.error(
-      "CHAT ERROR:",
+      "BaatAI Error:",
       error
     );
 
+
     hideTyping();
 
+
+    const errorText =
+      error.message ||
+      "AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।";
+
+
     addMessage(
+      errorText,
       "assistant",
-      "AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।"
+      null
     );
 
-  }finally{
 
-    isSending =
-      false;
-
-    sendBtn.disabled =
-      false;
-
-    messageInput.focus();
+    saveCurrentMessage(
+      "assistant",
+      errorText,
+      null
+    );
 
   }
 
 }
-  /* =========================
+/* =====================================================
    SEND BUTTON
-========================= */
+===================================================== */
 
 sendBtn.onclick =
   function(){
@@ -2724,32 +2355,49 @@ sendBtn.onclick =
   };
 
 
-/* =========================
-   ENTER TO SEND
-========================= */
+/* =====================================================
+   ENTER SEND
+===================================================== */
 
-messageInput.addEventListener(
-  "keydown",
-  function(event){
+messageInput.onkeydown =
+  function(e){
 
     if(
-      event.key === "Enter" &&
-      !event.shiftKey
+      e.key === "Enter" &&
+      !e.shiftKey
     ){
 
-      event.preventDefault();
+      e.preventDefault();
 
       sendMessage();
 
     }
 
-  }
-);
+  };
 
 
-/* =========================
-   MICROPHONE
-========================= */
+/* =====================================================
+   TEXTAREA SIZE
+===================================================== */
+
+messageInput.oninput =
+  function(){
+
+    this.style.height =
+      "39px";
+
+    this.style.height =
+      Math.min(
+        this.scrollHeight,
+        100
+      ) + "px";
+
+  };
+
+
+/* =====================================================
+   MICROPHONE / VOICE INPUT
+===================================================== */
 
 let recognition =
   null;
@@ -2782,15 +2430,14 @@ if(
     "en-IN";
 
 
-  /* =====================
-     MIC START
-  ===================== */
-
   recognition.onstart =
     function(){
 
       isListening =
         true;
+
+      micBtn.textContent =
+        "🔴";
 
       micBtn.classList.add(
         "listening"
@@ -2799,16 +2446,15 @@ if(
     };
 
 
-  /* =====================
-     MIC END
-  ===================== */
-
   recognition.onend =
     function(){
 
       isListening =
         false;
 
+      micBtn.textContent =
+        "🎤";
+
       micBtn.classList.remove(
         "listening"
       );
@@ -2816,31 +2462,21 @@ if(
     };
 
 
-  /* =====================
-     MIC ERROR
-  ===================== */
-
   recognition.onerror =
-    function(event){
-
-      console.log(
-        "Microphone error:",
-        event.error
-      );
+    function(){
 
       isListening =
         false;
 
+      micBtn.textContent =
+        "🎤";
+
       micBtn.classList.remove(
         "listening"
       );
 
     };
 
-
-  /* =====================
-     SPEECH RESULT
-  ===================== */
 
   recognition.onresult =
     function(event){
@@ -2871,10 +2507,6 @@ if(
     };
 
 
-  /* =====================
-     MIC BUTTON
-  ===================== */
-
   micBtn.onclick =
     function(){
 
@@ -2882,25 +2514,24 @@ if(
 
         recognition.stop();
 
-        return;
+      }else{
 
-      }
+        try{
 
+          recognition.start();
 
-      try{
+        }catch(error){
 
-        recognition.start();
+          console.log(
+            error
+          );
 
-      }catch(error){
-
-        console.log(
-          "Mic start error:",
-          error
-        );
+        }
 
       }
 
     };
+
 
 }else{
 
@@ -2908,102 +2539,108 @@ if(
     function(){
 
       alert(
-        "Voice input आपके browser में supported नहीं है। Chrome browser में try करें।"
+        "Voice input आपके browser में supported नहीं है।"
       );
 
     };
 
 }
-  /* =========================
-   INITIALIZE BAATAI
-========================= */
+
+
+/* =====================================================
+   VIDEO
+===================================================== */
+
+bgVideo.play().catch(
+  function(error){
+
+    console.log(
+      "Video autoplay:",
+      error
+    );
+
+  }
+);
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
 
 function initializeApp(){
 
-  currentUser =
-    getSavedUser();
-
-  updateAuthHeader();
-
-  loadTheme();
-
   renderHistory();
 
-
   /*
-    अगर user logged in नहीं है,
-    तो Login button दिखाई देगा।
+    अगर कोई chat पहले से मौजूद है,
+    तो सबसे recent chat खोलेंगे।
   */
 
-  if(!currentUser){
+  if(chats.length > 0){
 
-    console.log(
-      "BaatAI: User not logged in."
-    );
+    const sorted =
+      chats
+        .slice()
+        .sort(
+          function(a,b){
+
+            return (
+              b.updatedAt -
+              a.updatedAt
+            );
+
+          }
+        );
+
+
+    const latest =
+      sorted[0];
+
+
+    if(
+      latest &&
+      latest.messages &&
+      latest.messages.length > 0
+    ){
+
+      currentChat =
+        latest;
+
+      openChat(
+        latest.id
+      );
+
+    }else{
+
+      currentChat =
+        latest ||
+        null;
+
+      showWelcome();
+
+    }
 
   }else{
 
-    console.log(
-      "BaatAI: Logged in as",
-      currentUser.name
-    );
+    showWelcome();
 
   }
 
 
-  /*
-    New Chat तैयार करें
-  */
-
-  if(!currentChatId){
-
-    startNewChat();
-
-  }
+  messageInput.focus();
 
 }
 
 
-/* =========================
-   BACKGROUND VIDEO
-========================= */
-
-const bgVideo =
-  document.getElementById(
-    "bgVideo"
-  );
+window.addEventListener(
+  "load",
+  initializeApp
+);
 
 
-if(bgVideo){
-
-  bgVideo.muted =
-    true;
-
-  bgVideo.play()
-    .catch(
-      function(error){
-
-        console.log(
-          "Background video autoplay blocked:",
-          error
-        );
-
-      }
-    );
-
-}
-
-
-/* =========================
-   INITIALIZE
-========================= */
-
-initializeApp();
-
-
-/* =========================
-   KEEP HISTORY UPDATED
-========================= */
+/* =====================================================
+   UPDATE HISTORY TIME
+===================================================== */
 
 setInterval(
   function(){
@@ -3011,38 +2648,12 @@ setInterval(
     renderHistory();
 
   },
-  5000
-);
-
-
-/* =========================
-   PAGE VISIBILITY
-========================= */
-
-document.addEventListener(
-  "visibilitychange",
-  function(){
-
-    if(
-      !document.hidden &&
-      bgVideo
-    ){
-
-      bgVideo.play()
-        .catch(
-          function(){
-
-            /* Ignore autoplay errors */
-
-          }
-        );
-
-    }
-
-  }
+  60 * 1000
 );
 
 </script>
+
+</div>
 
 </body>
 </html>
