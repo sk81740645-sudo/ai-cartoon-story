@@ -408,6 +408,23 @@ body{
   border:1px solid rgba(0,229,255,.4);
 }
 
+/* MIC */
+
+.micBtn.listening{
+  background:rgba(255,0,0,.18);
+  border-color:#ff4444;
+  color:#ff4444;
+  animation:micPulse 1s infinite;
+}
+
+@keyframes micPulse{
+
+  50%{
+    box-shadow:0 0 14px rgba(255,0,0,.5);
+  }
+
+}
+
 /* SIDEBAR */
 
 .sidebar{
@@ -553,23 +570,6 @@ body{
   cursor:pointer;
 }
 
-/* MIC */
-
-.micBtn.listening{
-  background:rgba(255,0,0,.18);
-  border-color:#ff4444;
-  color:#ff4444;
-  animation:micPulse 1s infinite;
-}
-
-@keyframes micPulse{
-
-  50%{
-    box-shadow:0 0 14px rgba(255,0,0,.5);
-  }
-
-}
-
 /* LIGHT */
 
 body.light{
@@ -673,9 +673,6 @@ body.light .profilePopup p{
 body.light .closePopup{
   color:#111;
 }
-
-/* MOBILE */
-
 @media(max-width:700px){
 
   .header{
@@ -1014,6 +1011,14 @@ body.light .closePopup{
         📷
       </button>
 
+      <button
+        class="iconBtn micBtn"
+        id="micBtn"
+        title="Voice Input"
+      >
+        🎤
+      </button>
+
       <input
         type="file"
         id="imageInput"
@@ -1027,7 +1032,7 @@ body.light .closePopup{
         autocomplete="off"
       ></textarea>
 
-<button
+      <button
         class="sendBtn"
         id="sendBtn"
         title="Send"
@@ -1710,8 +1715,6 @@ function showWelcome(){
   `;
 
 }
-
-
 /* =====================================================
    NEW CHAT
 ===================================================== */
@@ -1800,6 +1803,15 @@ clearHistoryBtn.onclick =
 
     messageInput.value =
       "";
+
+    selectedImage =
+      null;
+
+    imageInput.value =
+      "";
+
+    messageInput.placeholder =
+      "Message BaatAI...";
 
     sidebar.classList.remove(
       "open"
@@ -2032,7 +2044,7 @@ function hideTyping(){
 
 
 /* =====================================================
-   IMAGE
+   IMAGE UPLOAD
 ===================================================== */
 
 let selectedImage =
@@ -2133,17 +2145,6 @@ async function sendMessage(){
   }
 
 
-  /* SAVE USER NAME */
-
-  if(text){
-
-    saveUserNameFromMessage(
-      text
-    );
-
-  }
-
-
   /* SHOW USER MESSAGE */
 
   addMessage(
@@ -2233,11 +2234,19 @@ async function sendMessage(){
               "application/json"
           },
 
-      body: JSON.stringify({
-  message: text,
-  image: imageToSend || null,
-  conversation: conversation
-})
+          body:
+            JSON.stringify({
+
+              message:
+                text,
+
+              image:
+                imageToSend || null,
+
+              conversation:
+                conversation
+
+            })
 
         }
       );
@@ -2334,8 +2343,6 @@ async function sendMessage(){
   }
 
 }
-
-
 /* =====================================================
    SEND BUTTON
 ===================================================== */
@@ -2389,7 +2396,7 @@ messageInput.oninput =
 
 
 /* =====================================================
-   MICROPHONE
+   MICROPHONE / VOICE INPUT
 ===================================================== */
 
 let recognition =
