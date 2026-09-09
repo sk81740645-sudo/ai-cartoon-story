@@ -407,22 +407,36 @@ body{
   border-radius:13px;
   border:1px solid rgba(0,229,255,.4);
 }
+/* CHATGPT STYLE MIC */
 
-/* MIC */
+.micBtn{
+  color:#fff;
+  background:rgba(35,35,35,.85);
+  border:1px solid rgba(255,255,255,.18);
+}
+
+.micBtn svg{
+  width:21px;
+  height:21px;
+  display:block;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
 
 .micBtn.listening{
-  background:rgba(255,0,0,.18);
+  background:rgba(255,50,50,.18);
   border-color:#ff4444;
   color:#ff4444;
   animation:micPulse 1s infinite;
 }
 
 @keyframes micPulse{
-
   50%{
-    box-shadow:0 0 14px rgba(255,0,0,.5);
+    box-shadow:0 0 15px rgba(255,60,60,.55);
   }
-
 }
 
 /* SIDEBAR */
@@ -1011,13 +1025,37 @@ body.light .closePopup{
         📷
       </button>
 
-      <button
-        class="iconBtn micBtn"
-        id="micBtn"
-        title="Voice Input"
-      >
-        🎤
-      </button>
+    <button
+  class="iconBtn micBtn"
+  id="micBtn"
+  title="Voice Input"
+  type="button"
+>
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+  >
+    <rect
+      x="9"
+      y="3"
+      width="6"
+      height="11"
+      rx="3"
+    ></rect>
+
+    <path
+      d="M5 11a7 7 0 0 0 14 0"
+    ></path>
+
+    <path
+      d="M12 18v3"
+    ></path>
+
+    <path
+      d="M8 21h8"
+    ></path>
+  </svg>
+    </button>
 
       <input
         type="file"
@@ -2429,54 +2467,27 @@ if(
   recognition.lang =
     "en-IN";
 
+recognition.onstart = function(){
 
-  recognition.onstart =
-    function(){
+  isListening = true;
 
-      isListening =
-        true;
+  micBtn.classList.add("listening");
 
-      micBtn.textContent =
-        "🔴";
+};
+recognition.onend = function(){
 
-      micBtn.classList.add(
-        "listening"
-      );
+  isListening = false;
 
-    };
+  micBtn.classList.remove("listening");
 
+};
+recognition.onerror = function(){
 
-  recognition.onend =
-    function(){
+  isListening = false;
 
-      isListening =
-        false;
+  micBtn.classList.remove("listening");
 
-      micBtn.textContent =
-        "🎤";
-
-      micBtn.classList.remove(
-        "listening"
-      );
-
-    };
-
-
-  recognition.onerror =
-    function(){
-
-      isListening =
-        false;
-
-      micBtn.textContent =
-        "🎤";
-
-      micBtn.classList.remove(
-        "listening"
-      );
-
-    };
-
+};
 
   recognition.onresult =
     function(event){
