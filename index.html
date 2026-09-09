@@ -2289,9 +2289,17 @@ async function sendMessage(){
         }
       );
 
+const responseText = await response.text();
 
-    const data =
-      await response.json();
+let data;
+
+try {
+  data = JSON.parse(responseText);
+} catch (e) {
+  throw new Error(
+    responseText || `Server ने कोई valid JSON response नहीं दिया. Status: ${response.status}`
+  );
+}
 
 
     if(!response.ok){
