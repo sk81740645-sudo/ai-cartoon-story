@@ -35,14 +35,12 @@ const groq = new Groq({
 
 /* =========================
    ROBOTS
-   IMPORTANT:
-   robots route MUST be before
-   express.static()
 ========================= */
 
 app.get("/robots.txt", (req, res) => {
   res.status(200);
   res.type("text/plain");
+
   res.set(
     "Cache-Control",
     "no-store, no-cache, must-revalidate, proxy-revalidate"
@@ -61,6 +59,7 @@ Sitemap: https://baatai-ai.onrender.com/sitemap.xml`
 ========================= */
 
 app.get("/sitemap.xml", (req, res) => {
+
   res.type("application/xml");
 
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
@@ -71,6 +70,7 @@ app.get("/sitemap.xml", (req, res) => {
 </url>
 
 </urlset>`);
+
 });
 
 /* =========================
@@ -182,6 +182,7 @@ function verifyAdminToken(token) {
     return false;
 
   }
+
 }
 
 /* =========================
@@ -215,6 +216,7 @@ function getCookie(req, name) {
   }
 
   return null;
+
 }
 
 /* =========================
@@ -235,7 +237,8 @@ function requireAdmin(req, res, next) {
   ) {
 
     return res.status(401).json({
-      error: "Admin login required"
+      error:
+        "Admin login required"
     });
 
   }
@@ -252,8 +255,6 @@ async function createTables() {
 
   try {
 
-    /* USERS */
-
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -264,8 +265,6 @@ async function createTables() {
       )
     `);
 
-    /* CHATS */
-
     await pool.query(`
       CREATE TABLE IF NOT EXISTS chats (
         id SERIAL PRIMARY KEY,
@@ -275,8 +274,6 @@ async function createTables() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
-
-    /* MESSAGES */
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS messages (
@@ -290,7 +287,9 @@ async function createTables() {
       )
     `);
 
-    console.log("Database tables ready");
+    console.log(
+      "Database tables ready"
+    );
 
   } catch (error) {
 
@@ -332,19 +331,33 @@ app.get(
         "SELECT 1"
       );
 
-      res.json({
+      return res.json({
+
         status: "ok",
+
         database: "connected",
+
         message:
           "BaatAI server is running"
+
       });
 
     } catch (error) {
 
-      res.status(500).json({
+      console.error(
+        "HEALTH ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+
         status: "error",
+
         database: "not connected",
-        error: error.message
+
+        error:
+          error.message
+
       });
 
     }
@@ -381,7 +394,9 @@ app.post(
 
       }
 
-      if (password.length < 6) {
+      if (
+        password.length < 6
+      ) {
 
         return res.status(400).json({
           error:
@@ -401,7 +416,9 @@ app.post(
           [cleanEmail]
         );
 
-      if (existing.rows.length > 0) {
+      if (
+        existing.rows.length > 0
+      ) {
 
         return res.status(409).json({
           error:
@@ -429,12 +446,16 @@ app.post(
           ]
         );
 
-      res.json({
+      return res.json({
+
         success: true,
+
         message:
           "Account successfully created",
+
         user:
           result.rows[0]
+
       });
 
     } catch (error) {
@@ -444,7 +465,7 @@ app.post(
         error
       );
 
-      res.status(500).json({
+      return res.status(500).json({
         error:
           "Account बनाने में समस्या हुई।"
       });
@@ -498,7 +519,9 @@ app.post(
           [cleanEmail]
         );
 
-      if (result.rows.length === 0) {
+      if (
+        result.rows.length === 0
+      ) {
 
         return res.status(401).json({
           error:
@@ -525,7 +548,7 @@ app.post(
 
       }
 
-      res.json({
+      return res.json({
 
         success: true,
 
@@ -547,7 +570,7 @@ app.post(
         error
       );
 
-      res.status(500).json({
+      return res.status(500).json({
         error:
           "Login में समस्या हुई।"
       });
@@ -556,7 +579,6 @@ app.post(
 
   }
 );
-
 /* =========================
    ADMIN LOGIN
 ========================= */
@@ -618,8 +640,7 @@ app.post(
         createAdminToken();
 
       const secure =
-        process.env.NODE_ENV ===
-        "production"
+        process.env.NODE_ENV === "production"
           ? "; Secure"
           : "";
 
@@ -630,7 +651,7 @@ app.post(
         )}; HttpOnly; Path=/; Max-Age=86400; SameSite=Lax${secure}`
       );
 
-      res.json({
+      return res.json({
         success: true,
         message:
           "Admin login successful"
@@ -643,7 +664,7 @@ app.post(
         error
       );
 
-      res.status(500).json({
+      return res.status(500).json({
         error:
           "Admin login में समस्या हुई।"
       });
@@ -662,7 +683,7 @@ app.get(
   requireAdmin,
   (req, res) => {
 
-    res.json({
+    return res.json({
       success: true,
       admin: true
     });
@@ -692,7 +713,7 @@ app.get(
            ORDER BY created_at DESC`
         );
 
-      res.json({
+      return res.json({
         success: true,
         users:
           result.rows
@@ -705,7 +726,7 @@ app.get(
         error
       );
 
-      res.status(500).json({
+      return res.status(500).json({
         error:
           "Users की जानकारी प्राप्त नहीं हो सकी।"
       });
@@ -783,12 +804,16 @@ app.post(
 
       }
 
-      res.json({
+      return res.json({
+
         success: true,
+
         message:
           "Password successfully reset हो गया।",
+
         user:
           result.rows[0]
+
       });
 
     } catch (error) {
@@ -798,7 +823,7 @@ app.post(
         error
       );
 
-      res.status(500).json({
+      return res.status(500).json({
         error:
           "Password reset नहीं हो पाया।"
       });
@@ -821,7 +846,7 @@ app.post(
       "admin_session=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax"
     );
 
-    res.json({
+    return res.json({
       success: true,
       message:
         "Admin logout successful"
@@ -862,12 +887,11 @@ app.post(
            RETURNING *`,
           [
             userId,
-            title ||
-              "New Chat"
+            title || "New Chat"
           ]
         );
 
-      res.json({
+      return res.json({
         success: true,
         chat:
           result.rows[0]
@@ -880,7 +904,7 @@ app.post(
         error
       );
 
-      res.status(500).json({
+      return res.status(500).json({
         error:
           "Chat create नहीं हो सकी।"
       });
@@ -912,7 +936,7 @@ app.get(
           [userId]
         );
 
-      res.json({
+      return res.json({
         success: true,
         chats:
           result.rows
@@ -925,7 +949,7 @@ app.get(
         error
       );
 
-      res.status(500).json({
+      return res.status(500).json({
         error:
           "Previous chats नहीं मिल सके।"
       });
@@ -991,7 +1015,7 @@ app.get(
           ]
         );
 
-      res.json({
+      return res.json({
 
         success: true,
 
@@ -1010,7 +1034,7 @@ app.get(
         error
       );
 
-      res.status(500).json({
+      return res.status(500).json({
         error:
           "Chat खोलने में समस्या हुई।"
       });
@@ -1019,7 +1043,6 @@ app.get(
 
   }
 );
-
 /* =========================
    SAVE MESSAGE
 ========================= */
@@ -1108,7 +1131,7 @@ app.post(
         ]
       );
 
-      res.json({
+      return res.json({
         success: true,
         message:
           result.rows[0]
@@ -1121,7 +1144,7 @@ app.post(
         error
       );
 
-      res.status(500).json({
+      return res.status(500).json({
         error:
           "Message save नहीं हो पाया।"
       });
@@ -1189,7 +1212,7 @@ app.delete(
         ]
       );
 
-      res.json({
+      return res.json({
         success: true,
         message:
           "Chat delete हो गई।"
@@ -1202,7 +1225,7 @@ app.delete(
         error
       );
 
-      res.status(500).json({
+      return res.status(500).json({
         error:
           "Chat delete नहीं हो सकी।"
       });
@@ -1237,7 +1260,7 @@ app.delete(
         [userId]
       );
 
-      res.json({
+      return res.json({
         success: true,
         message:
           "All chat history deleted"
@@ -1250,7 +1273,7 @@ app.delete(
         error
       );
 
-      res.status(500).json({
+      return res.status(500).json({
         error:
           "Chat history delete नहीं हो सकी।"
       });
@@ -1262,8 +1285,7 @@ app.delete(
 
 /* =========================
    GROQ CHAT
-   TEXT + IMAGE
-   WITH CONVERSATION MEMORY
+   PART 1
 ========================= */
 
 app.post(
@@ -1278,8 +1300,10 @@ app.post(
           : "";
 
       const image =
-        req.body?.image || null;
-const message = req.body?.message;
+        typeof req.body?.image === "string"
+          ? req.body.image
+          : null;
+
       let conversation =
         Array.isArray(req.body?.conversation)
           ? req.body.conversation
@@ -1289,12 +1313,10 @@ const message = req.body?.message;
          MESSAGE CHECK
       ========================= */
 
-      if (
-        !message &&
-        !image
-      ) {
+      if (!message && !image) {
 
         return res.status(400).json({
+          success: false,
           error:
             "Message खाली है।"
         });
@@ -1312,6 +1334,7 @@ const message = req.body?.message;
         );
 
         return res.status(500).json({
+          success: false,
           error:
             "GROQ_API_KEY Render Environment में सेट नहीं है।"
         });
@@ -1330,7 +1353,8 @@ const message = req.body?.message;
               item.role === "user" ||
               item.role === "assistant"
             ) &&
-            typeof item.content === "string"
+            typeof item.content === "string" &&
+            item.content.trim()
           )
           .slice(-20);
 
@@ -1347,39 +1371,38 @@ IMPORTANT LANGUAGE RULE:
 - If the user writes in Hindi, reply in Hindi.
 - If the user writes in Hinglish, reply in Hinglish.
 - Do not change language unless the user asks you to.
+
 IMPORTANT CONVERSATION RULE:
 - Remember useful information from the current conversation.
 - Use the conversation history supplied to you as context.
 - Understand follow-up questions naturally.
 - Do not repeatedly ask for information that is already present in the conversation.
 - Never claim to remember something that is not present in the available conversation.
+
 ANSWER STYLE:
 - Be helpful and direct.
 - Keep answers easy to understand.
 - For coding questions, provide correct code and clear steps.
 - For simple questions, do not give unnecessarily long answers.
 - Be friendly and natural.
+`;
 
       /* =========================
          BUILD GROQ MESSAGES
       ========================= */
 
       const groqMessages = [
-
         {
           role: "system",
           content: systemPrompt
         }
-
       ];
 
       /* =========================
          ADD PREVIOUS CONTEXT
       ========================= */
 
-      for (
-        const item of conversation
-      ) {
+      for (const item of conversation) {
 
         groqMessages.push({
           role: item.role,
@@ -1387,8 +1410,7 @@ ANSWER STYLE:
         });
 
       }
-
-      /* =========================
+             /* =========================
          CURRENT USER MESSAGE
       ========================= */
 
@@ -1401,11 +1423,9 @@ ANSWER STYLE:
 
       if (!image) {
 
-        model =
-          "openai/gpt-oss-20b";
+        model = "openai/gpt-oss-20b";
 
-        currentContent =
-          message;
+        currentContent = message;
 
       }
 
@@ -1423,20 +1443,18 @@ ANSWER STYLE:
         if (!match) {
 
           return res.status(400).json({
+            success: false,
             error:
               "Image format सही नहीं है।"
           });
 
         }
 
-        const mimeType =
-          match[1];
+        const mimeType = match[1];
 
-        const base64Data =
-          match[2];
+        const base64Data = match[2];
 
-        model =
-          "qwen/qwen3.6-27b";
+        model = "qwen/qwen3.6-27b";
 
         currentContent = [
 
@@ -1459,18 +1477,19 @@ ANSWER STYLE:
 
       }
 
+      /* =========================
+         ADD CURRENT USER MESSAGE
+      ========================= */
+
       groqMessages.push({
         role: "user",
-        content:
-          currentContent
+        content: currentContent
       });
 
       console.log(
         "Groq request:",
         model,
-        image
-          ? "(image)"
-          : "(text)"
+        image ? "(image)" : "(text)"
       );
 
       /* =========================
@@ -1482,8 +1501,7 @@ ANSWER STYLE:
 
           model: model,
 
-          messages:
-            groqMessages,
+          messages: groqMessages,
 
           temperature: 0.7,
 
@@ -1492,7 +1510,7 @@ ANSWER STYLE:
         });
 
       /* =========================
-         GET RESPONSE
+         GET AI RESPONSE
       ========================= */
 
       const reply =
@@ -1501,7 +1519,10 @@ ANSWER STYLE:
           ?.message
           ?.content;
 
-      if (!reply) {
+      if (
+        typeof reply !== "string" ||
+        !reply.trim()
+      ) {
 
         console.error(
           "EMPTY GROQ RESPONSE:",
@@ -1509,6 +1530,7 @@ ANSWER STYLE:
         );
 
         return res.status(500).json({
+          success: false,
           error:
             "AI ने कोई जवाब नहीं दिया।"
         });
@@ -1516,10 +1538,10 @@ ANSWER STYLE:
       }
 
       /* =========================
-         RESPONSE
+         SUCCESS RESPONSE
       ========================= */
 
-      res.json({
+      return res.status(200).json({
 
         success: true,
 
@@ -1543,34 +1565,30 @@ ANSWER STYLE:
       let errorMessage =
         "AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।";
 
-      if (
-        error?.status === 401
-      ) {
+      if (error?.status === 401) {
 
         errorMessage =
           "Groq API key गलत है या valid नहीं है।";
 
-      } else if (
-        error?.status === 429
-      ) {
+      } else if (error?.status === 429) {
 
         errorMessage =
           "AI की request limit पूरी हो गई है। थोड़ी देर बाद दोबारा कोशिश करें।";
 
-      } else if (
-        error?.message
-      ) {
+      } else if (error?.status === 400) {
 
-        console.error(
-          "Groq error message:",
-          error.message
-        );
+        errorMessage =
+          "AI request सही नहीं है। Render logs में details देखें।";
 
       }
 
-      res.status(500).json({
+      return res.status(500).json({
+
+        success: false,
+
         error:
           errorMessage
+
       });
 
     }
@@ -1586,7 +1604,8 @@ app.use(
   "/api",
   (req, res) => {
 
-    res.status(404).json({
+    return res.status(404).json({
+      success: false,
       error:
         "API endpoint नहीं मिला।"
     });
@@ -1610,7 +1629,8 @@ app.use(
       return next(error);
     }
 
-    res.status(500).json({
+    return res.status(500).json({
+      success: false,
       error:
         "Server में समस्या हुई।"
     });
