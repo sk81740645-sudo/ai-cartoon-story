@@ -309,6 +309,17 @@ async function createTables() {
       )
     `);
 
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS visitor_messages (
+        id SERIAL PRIMARY KEY,
+        visitor_id TEXT NOT NULL,
+        role TEXT NOT NULL,
+        content TEXT,
+        image_data TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     console.log(
       "Database tables ready"
     );
@@ -323,7 +334,6 @@ async function createTables() {
   }
 
 }
-
 /* =========================
    HOME
 ========================= */
