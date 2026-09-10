@@ -718,7 +718,7 @@ app.get(
 ========================= */
 
 app.get(
-  "/api/admin/users",
+  "/api/admin/messages",
   requireAdmin,
   async (req, res) => {
 
@@ -727,30 +727,36 @@ app.get(
       const result =
         await pool.query(
           `SELECT
-            id,
-            name,
-            email,
-            created_at
-           FROM users
-           ORDER BY created_at DESC`
+            m.id,
+            m.user_id,
+            u.name,
+            u.email,
+            m.role,
+            m.content,
+            m.timestamp
+           FROM messages m
+           LEFT JOIN users u
+             ON m.user_id = u.id
+           ORDER BY m.timestamp DESC
+           LIMIT 500`
         );
 
       return res.json({
         success: true,
-        users:
+        messages:
           result.rows
       });
 
     } catch (error) {
 
       console.error(
-        "ADMIN USERS ERROR:",
+        "ADMIN MESSAGES ERROR:",
         error
       );
 
       return res.status(500).json({
         error:
-          "Users की जानकारी प्राप्त नहीं हो सकी।"
+          "Messages की जानकारी प्राप्त नहीं हो सकी।"
       });
 
     }
