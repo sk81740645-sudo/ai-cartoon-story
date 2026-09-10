@@ -2164,7 +2164,24 @@ async function sendMessage(){
 
   const imageToSend =
     selectedImage;
+/* =========================
+   ANONYMOUS VISITOR ID
+========================= */
 
+let visitorId =
+  localStorage.getItem("baatai-visitor-id");
+
+if (!visitorId) {
+
+  visitorId =
+    crypto.randomUUID();
+
+  localStorage.setItem(
+    "baatai-visitor-id",
+    visitorId
+  );
+
+}
 
   if(
     !text &&
@@ -2275,19 +2292,22 @@ async function sendMessage(){
               "application/json"
           },
 
-          body:
-            JSON.stringify({
+        body:
+  JSON.stringify({
 
-              message:
-                text,
+    message:
+      text,
 
-              image:
-                imageToSend || null,
+    image:
+      imageToSend || null,
 
-              conversation:
-                conversation
+    conversation:
+      conversation,
 
-            })
+    visitorId:
+      visitorId
+
+  })
 
         }
       );
