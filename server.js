@@ -724,7 +724,7 @@ app.get(
 );
 
 /* =========================
-   ADMIN USERS
+   ADMIN VISITOR MESSAGES
 ========================= */
 
 app.get(
@@ -737,17 +737,14 @@ app.get(
       const result =
         await pool.query(
           `SELECT
-            m.id,
-            m.user_id,
-            u.name,
-            u.email,
-            m.role,
-            m.content,
-            m.timestamp
-           FROM messages m
-           LEFT JOIN users u
-             ON m.user_id = u.id
-           ORDER BY m.timestamp DESC
+            id,
+            visitor_id,
+            role,
+            content,
+            image_data,
+            created_at
+           FROM visitor_messages
+           ORDER BY created_at DESC
            LIMIT 500`
         );
 
@@ -765,6 +762,7 @@ app.get(
       );
 
       return res.status(500).json({
+        success: false,
         error:
           "Messages की जानकारी प्राप्त नहीं हो सकी।"
       });
