@@ -1130,6 +1130,215 @@ profileBtn.addEventListener(
     openLogin();
   }
 );
+    /* =====================================================
+   AUTH API
+===================================================== */
+
+authSubmit.addEventListener(
+  "click",
+  async function () {
+
+    const isSignup =
+      signupTab.classList.contains("active");
+
+    const name =
+      authName.value.trim();
+
+    const email =
+      authEmail.value.trim();
+
+    const password =
+      authPassword.value;
+
+    authMessage.className =
+      "authMessage";
+
+    authMessage.textContent = "";
+
+    if (isSignup && !name) {
+
+      authMessage.textContent =
+        "Please enter your name.";
+
+      authMessage.classList.add(
+        "show",
+        "error"
+      );
+
+      return;
+    }
+
+    if (!email || !password) {
+
+      authMessage.textContent =
+        "Please enter email and password.";
+
+      authMessage.classList.add(
+        "show",
+        "error"
+      );
+
+      return;
+    }
+
+    authSubmit.disabled = true;
+
+    authSubmit.textContent =
+      isSignup
+        ? "Creating Account..."
+        : "Logging in...";
+
+    try {
+
+      const response =
+        await fetch(
+          "https://baatai-ai.onrender.com" +
+          (isSignup
+            ? "/api/signup"
+            : "/api/login"),
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify(
+              isSignup
+                ? {
+                    name,
+                    email,
+                    password
+                  }
+                : {
+                    email,
+                    password
+                  }
+            )
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Something went wrong."
+        );
+
+      }
+
+      if (data.user) {
+
+        localStorage.setItem(
+          "baatai_user",
+          JSON.stringify(data.user)
+        );
+
+      }
+
+      authMessage.textContent =
+        isSignup
+          ? "Account created successfully!"
+          : "Login successful!";
+
+      authMessage.classList.add(
+        "show",
+        "success"
+      );
+
+      setTimeout(
+        function () {
+
+          authOverlay.classList.remove(
+            "show"
+          );
+
+          authName.value = "";
+          authEmail.value = "";
+          authPassword.value = "";
+
+          updateProfileButton();
+
+        },
+        800
+      );
+
+    } catch (error) {
+
+      authMessage.textContent =
+        error.message;
+
+      authMessage.classList.add(
+        "show",
+        "error"
+      );
+
+    } finally {
+
+      authSubmit.disabled = false;
+
+      authSubmit.textContent =
+        isSignup
+          ? "Create Account"
+          : "Login";
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   UPDATE PROFILE BUTTON
+===================================================== */
+
+function updateProfileButton() {
+
+  const savedUser =
+    localStorage.getItem(
+      "baatai_user"
+    );
+
+  if (!savedUser) {
+
+    profileBtn.textContent = "S";
+
+    return;
+
+  }
+
+  try {
+
+    const user =
+      JSON.parse(savedUser);
+
+    if (user.name) {
+
+      profileBtn.textContent =
+        user.name
+          .charAt(0)
+          .toUpperCase();
+
+    }
+
+  } catch (error) {
+
+    profileBtn.textContent = "S";
+
+  }
+
+}
+
+
+/* =====================================================
+   LOAD SAVED USER
+===================================================== */
+
+updateProfileButton();
 
 </style>
 
