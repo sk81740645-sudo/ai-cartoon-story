@@ -6,16 +6,34 @@ const { Pool } = require("pg");
 const bcrypt = require("bcryptjs");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+const PORT =
+  process.env.PORT || 3000;
+
 
 /* =========================
    MIDDLEWARE
 ========================= */
+
 app.use((req, res, next) => {
-  res.header(
-    "Access-Control-Allow-Origin",
-    "https://baatai-static-web.onrender.com"
-  );
+
+  const allowedOrigin =
+    "https://baatai-static-web.onrender.com";
+
+  if (
+    req.headers.origin ===
+    allowedOrigin
+  ) {
+    res.header(
+      "Access-Control-Allow-Origin",
+      allowedOrigin
+    );
+
+    res.header(
+      "Access-Control-Allow-Credentials",
+      "true"
+    );
+  }
 
   res.header(
     "Access-Control-Allow-Methods",
@@ -27,79 +45,116 @@ app.use((req, res, next) => {
     "Content-Type, Authorization"
   );
 
-  if (req.method === "OPTIONS") {
+  if (
+    req.method === "OPTIONS"
+  ) {
     return res.sendStatus(204);
   }
 
   next();
+
 });
 
-app.use(express.json({ limit: "15mb" }));
+
+app.use(
+  express.json({
+    limit: "15mb"
+  })
+);
+
 
 /* =========================
    DATABASE
 ========================= */
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+
+  connectionString:
+    process.env.DATABASE_URL,
+
   ssl: {
     rejectUnauthorized: false
   }
+
 });
+
 
 /* =========================
    GROQ
 ========================= */
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY
-});
+const groq =
+  new Groq({
+    apiKey:
+      process.env.GROQ_API_KEY
+  });
+
 
 /* =========================
    ROBOTS
 ========================= */
 
-app.get("/robots.txt", (req, res) => {
-  res.status(200);
-  res.type("text/plain");
+app.get(
+  "/robots.txt",
+  (req, res) => {
 
-  res.set(
-    "Cache-Control",
-    "no-store, no-cache, must-revalidate, proxy-revalidate"
-  );
+    res.status(200);
 
-  res.send(
+    res.type(
+      "text/plain"
+    );
+
+    res.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+
+    res.send(
 `User-agent: *
 Allow: /
 
 Sitemap: https://baatai-ai.onrender.com/sitemap.xml`
-  );
-});
+    );
+
+  }
+);
+
 
 /* =========================
    SITEMAP
 ========================= */
 
-app.get("/sitemap.xml", (req, res) => {
+app.get(
+  "/sitemap.xml",
+  (req, res) => {
 
-  res.type("application/xml");
+    res.type(
+      "application/xml"
+    );
 
-  res.send(`<?xml version="1.0" encoding="UTF-8"?>
+    res.send(
+`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://baatai-ai.onrender.com/</loc>
 </url>
 
-</urlset>`);
+</urlset>`
+    );
 
-});
+  }
+);
+
 
 /* =========================
    STATIC FILES
 ========================= */
 
-app.use(express.static(__dirname));
+app.use(
+  express.static(__dirname)
+);
+
 
 /* =========================
    SESSION
@@ -108,14 +163,19 @@ app.use(express.static(__dirname));
 const SESSION_SECRET =
   process.env.SESSION_SECRET;
 
+
 /* =========================
-   ADMIN TOKEN
+   CREATE ADMIN TOKEN
 ========================= */
 
 function createAdminToken() {
 
   const expires =
-    Date.now() + 24 * 60 * 60 * 1000;
+    Date.now() +
+    24 *
+    60 *
+    60 *
+    1000;
 
   const data =
     `admin:${expires}`;
@@ -124,7 +184,7 @@ function createAdminToken() {
     crypto
       .createHmac(
         "sha256",
-        SESSION_SECRET || "temporary-secret"
+        SESSION_SECRET
       )
       .update(data)
       .digest("hex");
@@ -134,17 +194,23 @@ function createAdminToken() {
       `${data}:${signature}`
     )
     .toString("base64url");
+
 }
+
 
 /* =========================
    VERIFY ADMIN TOKEN
 ========================= */
 
-function verifyAdminToken(token) {
+function verifyAdminToken(
+  token
+) {
 
   try {
 
-    if (!SESSION_SECRET) {
+    if (
+      !SESSION_SECRET
+    ) {
       return false;
     }
 
@@ -159,19 +225,32 @@ function verifyAdminToken(token) {
     const parts =
       decoded.split(":");
 
-    if (parts.length !== 3) {
+    if (
+      parts.length !== 3
+    ) {
       return false;
     }
 
-    const role = parts[0];
-    const expires = Number(parts[1]);
-    const signature = parts[2];
+    const role =
+      parts[0];
 
-    if (role !== "admin") {
+    const expires =
+      Number(parts[1]);
+
+    const signature =
+      parts[2];
+
+    if (
+      role !== "admin"
+    ) {
       return false;
     }
 
-    if (!expires || Date.now() > expires) {
+    if (
+      !expires ||
+      Date.now() >
+        expires
+    ) {
       return false;
     }
 
@@ -195,8 +274,12 @@ function verifyAdminToken(token) {
     }
 
     return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature)
+      Buffer.from(
+        signature
+      ),
+      Buffer.from(
+        expectedSignature
+      )
     );
 
   } catch {
@@ -207,11 +290,15 @@ function verifyAdminToken(token) {
 
 }
 
+
 /* =========================
-   COOKIE
+   GET COOKIE
 ========================= */
 
-function getCookie(req, name) {
+function getCookie(
+  req,
+  name
+) {
 
   const cookies =
     req.headers.cookie || "";
@@ -219,7 +306,9 @@ function getCookie(req, name) {
   const parts =
     cookies.split(";");
 
-  for (const part of parts) {
+  for (
+    const part of parts
+  ) {
 
     const [
       key,
@@ -227,7 +316,9 @@ function getCookie(req, name) {
     ] =
       part.trim().split("=");
 
-    if (key === name) {
+    if (
+      key === name
+    ) {
 
       return decodeURIComponent(
         value.join("=")
@@ -241,11 +332,16 @@ function getCookie(req, name) {
 
 }
 
+
 /* =========================
    ADMIN MIDDLEWARE
 ========================= */
 
-function requireAdmin(req, res, next) {
+function requireAdmin(
+  req,
+  res,
+  next
+) {
 
   const token =
     getCookie(
@@ -255,19 +351,25 @@ function requireAdmin(req, res, next) {
 
   if (
     !token ||
-    !verifyAdminToken(token)
+    !verifyAdminToken(
+      token
+    )
   ) {
 
-    return res.status(401).json({
-      error:
-        "Admin login required"
-    });
+    return res
+      .status(401)
+      .json({
+        success: false,
+        error:
+          "Admin login required"
+      });
 
   }
 
   next();
 
 }
+
 
 /* =========================
    DATABASE TABLES
@@ -287,6 +389,7 @@ async function createTables() {
       )
     `);
 
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS chats (
         id SERIAL PRIMARY KEY,
@@ -296,6 +399,7 @@ async function createTables() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS messages (
@@ -309,6 +413,7 @@ async function createTables() {
       )
     `);
 
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS visitor_messages (
         id SERIAL PRIMARY KEY,
@@ -319,6 +424,7 @@ async function createTables() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
 
     console.log(
       "Database tables ready"
@@ -334,20 +440,26 @@ async function createTables() {
   }
 
 }
+
+
 /* =========================
    HOME
 ========================= */
 
-app.get("/", (req, res) => {
+app.get(
+  "/",
+  (req, res) => {
 
-  res.sendFile(
-    path.join(
-      __dirname,
-      "index.html"
-    )
-  );
+    res.sendFile(
+      path.join(
+        __dirname,
+        "index.html"
+      )
+    );
 
-});
+  }
+);
+
 
 /* =========================
    HEALTH
@@ -367,7 +479,8 @@ app.get(
 
         status: "ok",
 
-        database: "connected",
+        database:
+          "connected",
 
         message:
           "BaatAI server is running"
@@ -381,21 +494,25 @@ app.get(
         error
       );
 
-      return res.status(500).json({
+      return res
+        .status(500)
+        .json({
 
-        status: "error",
+          status: "error",
 
-        database: "not connected",
+          database:
+            "not connected",
 
-        error:
-          error.message
+          error:
+            error.message
 
-      });
+        });
 
     }
 
   }
 );
+
 
 /* =========================
    SIGN UP
@@ -413,51 +530,78 @@ app.post(
         password
       } = req.body;
 
+
       if (
         !name ||
         !email ||
         !password
       ) {
 
-        return res.status(400).json({
-          error:
-            "Name, Email और Password जरूरी हैं।"
-        });
+        return res
+          .status(400)
+          .json({
+
+            success: false,
+
+            error:
+              "Name, Email और Password जरूरी हैं।"
+
+          });
 
       }
+
 
       if (
         password.length < 6
       ) {
 
-        return res.status(400).json({
-          error:
-            "Password कम से कम 6 अक्षर का होना चाहिए।"
-        });
+        return res
+          .status(400)
+          .json({
+
+            success: false,
+
+            error:
+              "Password कम से कम 6 अक्षर का होना चाहिए।"
+
+          });
 
       }
+
 
       const cleanEmail =
         email
           .trim()
           .toLowerCase();
 
+
       const existing =
         await pool.query(
-          "SELECT id FROM users WHERE email = $1",
+          `SELECT id
+           FROM users
+           WHERE email = $1`,
           [cleanEmail]
         );
 
+
       if (
-        existing.rows.length > 0
+        existing.rows.length >
+        0
       ) {
 
-        return res.status(409).json({
-          error:
-            "इस Email से account पहले से मौजूद है।"
-        });
+        return res
+          .status(409)
+          .json({
+
+            success: false,
+
+            error:
+              "इस Email से account पहले से मौजूद है।"
+
+          });
 
       }
+
 
       const hashedPassword =
         await bcrypt.hash(
@@ -465,18 +609,20 @@ app.post(
           10
         );
 
+
       const result =
         await pool.query(
           `INSERT INTO users
-          (name, email, password)
-          VALUES ($1, $2, $3)
-          RETURNING id, name, email`,
+           (name, email, password)
+           VALUES ($1, $2, $3)
+           RETURNING id, name, email, created_at`,
           [
             name.trim(),
             cleanEmail,
             hashedPassword
           ]
         );
+
 
       return res.json({
 
@@ -490,6 +636,7 @@ app.post(
 
       });
 
+
     } catch (error) {
 
       console.error(
@@ -497,15 +644,22 @@ app.post(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Account बनाने में समस्या हुई।"
-      });
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Account बनाने में समस्या हुई।"
+
+        });
 
     }
 
   }
 );
+
 
 /* =========================
    LOGIN
@@ -522,48 +676,67 @@ app.post(
         password
       } = req.body;
 
+
       if (
         !email ||
         !password
       ) {
 
-        return res.status(400).json({
-          error:
-            "Email और Password डालें।"
-        });
+        return res
+          .status(400)
+          .json({
+
+            success: false,
+
+            error:
+              "Email और Password डालें।"
+
+          });
 
       }
+
 
       const cleanEmail =
         email
           .trim()
           .toLowerCase();
 
+
       const result =
         await pool.query(
           `SELECT
-            id,
-            name,
-            email,
-            password
+             id,
+             name,
+             email,
+             password
            FROM users
            WHERE email = $1`,
           [cleanEmail]
         );
 
+
       if (
-        result.rows.length === 0
+        result.rows.length ===
+        0
       ) {
 
-        return res.status(401).json({
-          error:
-            "Email या Password गलत है।"
-        });
+        return res
+          .status(401)
+          .json({
+
+            success: false,
+
+            error:
+              "Email या Password गलत है।"
+
+          });
 
       }
 
+
       const user =
         result.rows[0];
+
 
       const match =
         await bcrypt.compare(
@@ -571,14 +744,22 @@ app.post(
           user.password
         );
 
+
       if (!match) {
 
-        return res.status(401).json({
-          error:
-            "Email या Password गलत है।"
-        });
+        return res
+          .status(401)
+          .json({
+
+            success: false,
+
+            error:
+              "Email या Password गलत है।"
+
+          });
 
       }
+
 
       return res.json({
 
@@ -588,12 +769,20 @@ app.post(
           "Login successful",
 
         user: {
-          id: user.id,
-          name: user.name,
-          email: user.email
+
+          id:
+            user.id,
+
+          name:
+            user.name,
+
+          email:
+            user.email
+
         }
 
       });
+
 
     } catch (error) {
 
@@ -602,15 +791,23 @@ app.post(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Login में समस्या हुई।"
-      });
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Login में समस्या हुई।"
+
+        });
 
     }
 
   }
 );
+
+
 /* =========================
    ADMIN LOGIN
 ========================= */
@@ -626,55 +823,88 @@ app.post(
         password
       } = req.body;
 
+
       const adminEmail =
         process.env.ADMIN_EMAIL;
 
       const adminPassword =
         process.env.ADMIN_PASSWORD;
 
-      if (!SESSION_SECRET) {
 
-        return res.status(500).json({
-          error:
-            "SESSION_SECRET Render में सेट नहीं है।"
-        });
+      if (
+        !SESSION_SECRET
+      ) {
+
+        return res
+          .status(500)
+          .json({
+
+            success: false,
+
+            error:
+              "SESSION_SECRET Render में सेट नहीं है।"
+
+          });
 
       }
+
 
       if (
         !adminEmail ||
         !adminPassword
       ) {
 
-        return res.status(500).json({
-          error:
-            "ADMIN_EMAIL या ADMIN_PASSWORD Render में सेट नहीं है।"
-        });
+        return res
+          .status(500)
+          .json({
+
+            success: false,
+
+            error:
+              "ADMIN_EMAIL या ADMIN_PASSWORD Render में सेट नहीं है।"
+
+          });
 
       }
+
 
       if (
         !email ||
         !password ||
-        email.trim().toLowerCase() !==
-          adminEmail.trim().toLowerCase() ||
-        password !== adminPassword
+        email
+          .trim()
+          .toLowerCase() !==
+            adminEmail
+              .trim()
+              .toLowerCase() ||
+        password !==
+          adminPassword
       ) {
 
-        return res.status(401).json({
-          error:
-            "Admin Email या Password गलत है।"
-        });
+        return res
+          .status(401)
+          .json({
+
+            success: false,
+
+            error:
+              "Admin Email या Password गलत है।"
+
+          });
 
       }
+
 
       const token =
         createAdminToken();
 
+
       const secure =
-        process.env.NODE_ENV === "production"
+        process.env.NODE_ENV ===
+        "production"
           ? "; Secure"
           : "";
+
 
       res.setHeader(
         "Set-Cookie",
@@ -683,11 +913,16 @@ app.post(
         )}; HttpOnly; Path=/; Max-Age=86400; SameSite=Lax${secure}`
       );
 
+
       return res.json({
+
         success: true,
+
         message:
           "Admin login successful"
+
       });
+
 
     } catch (error) {
 
@@ -696,15 +931,22 @@ app.post(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Admin login में समस्या हुई।"
-      });
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Admin login में समस्या हुई।"
+
+        });
 
     }
 
   }
 );
+
 
 /* =========================
    ADMIN CHECK
@@ -716,12 +958,73 @@ app.get(
   (req, res) => {
 
     return res.json({
+
       success: true,
+
       admin: true
+
     });
 
   }
 );
+
+
+/* =========================
+   ADMIN USERS
+========================= */
+
+app.get(
+  "/api/admin/users",
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const result =
+        await pool.query(
+          `SELECT
+             id,
+             name,
+             email,
+             created_at
+           FROM users
+           ORDER BY created_at DESC`
+        );
+
+
+      return res.json({
+
+        success: true,
+
+        users:
+          result.rows
+
+      });
+
+
+    } catch (error) {
+
+      console.error(
+        "ADMIN USERS ERROR:",
+        error
+      );
+
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Users की जानकारी प्राप्त नहीं हो सकी।"
+
+        });
+
+    }
+
+  }
+);
+
 
 /* =========================
    ADMIN VISITOR MESSAGES
@@ -737,22 +1040,27 @@ app.get(
       const result =
         await pool.query(
           `SELECT
-            id,
-            visitor_id,
-            role,
-            content,
-            image_data,
-            created_at
+             id,
+             visitor_id,
+             role,
+             content,
+             image_data,
+             created_at
            FROM visitor_messages
            ORDER BY created_at DESC
            LIMIT 500`
         );
 
+
       return res.json({
+
         success: true,
+
         messages:
           result.rows
+
       });
+
 
     } catch (error) {
 
@@ -761,16 +1069,119 @@ app.get(
         error
       );
 
-      return res.status(500).json({
-        success: false,
-        error:
-          "Messages की जानकारी प्राप्त नहीं हो सकी।"
-      });
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Messages की जानकारी प्राप्त नहीं हो सकी।"
+
+        });
 
     }
 
   }
 );
+
+
+/* =========================
+   DELETE VISITOR MESSAGE
+========================= */
+
+app.delete(
+  "/api/admin/messages/:id",
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const id =
+        Number(
+          req.params.id
+        );
+
+
+      if (
+        !Number.isInteger(id) ||
+        id <= 0
+      ) {
+
+        return res
+          .status(400)
+          .json({
+
+            success: false,
+
+            error:
+              "Invalid message ID."
+
+          });
+
+      }
+
+
+      const result =
+        await pool.query(
+          `DELETE FROM visitor_messages
+           WHERE id = $1
+           RETURNING id`,
+          [id]
+        );
+
+
+      if (
+        result.rowCount === 0
+      ) {
+
+        return res
+          .status(404)
+          .json({
+
+            success: false,
+
+            error:
+              "Message नहीं मिला।"
+
+          });
+
+      }
+
+
+      return res.json({
+
+        success: true,
+
+        message:
+          "Message delete हो गया।"
+
+      });
+
+
+    } catch (error) {
+
+      console.error(
+        "DELETE MESSAGE ERROR:",
+        error
+      );
+
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Message delete नहीं हो सका।"
+
+        });
+
+    }
+
+  }
+);
+
 
 /* =========================
    ADMIN RESET PASSWORD
@@ -788,34 +1199,60 @@ app.post(
         newPassword
       } = req.body;
 
+
+      const numericUserId =
+        Number(userId);
+
+
       if (
-        !userId ||
+        !Number.isInteger(
+          numericUserId
+        ) ||
+        numericUserId <= 0 ||
         !newPassword
       ) {
 
-        return res.status(400).json({
-          error:
-            "User ID और नया Password जरूरी है।"
-        });
+        return res
+          .status(400)
+          .json({
+
+            success: false,
+
+            error:
+              "User ID और नया Password जरूरी है।"
+
+          });
 
       }
+
 
       if (
-        newPassword.length < 6
+        typeof newPassword !==
+          "string" ||
+        newPassword.length <
+          6
       ) {
 
-        return res.status(400).json({
-          error:
-            "Password कम से कम 6 अक्षर का होना चाहिए।"
-        });
+        return res
+          .status(400)
+          .json({
+
+            success: false,
+
+            error:
+              "Password कम से कम 6 अक्षर का होना चाहिए।"
+
+          });
 
       }
+
 
       const hashed =
         await bcrypt.hash(
           newPassword,
           10
         );
+
 
       const result =
         await pool.query(
@@ -825,20 +1262,29 @@ app.post(
            RETURNING id, name, email`,
           [
             hashed,
-            userId
+            numericUserId
           ]
         );
 
+
       if (
-        result.rows.length === 0
+        result.rows.length ===
+        0
       ) {
 
-        return res.status(404).json({
-          error:
-            "User नहीं मिला।"
-        });
+        return res
+          .status(404)
+          .json({
+
+            success: false,
+
+            error:
+              "User नहीं मिला।"
+
+          });
 
       }
+
 
       return res.json({
 
@@ -852,6 +1298,7 @@ app.post(
 
       });
 
+
     } catch (error) {
 
       console.error(
@@ -859,15 +1306,22 @@ app.post(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Password reset नहीं हो पाया।"
-      });
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Password reset नहीं हो पाया।"
+
+        });
 
     }
 
   }
 );
+
 
 /* =========================
    ADMIN LOGOUT
@@ -882,14 +1336,19 @@ app.post(
       "admin_session=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax"
     );
 
+
     return res.json({
+
       success: true,
+
       message:
         "Admin logout successful"
+
     });
 
   }
 );
+
 
 /* =========================
    CREATE CHAT
@@ -906,14 +1365,22 @@ app.post(
         title
       } = req.body;
 
+
       if (!userId) {
 
-        return res.status(400).json({
-          error:
-            "User ID जरूरी है।"
-        });
+        return res
+          .status(400)
+          .json({
+
+            success: false,
+
+            error:
+              "User ID जरूरी है।"
+
+          });
 
       }
+
 
       const result =
         await pool.query(
@@ -923,15 +1390,21 @@ app.post(
            RETURNING *`,
           [
             userId,
-            title || "New Chat"
+            title ||
+              "New Chat"
           ]
         );
 
+
       return res.json({
+
         success: true,
+
         chat:
           result.rows[0]
+
       });
+
 
     } catch (error) {
 
@@ -940,15 +1413,22 @@ app.post(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Chat create नहीं हो सकी।"
-      });
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Chat create नहीं हो सकी।"
+
+        });
 
     }
 
   }
 );
+
 
 /* =========================
    GET PREVIOUS CHATS
@@ -963,6 +1443,7 @@ app.get(
       const userId =
         req.params.userId;
 
+
       const result =
         await pool.query(
           `SELECT *
@@ -972,11 +1453,16 @@ app.get(
           [userId]
         );
 
+
       return res.json({
+
         success: true,
+
         chats:
           result.rows
+
       });
+
 
     } catch (error) {
 
@@ -985,15 +1471,22 @@ app.get(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Previous chats नहीं मिल सके।"
-      });
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Previous chats नहीं मिल सके।"
+
+        });
 
     }
 
   }
 );
+
 
 /* =========================
    GET CHAT MESSAGES
@@ -1010,6 +1503,7 @@ app.get(
         chatId
       } = req.params;
 
+
       const chatResult =
         await pool.query(
           `SELECT *
@@ -1022,16 +1516,25 @@ app.get(
           ]
         );
 
+
       if (
-        chatResult.rows.length === 0
+        chatResult.rows.length ===
+        0
       ) {
 
-        return res.status(404).json({
-          error:
-            "Chat नहीं मिली।"
-        });
+        return res
+          .status(404)
+          .json({
+
+            success: false,
+
+            error:
+              "Chat नहीं मिली।"
+
+          });
 
       }
+
 
       const messages =
         await pool.query(
@@ -1051,6 +1554,7 @@ app.get(
           ]
         );
 
+
       return res.json({
 
         success: true,
@@ -1063,6 +1567,7 @@ app.get(
 
       });
 
+
     } catch (error) {
 
       console.error(
@@ -1070,15 +1575,23 @@ app.get(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Chat खोलने में समस्या हुई।"
-      });
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Chat खोलने में समस्या हुई।"
+
+        });
 
     }
 
   }
 );
+
+
 /* =========================
    SAVE MESSAGE
 ========================= */
@@ -1097,20 +1610,45 @@ app.post(
         imageData
       } = req.body;
 
+
       if (
         !userId ||
         !chatId ||
         !role
       ) {
 
-        return res.status(400).json({
-          error:
-            "Message information अधूरी है।"
-        });
+        return res
+          .status(400)
+          .json({
+
+            success: false,
+
+            error:
+              "Message information अधूरी है।"
+
+          });
 
       }
 
-      /* CHECK CHAT BELONGS TO USER */
+
+      if (
+        role !== "user" &&
+        role !== "assistant"
+      ) {
+
+        return res
+          .status(400)
+          .json({
+
+            success: false,
+
+            error:
+              "Invalid message role."
+
+          });
+
+      }
+
 
       const chatCheck =
         await pool.query(
@@ -1124,16 +1662,25 @@ app.post(
           ]
         );
 
+
       if (
-        chatCheck.rows.length === 0
+        chatCheck.rows.length ===
+        0
       ) {
 
-        return res.status(403).json({
-          error:
-            "यह chat आपके account की नहीं है।"
-        });
+        return res
+          .status(403)
+          .json({
+
+            success: false,
+
+            error:
+              "यह chat आपके account की नहीं है।"
+
+          });
 
       }
+
 
       const result =
         await pool.query(
@@ -1148,7 +1695,9 @@ app.post(
            VALUES ($1,$2,$3,$4,$5)
            RETURNING *`,
           [
-            chatId,
+            userId
+              ? chatId
+              : null,
             userId,
             role,
             content || "",
@@ -1156,9 +1705,11 @@ app.post(
           ]
         );
 
+
       await pool.query(
         `UPDATE chats
-         SET updated_at = CURRENT_TIMESTAMP
+         SET updated_at =
+           CURRENT_TIMESTAMP
          WHERE id = $1
          AND user_id = $2`,
         [
@@ -1167,11 +1718,16 @@ app.post(
         ]
       );
 
+
       return res.json({
+
         success: true,
+
         message:
           result.rows[0]
+
       });
+
 
     } catch (error) {
 
@@ -1180,15 +1736,22 @@ app.post(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Message save नहीं हो पाया।"
-      });
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Message save नहीं हो पाया।"
+
+        });
 
     }
 
   }
 );
+
 
 /* =========================
    DELETE ONE CHAT
@@ -1205,6 +1768,7 @@ app.delete(
         chatId
       } = req.params;
 
+
       const chatCheck =
         await pool.query(
           `SELECT id
@@ -1217,16 +1781,25 @@ app.delete(
           ]
         );
 
+
       if (
-        chatCheck.rows.length === 0
+        chatCheck.rows.length ===
+        0
       ) {
 
-        return res.status(404).json({
-          error:
-            "Chat नहीं मिली।"
-        });
+        return res
+          .status(404)
+          .json({
+
+            success: false,
+
+            error:
+              "Chat नहीं मिली।"
+
+          });
 
       }
+
 
       await pool.query(
         `DELETE FROM messages
@@ -1238,6 +1811,7 @@ app.delete(
         ]
       );
 
+
       await pool.query(
         `DELETE FROM chats
          WHERE id = $1
@@ -1248,11 +1822,16 @@ app.delete(
         ]
       );
 
+
       return res.json({
+
         success: true,
+
         message:
           "Chat delete हो गई।"
+
       });
+
 
     } catch (error) {
 
@@ -1261,15 +1840,22 @@ app.delete(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Chat delete नहीं हो सकी।"
-      });
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Chat delete नहीं हो सकी।"
+
+        });
 
     }
 
   }
 );
+
 
 /* =========================
    DELETE ALL CHATS
@@ -1284,11 +1870,13 @@ app.delete(
       const userId =
         req.params.userId;
 
+
       await pool.query(
         `DELETE FROM messages
          WHERE user_id = $1`,
         [userId]
       );
+
 
       await pool.query(
         `DELETE FROM chats
@@ -1296,11 +1884,16 @@ app.delete(
         [userId]
       );
 
+
       return res.json({
+
         success: true,
+
         message:
           "All chat history deleted"
+
       });
+
 
     } catch (error) {
 
@@ -1309,19 +1902,25 @@ app.delete(
         error
       );
 
-      return res.status(500).json({
-        error:
-          "Chat history delete नहीं हो सकी।"
-      });
+      return res
+        .status(500)
+        .json({
+
+          success: false,
+
+          error:
+            "Chat history delete नहीं हो सकी।"
+
+        });
 
     }
 
   }
 );
 
+
 /* =========================
    GROQ CHAT
-   PART 1
 ========================= */
 
 app.post(
@@ -1329,76 +1928,132 @@ app.post(
   async (req, res) => {
 
     try {
-             const visitorId =
-        typeof req.body?.visitorId === "string" &&
+
+      /* =========================
+         VISITOR ID
+      ========================= */
+
+      const visitorId =
+        typeof req.body?.visitorId ===
+          "string" &&
         req.body.visitorId.trim()
           ? req.body.visitorId.trim()
           : crypto.randomUUID();
 
+
+      /* =========================
+         MESSAGE
+      ========================= */
+
       const message =
-        typeof req.body?.message === "string"
+        typeof req.body?.message ===
+          "string"
           ? req.body.message.trim()
           : "";
 
+
+      /* =========================
+         IMAGE
+      ========================= */
+
       const image =
-        typeof req.body?.image === "string"
+        typeof req.body?.image ===
+          "string"
           ? req.body.image
           : null;
 
-      let conversation =
-        Array.isArray(req.body?.conversation)
-          ? req.body.conversation
-          : [];
-             /* =========================
-         SAVE ANONYMOUS USER MESSAGE
+
+      /* =========================
+         CONVERSATION
       ========================= */
 
-      if (message) {
+      let conversation =
+        Array.isArray(
+          req.body?.conversation
+        )
+          ? req.body.conversation
+          : [];
 
-        await pool.query(
-          `INSERT INTO visitor_messages
-           (visitor_id, role, content)
-           VALUES ($1, $2, $3)`,
-          [
-            visitorId,
-            "user",
-            message
-          ]
-        );
-
-      }
 
       /* =========================
          MESSAGE CHECK
       ========================= */
 
-      if (!message && !image) {
+      if (
+        !message &&
+        !image
+      ) {
 
-        return res.status(400).json({
-          success: false,
-          error:
-            "Message खाली है।"
-        });
+        return res
+          .status(400)
+          .json({
+
+            success: false,
+
+            error:
+              "Message खाली है।"
+
+          });
 
       }
+
 
       /* =========================
          API KEY CHECK
       ========================= */
 
-      if (!process.env.GROQ_API_KEY) {
+      if (
+        !process.env.GROQ_API_KEY
+      ) {
 
         console.error(
           "GROQ_API_KEY missing"
         );
 
-        return res.status(500).json({
-          success: false,
-          error:
-            "GROQ_API_KEY Render Environment में सेट नहीं है।"
-        });
+        return res
+          .status(500)
+          .json({
+
+            success: false,
+
+            error:
+              "GROQ_API_KEY Render Environment में सेट नहीं है।"
+
+          });
 
       }
+
+
+      /* =========================
+         SAVE USER MESSAGE
+      ========================= */
+
+      if (message) {
+
+        try {
+
+          await pool.query(
+            `INSERT INTO visitor_messages
+             (visitor_id, role, content)
+             VALUES ($1, $2, $3)`,
+            [
+              visitorId,
+              "user",
+              message
+            ]
+          );
+
+        } catch (dbError) {
+
+          console.error(
+            "VISITOR USER MESSAGE SAVE ERROR:",
+            dbError.message
+          );
+
+        }
+
+      }
+
 
       /* =========================
          LIMIT CONVERSATION
@@ -1406,16 +2061,21 @@ app.post(
 
       conversation =
         conversation
-          .filter(item =>
-            item &&
-            (
-              item.role === "user" ||
-              item.role === "assistant"
-            ) &&
-            typeof item.content === "string" &&
-            item.content.trim()
+          .filter(
+            item =>
+              item &&
+              (
+                item.role ===
+                  "user" ||
+                item.role ===
+                  "assistant"
+              ) &&
+              typeof item.content ===
+                "string" &&
+              item.content.trim()
           )
           .slice(-20);
+
 
       /* =========================
          SYSTEM PROMPT
@@ -1446,35 +2106,52 @@ ANSWER STYLE:
 - Be friendly and natural.
 `;
 
+
       /* =========================
-         BUILD GROQ MESSAGES
+         GROQ MESSAGES
       ========================= */
 
       const groqMessages = [
+
         {
           role: "system",
-          content: systemPrompt
+          content:
+            systemPrompt
         }
+
       ];
 
+
       /* =========================
-         ADD PREVIOUS CONTEXT
+         PREVIOUS CONTEXT
       ========================= */
 
-      for (const item of conversation) {
+      for (
+        const item of
+        conversation
+      ) {
 
         groqMessages.push({
-          role: item.role,
-          content: item.content
+
+          role:
+            item.role,
+
+          content:
+            item.content
+
         });
 
       }
-             /* =========================
-         CURRENT USER MESSAGE
+
+
+      /* =========================
+         CURRENT MESSAGE
       ========================= */
 
       let model;
+
       let currentContent;
+
 
       /* =========================
          TEXT ONLY
@@ -1482,11 +2159,14 @@ ANSWER STYLE:
 
       if (!image) {
 
-        model = "openai/gpt-oss-20b";
+        model =
+          "openai/gpt-oss-20b";
 
-        currentContent = message;
+        currentContent =
+          message;
 
       }
+
 
       /* =========================
          IMAGE + TEXT
@@ -1499,57 +2179,89 @@ ANSWER STYLE:
             /^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/
           );
 
+
         if (!match) {
 
-          return res.status(400).json({
-            success: false,
-            error:
-              "Image format सही नहीं है।"
-          });
+          return res
+            .status(400)
+            .json({
+
+              success: false,
+
+              error:
+                "Image format सही नहीं है।"
+
+            });
 
         }
 
-        const mimeType = match[1];
 
-        const base64Data = match[2];
+        const mimeType =
+          match[1];
 
-        model = "qwen/qwen3.6-27b";
+
+        const base64Data =
+          match[2];
+
+
+        model =
+          "qwen/qwen3.6-27b";
+
 
         currentContent = [
 
           {
+
             type: "text",
+
             text:
               message ||
               "इस image को ध्यान से देखकर बताइए इसमें क्या है।"
+
           },
 
           {
-            type: "image_url",
+
+            type:
+              "image_url",
+
             image_url: {
+
               url:
                 `data:${mimeType};base64,${base64Data}`
+
             }
+
           }
 
         ];
 
       }
 
+
       /* =========================
-         ADD CURRENT USER MESSAGE
+         CURRENT USER MESSAGE
       ========================= */
 
       groqMessages.push({
-        role: "user",
-        content: currentContent
+
+        role:
+          "user",
+
+        content:
+          currentContent
+
       });
+
 
       console.log(
         "Groq request:",
         model,
-        image ? "(image)" : "(text)"
+        image
+          ? "(image)"
+          : "(text)"
       );
+
 
       /* =========================
          GROQ REQUEST
@@ -1558,85 +2270,113 @@ ANSWER STYLE:
       const completion =
         await groq.chat.completions.create({
 
-          model: model,
+          model:
 
-          messages: groqMessages,
+            model,
 
-          temperature: 0.7,
+          messages:
 
-          max_tokens: 2048
+            groqMessages,
+
+          temperature:
+            0.7,
+
+          max_tokens:
+            2048
 
         });
 
-/* =========================
-   GET AI RESPONSE
-========================= */
 
-const reply =
-  completion
-    ?.choices?.[0]
-    ?.message
-    ?.content;
-
-
-/* =========================
-   SAVE AI RESPONSE
-========================= */
-
-if (
-  typeof reply === "string" &&
-  reply.trim()
-) {
-
-  await pool.query(
-    `INSERT INTO visitor_messages
-     (visitor_id, role, content)
-     VALUES ($1, $2, $3)`,
-    [
-      visitorId,
-      "assistant",
-      reply.trim()
-    ]
-  );
-
-}
-
-
-if (
-  typeof reply !== "string" ||
-  !reply.trim()
-) {
-
-  console.error(
-    "EMPTY GROQ RESPONSE:",
-    completion
-  );
-
-  return res.status(500).json({
-    success: false,
-    error:
-      "AI ने कोई जवाब नहीं दिया।"
-  });
-
-}
-       
       /* =========================
-         SUCCESS RESPONSE
+         GET AI RESPONSE
       ========================= */
 
-      return res.status(200).json({
+      const reply =
+        completion
+          ?.choices?.[0]
+          ?.message
+          ?.content;
 
-        success: true,
 
-        reply:
-          reply.trim(),
+      /* =========================
+         CHECK RESPONSE
+      ========================= */
 
-        model,
+      if (
+        typeof reply !==
+          "string" ||
+        !reply.trim()
+      ) {
 
-        hasImage:
-          Boolean(image)
+        console.error(
+          "EMPTY GROQ RESPONSE:",
+          completion
+        );
 
-      });
+
+        return res
+          .status(500)
+          .json({
+
+            success: false,
+
+            error:
+              "AI ने कोई जवाब नहीं दिया।"
+
+          });
+
+      }
+
+
+      /* =========================
+         SAVE AI RESPONSE
+      ========================= */
+
+      try {
+
+        await pool.query(
+          `INSERT INTO visitor_messages
+           (visitor_id, role, content)
+           VALUES ($1, $2, $3)`,
+          [
+            visitorId,
+            "assistant",
+            reply.trim()
+          ]
+        );
+
+      } catch (dbError) {
+
+        console.error(
+          "VISITOR AI MESSAGE SAVE ERROR:",
+          dbError.message
+        );
+
+      }
+
+
+      /* =========================
+         SUCCESS
+      ========================= */
+
+      return res
+        .status(200)
+        .json({
+
+          success: true,
+
+          reply:
+            reply.trim(),
+
+          model:
+
+            model,
+
+          hasImage:
+            Boolean(image)
+
+        });
+
 
     } catch (error) {
 
@@ -1645,39 +2385,58 @@ if (
         error
       );
 
+
       let errorMessage =
         "AI से जवाब लेने में समस्या हुई। कृपया दोबारा कोशिश करें।";
 
-      if (error?.status === 401) {
+
+      if (
+        error?.status ===
+        401
+      ) {
 
         errorMessage =
           "Groq API key गलत है या valid नहीं है।";
 
-      } else if (error?.status === 429) {
+      }
+
+      else if (
+        error?.status ===
+        429
+      ) {
 
         errorMessage =
           "AI की request limit पूरी हो गई है। थोड़ी देर बाद दोबारा कोशिश करें।";
 
-      } else if (error?.status === 400) {
+      }
+
+      else if (
+        error?.status ===
+        400
+      ) {
 
         errorMessage =
           "AI request सही नहीं है। Render logs में details देखें।";
 
       }
 
-      return res.status(500).json({
 
-        success: false,
+      return res
+        .status(500)
+        .json({
 
-        error:
-          errorMessage
+          success: false,
 
-      });
+          error:
+            errorMessage
+
+        });
 
     }
 
   }
 );
+
 
 /* =========================
    404 API
@@ -1687,39 +2446,64 @@ app.use(
   "/api",
   (req, res) => {
 
-    return res.status(404).json({
-      success: false,
-      error:
-        "API endpoint नहीं मिला।"
-    });
+    return res
+      .status(404)
+      .json({
+
+        success: false,
+
+        error:
+          "API endpoint नहीं मिला।"
+
+      });
 
   }
 );
+
 
 /* =========================
    ERROR HANDLER
 ========================= */
 
 app.use(
-  (error, req, res, next) => {
+  (
+    error,
+    req,
+    res,
+    next
+  ) => {
 
     console.error(
       "SERVER ERROR:",
       error
     );
 
-    if (res.headersSent) {
-      return next(error);
+
+    if (
+      res.headersSent
+    ) {
+
+      return next(
+        error
+      );
+
     }
 
-    return res.status(500).json({
-      success: false,
-      error:
-        "Server में समस्या हुई।"
-    });
+
+    return res
+      .status(500)
+      .json({
+
+        success: false,
+
+        error:
+          "Server में समस्या हुई।"
+
+      });
 
   }
 );
+
 
 /* =========================
    START SERVER
@@ -1728,6 +2512,7 @@ app.use(
 async function startServer() {
 
   await createTables();
+
 
   app.listen(
     PORT,
@@ -1742,5 +2527,6 @@ async function startServer() {
   );
 
 }
+
 
 startServer();
