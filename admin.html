@@ -218,11 +218,11 @@
 
         <div>
 
-          <h1>👥 BaatAI Users</h1>
+          <h1>💬 BaatAI Messages</h1>
 
-          <p class="subtitle">
-            Registered users
-          </p>
+<p class="subtitle">
+  Visitor questions and AI replies
+</p>
 
         </div>
 
@@ -255,17 +255,15 @@
           <thead>
 
             <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Created</th>
-              <th>Action</th>
-            </tr>
-
+  <th>ID</th>
+  <th>Visitor ID</th>
+  <th>Role</th>
+  <th>Message</th>
+  <th>Time</th>
+</tr>
           </thead>
-
-          <tbody id="usersTable">
-          </tbody>
+<tbody id="messagesTable">
+</tbody>
 
         </table>
 
@@ -362,7 +360,7 @@
           .style.display = "block";
 
 
-        loadUsers();
+        loadMessages();
 
 
       } catch (error) {
@@ -376,135 +374,122 @@
       }
 
     }
+/* =========================
+   LOAD VISITOR MESSAGES
+========================= */
 
+async function loadMessages() {
 
-    /* =========================
-       LOAD USERS
-    ========================= */
+  const table =
+    document.getElementById(
+      "messagesTable"
+    );
 
-    async function loadUsers() {
+  const count =
+    document.getElementById(
+      "userCount"
+    );
 
-      const table =
-        document.getElementById(
-          "usersTable"
-        );
+  try {
 
-
-      const count =
-        document.getElementById(
-          "userCount"
-        );
-
-
-      try {
-
-        const response =
-          await fetch(
-            "/api/admin/users",
-            {
-              credentials: "include"
-            }
-          );
-
-
-        const data =
-          await response.json();
-
-
-        if (!response.ok) {
-
-          throw new Error(
-            data.error ||
-            "Users load नहीं हुए।"
-          );
-
+    const response =
+      await fetch(
+        "/api/admin/messages",
+        {
+          credentials: "include"
         }
+      );
 
+    const data =
+      await response.json();
 
-        table.innerHTML = "";
+    if (!response.ok) {
 
-
-        count.textContent =
-          "Users: " +
-          data.users.length;
-
-
-        if (data.users.length === 0) {
-
-          table.innerHTML = `
-            <tr>
-              <td colspan="5">
-                अभी कोई user नहीं है।
-              </td>
-            </tr>
-          `;
-
-          return;
-        }
-
-
-        data.users.forEach(user => {
-
-          const row =
-            document.createElement("tr");
-
-
-          const date =
-            new Date(
-              user.created_at
-            ).toLocaleString("hi-IN");
-
-
-          row.innerHTML = `
-
-            <td>
-              ${escapeHtml(user.id)}
-            </td>
-
-            <td>
-              ${escapeHtml(user.name)}
-            </td>
-
-            <td>
-              ${escapeHtml(user.email)}
-            </td>
-
-            <td>
-              ${escapeHtml(date)}
-            </td>
-
-            <td class="action-cell">
-
-              <button
-                class="reset-btn"
-                onclick="resetPassword(
-                  ${Number(user.id)},
-                  '${escapeJs(user.name)}',
-                  '${escapeJs(user.email)}'
-                )">
-                🔑 Reset Password
-              </button>
-
-            </td>
-
-          `;
-
-
-          table.appendChild(row);
-
-        });
-
-
-      } catch (error) {
-
-        showDashboardMessage(
-          error.message,
-          "error"
-        );
-
-      }
+      throw new Error(
+        data.error ||
+        "Messages load नहीं हुए।"
+      );
 
     }
+
+    table.innerHTML = "";
+
+    count.textContent =
+      "Messages: " +
+      data.messages.length;
+
+    if (
+      data.messages.length === 0
+    ) {
+
+      table.innerHTML = `
+        <tr>
+          <td colspan="5">
+            अभी कोई message नहीं है।
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+    data.messages.forEach(
+      message => {
+
+        const row =
+          document.createElement("tr");
+
+        const date =
+          new Date(
+            message.created_at
+          ).toLocaleString("hi-IN");
+
+        row.innerHTML = `
+
+          <td>
+            ${escapeHtml(message.id)}
+          </td>
+
+          <td>
+            ${escapeHtml(message.visitor_id)}
+          </td>
+
+          <td>
+            ${escapeHtml(message.role)}
+          </td>
+
+          <td style="
+            white-space:pre-wrap;
+            min-width:300px;
+            max-width:500px;
+          ">
+            ${escapeHtml(
+              message.content || "Image"
+            )}
+          </td>
+
+          <td>
+            ${escapeHtml(date)}
+          </td>
+
+        `;
+
+        table.appendChild(row);
+
+      }
+    );
+
+  } catch (error) {
+
+    showDashboardMessage(
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
 
 
     /* =========================
