@@ -1570,34 +1570,58 @@ ANSWER STYLE:
 
         });
 
-      /* =========================
-         GET AI RESPONSE
-      ========================= */
+/* =========================
+   GET AI RESPONSE
+========================= */
 
-      const reply =
-        completion
-          ?.choices?.[0]
-          ?.message
-          ?.content;
+const reply =
+  completion
+    ?.choices?.[0]
+    ?.message
+    ?.content;
 
-      if (
-        typeof reply !== "string" ||
-        !reply.trim()
-      ) {
 
-        console.error(
-          "EMPTY GROQ RESPONSE:",
-          completion
-        );
+/* =========================
+   SAVE AI RESPONSE
+========================= */
 
-        return res.status(500).json({
-          success: false,
-          error:
-            "AI ने कोई जवाब नहीं दिया।"
-        });
+if (
+  typeof reply === "string" &&
+  reply.trim()
+) {
 
-      }
+  await pool.query(
+    `INSERT INTO visitor_messages
+     (visitor_id, role, content)
+     VALUES ($1, $2, $3)`,
+    [
+      visitorId,
+      "assistant",
+      reply.trim()
+    ]
+  );
 
+}
+
+
+if (
+  typeof reply !== "string" ||
+  !reply.trim()
+) {
+
+  console.error(
+    "EMPTY GROQ RESPONSE:",
+    completion
+  );
+
+  return res.status(500).json({
+    success: false,
+    error:
+      "AI ने कोई जवाब नहीं दिया।"
+  });
+
+}
+       
       /* =========================
          SUCCESS RESPONSE
       ========================= */
