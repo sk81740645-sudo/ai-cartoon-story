@@ -1331,6 +1331,11 @@ app.post(
   async (req, res) => {
 
     try {
+             const visitorId =
+        typeof req.body?.visitorId === "string" &&
+        req.body.visitorId.trim()
+          ? req.body.visitorId.trim()
+          : crypto.randomUUID();
 
       const message =
         typeof req.body?.message === "string"
@@ -1346,6 +1351,24 @@ app.post(
         Array.isArray(req.body?.conversation)
           ? req.body.conversation
           : [];
+             /* =========================
+         SAVE ANONYMOUS USER MESSAGE
+      ========================= */
+
+      if (message) {
+
+        await pool.query(
+          `INSERT INTO visitor_messages
+           (visitor_id, role, content)
+           VALUES ($1, $2, $3)`,
+          [
+            visitorId,
+            "user",
+            message
+          ]
+        );
+
+      }
 
       /* =========================
          MESSAGE CHECK
