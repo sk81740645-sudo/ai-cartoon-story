@@ -861,6 +861,275 @@ body.light .closePopup{
 .historyItem{
   pointer-events:auto !important;
 }
+  /* =====================================================
+   LOGIN / SIGN UP
+===================================================== */
+
+.authOverlay{
+  position:fixed;
+  inset:0;
+  z-index:200;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(8px);
+}
+
+.authOverlay.show{
+  display:flex;
+}
+
+.authBox{
+  width:100%;
+  max-width:390px;
+  padding:25px;
+  border:1px solid #00e5ff;
+  border-radius:22px;
+  background:rgba(0,18,24,.97);
+  box-shadow:0 0 35px rgba(0,229,255,.18);
+}
+
+.authLogo{
+  text-align:center;
+  margin-bottom:8px;
+  font-size:38px;
+}
+
+.authTitle{
+  text-align:center;
+  color:#fff;
+  font-size:25px;
+  font-weight:bold;
+}
+
+.authSubtitle{
+  text-align:center;
+  color:#91a6aa;
+  font-size:13px;
+  margin:7px 0 20px;
+}
+
+.authTabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:18px;
+}
+
+.authTab{
+  flex:1;
+  padding:11px;
+  border:1px solid rgba(0,229,255,.4);
+  border-radius:10px;
+  background:rgba(0,40,48,.7);
+  color:#fff;
+  cursor:pointer;
+}
+
+.authTab.active{
+  background:#00e5ff;
+  color:#001014;
+  font-weight:bold;
+}
+
+.authInput{
+  width:100%;
+  height:46px;
+  margin-bottom:12px;
+  padding:0 13px;
+  border:1px solid rgba(0,229,255,.4);
+  border-radius:10px;
+  outline:none;
+  background:rgba(0,8,12,.8);
+  color:#fff;
+  font-size:15px;
+}
+
+.authInput::placeholder{
+  color:#819397;
+}
+
+.authSubmit{
+  width:100%;
+  height:47px;
+  border:0;
+  border-radius:11px;
+  background:#00e5ff;
+  color:#001014;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.authClose{
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  border:1px solid rgba(0,229,255,.4);
+  border-radius:10px;
+  background:transparent;
+  color:#fff;
+  cursor:pointer;
+}
+
+.authMessage{
+  display:none;
+  margin-bottom:12px;
+  padding:10px;
+  border-radius:9px;
+  font-size:13px;
+  text-align:center;
+}
+
+.authMessage.show{
+  display:block;
+}
+
+.authMessage.error{
+  background:rgba(255,60,60,.15);
+  color:#ff8585;
+}
+
+.authMessage.success{
+  background:rgba(0,255,150,.12);
+  color:#6fffc0;
+}
+
+body.light .authBox{
+  background:rgba(255,255,255,.98);
+}
+
+body.light .authTitle{
+  color:#111;
+}
+
+body.light .authInput{
+  background:#fff;
+  color:#111;
+}
+
+body.light .authClose{
+  color:#111;
+}
+  /* =====================================================
+   LOGIN / SIGN UP UI
+===================================================== */
+
+const authOverlay =
+  document.getElementById("authOverlay");
+
+const loginTab =
+  document.getElementById("loginTab");
+
+const signupTab =
+  document.getElementById("signupTab");
+
+const authName =
+  document.getElementById("authName");
+
+const authSubmit =
+  document.getElementById("authSubmit");
+
+const authClose =
+  document.getElementById("authClose");
+
+const authMessage =
+  document.getElementById("authMessage");
+
+
+/* =========================
+   OPEN LOGIN
+========================= */
+
+function openLogin() {
+
+  authOverlay.classList.add("show");
+
+  loginTab.classList.add("active");
+  signupTab.classList.remove("active");
+
+  authName.style.display = "none";
+
+  authSubmit.textContent = "Login";
+
+  authMessage.className =
+    "authMessage";
+
+  authMessage.textContent = "";
+
+}
+
+
+/* =========================
+   LOGIN TAB
+========================= */
+
+loginTab.addEventListener(
+  "click",
+  function () {
+
+    loginTab.classList.add("active");
+    signupTab.classList.remove("active");
+
+    authName.style.display = "none";
+
+    authSubmit.textContent = "Login";
+
+    authMessage.className =
+      "authMessage";
+
+    authMessage.textContent = "";
+
+  }
+);
+
+
+/* =========================
+   SIGN UP TAB
+========================= */
+
+signupTab.addEventListener(
+  "click",
+  function () {
+
+    signupTab.classList.add("active");
+    loginTab.classList.remove("active");
+
+    authName.style.display = "block";
+
+    authSubmit.textContent = "Create Account";
+
+    authMessage.className =
+      "authMessage";
+
+    authMessage.textContent = "";
+
+  }
+);
+
+
+/* =========================
+   CLOSE AUTH
+========================= */
+
+authClose.addEventListener(
+  "click",
+  function () {
+
+    authOverlay.classList.remove("show");
+
+  }
+);
+  const profileBtn =
+  document.getElementById("profileBtn");
+
+profileBtn.addEventListener(
+  "click",
+  function () {
+    openLogin();
+  }
+);
 
 </style>
 
@@ -2696,6 +2965,92 @@ setInterval(
 </script>
 
 </div>
+<!-- =====================================================
+     LOGIN / SIGN UP
+===================================================== -->
 
+<div class="authOverlay" id="authOverlay">
+
+  <div class="authBox">
+
+    <div class="authLogo">
+      🤖
+    </div>
+
+    <div class="authTitle">
+      Welcome to BaatAI
+    </div>
+
+    <div class="authSubtitle">
+      Login or create your BaatAI account
+    </div>
+
+    <div class="authTabs">
+
+      <button
+        class="authTab active"
+        id="loginTab"
+        type="button"
+      >
+        Login
+      </button>
+
+      <button
+        class="authTab"
+        id="signupTab"
+        type="button"
+      >
+        Sign Up
+      </button>
+
+    </div>
+
+    <div
+      class="authMessage"
+      id="authMessage"
+    ></div>
+
+    <input
+      class="authInput"
+      id="authName"
+      type="text"
+      placeholder="Your Name"
+      style="display:none;"
+    />
+
+    <input
+      class="authInput"
+      id="authEmail"
+      type="email"
+      placeholder="Email"
+    />
+
+    <input
+      class="authInput"
+      id="authPassword"
+      type="password"
+      placeholder="Password"
+    />
+
+    <button
+      class="authSubmit"
+      id="authSubmit"
+      type="button"
+    >
+      Login
+    </button>
+
+    <button
+      class="authClose"
+      id="authClose"
+      type="button"
+    >
+      Continue as Guest
+    </button>
+
+  </div>
+
+</div>
+  
 </body>
 </html>
